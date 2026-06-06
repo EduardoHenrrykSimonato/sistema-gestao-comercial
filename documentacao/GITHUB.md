@@ -93,3 +93,20 @@ O arquivo `.gitignore` já está configurado para ignorar:
   ```
 - **Status do Push:** Realizado com sucesso
 - **Etapa Enviada:** Etapa 2 (Módulo de Cadastro de Usuários, Produtos e Clientes, banco SQLite e documentação).
+
+---
+
+## Correção — Erro de Importação do ItemVenda
+
+- **Link do Repositório:** [https://github.com/EduardoHenrrykSimonato/sistema-gestao-comercial.git](https://github.com/EduardoHenrrykSimonato/sistema-gestao-comercial.git)
+- **Branch Utilizada:** `main`
+- **Mensagem do Commit:** `fix: corrigir importacao do model item venda`
+- **Comandos Git Utilizados:**
+  ```bash
+  git status
+  git add .
+  git commit -m "fix: corrigir importacao do model item venda"
+  git push origin main
+  ```
+- **Status do Push:** Realizado com sucesso
+

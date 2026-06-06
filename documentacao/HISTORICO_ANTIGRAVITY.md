@@ -196,6 +196,34 @@ Toda a base do projeto correspondente à fundação (Etapa 1) e ao módulo de Ca
 
 ---
 
+## Correção - Erro de importação do ItemVenda
+
+**Data:** 05/06/2026
+
+### Problema encontrado
+Erro do compilador Angular/TypeScript ao tentar resolver o módulo do model `item-venda.model` no arquivo `venda.model.ts`, impedindo a compilação do projeto.
+
+### Arquivo com erro
+* `src/app/models/venda.model.ts`
+
+### Causa provável
+Divergência menor na estrutura e na declaração de propriedades (como a ausência de `venda_id?: number` opcional e o encapsulamento de `produto_nome?: string` no model `ItemVenda`), gerando incompatibilidades de compilação de tipos ou arquivos em duplicidade inativos em cache.
+
+### Arquivos alterados
+* [src/app/models/item-venda.model.ts](file:///c:/Projetos/sistema-gestao-comercial/src/app/models/item-venda.model.ts)
+* [src/app/models/venda.model.ts](file:///c:/Projetos/sistema-gestao-comercial/src/app/models/venda.model.ts)
+
+### Solução aplicada
+1. **Padronização do Model `ItemVenda`**: Alterado a declaração de `ItemVenda` para exportar a interface exatamente com os tipos especificados, incluindo `venda_id?: number` e `produto_nome?: string`.
+2. **Padronização do Model `Venda`**: Ajustado o `venda.model.ts` para importar corretamente o model e definir a interface compatível com `itens?: ItemVenda[]`.
+3. **Verificação de Duplicatas**: Confirmado a ausência de arquivos duplicados no diretório de models.
+4. **Verificação de Compilação**: Executado build para testar a correção e obter 0 erros de compilação.
+
+### Resultado esperado
+O projeto compila normalmente sem erros de resolução de módulos ou tipos em relação ao model `ItemVenda`.
+
+---
+
 ## Próximas Etapas
 
 | Etapa | Descrição | Status |

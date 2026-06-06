@@ -5,8 +5,7 @@ export interface Venda {
   cliente_id: number;
   data_venda: string;
   total: number;
-  status: string; // 'pendente' | 'paga'
-  // Campos auxiliares (não persistidos, usados na UI)
+  status: string;
   cliente_nome?: string;
   itens?: ItemVenda[];
 }
