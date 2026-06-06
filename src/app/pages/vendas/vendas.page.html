@@ -8,9 +8,169 @@
 </ion-header>
 
 <ion-content class="page-content">
-  <div class="placeholder-container">
-    <ion-icon name="construct-outline"></ion-icon>
-    <h2>Módulo de Vendas</h2>
-    <p>Esta tela será implementada na próxima etapa.</p>
+  <div class="page-header">
+    <h2>Registrar Vendas</h2>
+    <p>Adicione produtos, gerencie o carrinho e realize novas vendas</p>
+  </div>
+
+  <!-- Form Card: Cliente, Produto e Carrinho -->
+  <ion-card class="custom-card">
+    <ion-card-content>
+      <div class="form-title">
+        <ion-icon name="cart-outline"></ion-icon>
+        <h3>Nova Venda</h3>
+      </div>
+
+      <!-- Seleção do Cliente -->
+      <div class="input-group">
+        <ion-label class="input-label">Cliente da Venda</ion-label>
+        <ion-item lines="none" class="custom-input select-item">
+          <ion-icon name="person-outline" class="item-icon-left"></ion-icon>
+          <ion-select
+            placeholder="Selecione o Cliente"
+            [(ngModel)]="clienteSelecionadoId"
+            interface="popover"
+            class="custom-select"
+          >
+            <ion-select-option *ngFor="let c of clientes" [value]="c.id">
+              {{ c.nome }}
+            </ion-select-option>
+          </ion-select>
+        </ion-item>
+      </div>
+
+      <div class="divider-line"></div>
+
+      <!-- Adicionar Produto -->
+      <div class="form-title">
+        <ion-icon name="cube-outline"></ion-icon>
+        <h3>Adicionar Produtos</h3>
+      </div>
+
+      <div class="input-group">
+        <ion-label class="input-label">Produto</ion-label>
+        <ion-item lines="none" class="custom-input select-item">
+          <ion-icon name="cube-outline" class="item-icon-left"></ion-icon>
+          <ion-select
+            placeholder="Selecione o Produto"
+            [(ngModel)]="produtoSelecionadoId"
+            interface="popover"
+            class="custom-select"
+          >
+            <ion-select-option *ngFor="let p of produtos" [value]="p.id" [disabled]="p.estoque <= 0">
+              {{ p.nome }} - R$ {{ p.preco | number:'1.2-2' }} (Estoque: {{ p.estoque }} un)
+            </ion-select-option>
+          </ion-select>
+        </ion-item>
+      </div>
+
+      <div class="row-inputs">
+        <div class="input-group flex-2">
+          <ion-label class="input-label">Quantidade</ion-label>
+          <ion-item lines="none" class="custom-input">
+            <ion-input
+              type="number"
+              placeholder="Qtd."
+              [(ngModel)]="quantidadeSelecionada"
+              min="1"
+            ></ion-input>
+          </ion-item>
+        </div>
+
+        <div class="flex-1 button-container">
+          <ion-button class="add-btn" (click)="adicionarProduto()">
+            <ion-icon name="add-outline" slot="icon-only"></ion-icon>
+          </ion-button>
+        </div>
+      </div>
+
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Carrinho / Itens Adicionados -->
+  <div class="list-section" *ngIf="itensAdicionados.length > 0">
+    <h3>Carrinho de Compras</h3>
+
+    <div class="cart-container">
+      <div class="cart-item" *ngFor="let item of itensAdicionados; let i = index">
+        <div class="cart-info">
+          <h4>{{ item.produto_nome }}</h4>
+          <p>
+            <span>Qtd: <strong>{{ item.quantidade }}</strong></span>
+            <span class="divider-bullet">•</span>
+            <span>Preço: R$ {{ item.valor_unitario | number:'1.2-2' }}</span>
+          </p>
+        </div>
+        <div class="cart-subtotal-actions">
+          <span class="subtotal-text">R$ {{ item.subtotal | number:'1.2-2' }}</span>
+          <ion-button fill="clear" color="danger" class="remove-item-btn" (click)="removerProduto(i)">
+            <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+          </ion-button>
+        </div>
+      </div>
+
+      <!-- Total e Finalização -->
+      <div class="cart-footer">
+        <div class="total-row">
+          <span>Total Geral:</span>
+          <span class="total-value">R$ {{ totalVenda | number:'1.2-2' }}</span>
+        </div>
+        <div class="checkout-buttons">
+          <ion-button fill="outline" class="clear-cart-btn" (click)="limparFormulario()">
+            <ion-icon name="close-circle-outline" slot="start"></ion-icon>
+            Cancelar
+          </ion-button>
+          <ion-button class="checkout-btn" (click)="finalizarVenda()">
+            <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
+            Finalizar Venda
+          </ion-button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Vendas Realizadas -->
+  <div class="list-section">
+    <h3>Vendas Realizadas</h3>
+
+    <div *ngIf="vendasRealizadas.length === 0" class="empty-list">
+      <ion-icon name="cart-outline"></ion-icon>
+      <p>Nenhuma venda realizada.</p>
+    </div>
+
+    <ion-list lines="none" class="custom-list" *ngIf="vendasRealizadas.length > 0">
+      <div class="list-item-card sale-card" *ngFor="let v of vendasRealizadas">
+        <div class="item-info">
+          <div class="sale-title-row">
+            <h4>Venda #{{ v.id }}</h4>
+            <span class="status-badge" [class.paga]="v.status === 'paga'">
+              {{ v.status === 'paga' ? 'Paga' : 'Pendente' }}
+            </span>
+          </div>
+          
+          <p class="sale-details">
+            <span class="info-span">
+              <ion-icon name="person-outline"></ion-icon>
+              {{ v.cliente_nome }}
+            </span>
+            <span class="divider-pipe">|</span>
+            <span class="info-span">
+              <ion-icon name="calendar-outline"></ion-icon>
+              {{ v.data_venda }}
+            </span>
+          </p>
+
+          <p class="sale-items-count">
+            <ion-icon name="cube-outline"></ion-icon>
+            {{ v.itens?.length || 0 }} produto(s)
+          </p>
+        </div>
+
+        <div class="sale-total-column">
+          <span class="total-label">Total</span>
+          <span class="total-amount">R$ {{ v.total | number:'1.2-2' }}</span>
+        </div>
+      </div>
+    </ion-list>
   </div>
 </ion-content>

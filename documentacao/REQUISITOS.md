@@ -26,11 +26,11 @@
 - Campos: nome, CPF/CNPJ, telefone, e-mail, endereço.
 - Possui fallback funcional em memória para execução de CRUD completo no navegador.
 
-### RF05 — Controle de Estoque `[📋 Parcialmente Atendido (CRUD/UI) — Etapa 2 / Lógica de Vendas na Etapa 3]`
+### RF05 — Controle de Estoque `[✅ Atendido — Etapa 2 & Etapa 3]`
 - O estoque deve ser reduzido automaticamente ao realizar uma venda.
 - O sistema não deve permitir vender produto com estoque insuficiente.
 
-### RF06 — Registro de Vendas `[📋 Pendente — Etapa 3]`
+### RF06 — Registro de Vendas `[✅ Atendido — Etapa 3]`
 - Uma venda deve estar vinculada a um cliente.
 - Uma venda pode conter um ou mais produtos.
 - Cada item deve ter: produto, quantidade, valor unitário e subtotal.

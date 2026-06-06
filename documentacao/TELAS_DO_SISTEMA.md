@@ -107,11 +107,35 @@ Documentação das telas do sistema, atualizada a cada etapa do desenvolvimento.
 
 ---
 
+### 7. Vendas (`/vendas`)
+
+- **Objetivo da tela:** Registrar novas vendas, selecionar clientes e produtos, gerenciar itens no carrinho e baixar estoques e gerar contas a receber.
+- **Campos disponíveis:**
+  - Cliente da Venda (Select com clientes cadastrados)
+  - Produto (Select com produtos disponíveis, preço unitário e estoque atual)
+  - Quantidade (Input numérico, inteiro, obrigatório e maior que zero)
+- **Botões existentes:**
+  - Adicionar (Botão "+" para inserir produto selecionado no carrinho)
+  - Cancelar (Reseta o formulário/carrinho)
+  - Finalizar Venda (Processa e grava a venda e itens)
+  - Remover Item (Botão de lixeira na lista do carrinho)
+- **Validações:**
+  - Cliente obrigatório para finalizar.
+  - Pelo menos um item no carrinho para finalizar.
+  - Quantidade do item no carrinho não pode exceder o estoque disponível do produto.
+  - Bloqueio de inserção de itens com quantidade vazia, negativa ou nula.
+- **Carrinho de Compras:** Exibe lista reativa contendo nome do produto, quantidade, preço unitário, subtotal e botão para exclusão individual de itens.
+- **Totais:** Exibe o valor do Total Geral somando os subtotais de forma reativa.
+- **Vendas Realizadas:** Listagem reativa contendo código da venda, nome do cliente, data do registro, quantidade total de itens, total geral em reais e badge colorido de status (`Pendente` ou `Paga`).
+- **Status:** ✅ Implementada com fallback web em memória e baixa de estoque reativa (Etapa 3)
+- **Screenshots/Prints futuros:** (Reservado para capturas de tela)
+
+---
+
 ## Telas Pendentes
 
 | Tela | Rota | Etapa Prevista |
 |---|---|---|
-| Módulo de Vendas | `/vendas` | Etapa 3 |
 | Financeiro | `/financeiro` | Etapa 4 |
 | Contas a Receber | `/financeiro/receber` | Etapa 4 |
 | Relatórios | `/relatorios` | Etapa 5 |

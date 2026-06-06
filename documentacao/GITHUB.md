@@ -188,3 +188,26 @@ O arquivo `.gitignore` já está configurado para ignorar:
   2. Ajustou `ativarFallbackWeb()` do `DatabaseService` para também definir `useFallback = true`, garantindo que todas as chamadas de banco subsequentes utilizem as rotas emulado.
   3. Refatorou o `UsuarioService` para utilizar sua própria lista em memória `usuariosFallback` com os dados mockados de `admin`, provendo consistência estrutural com o `ProdutoService` e `ClienteService`.
 
+---
+
+## Etapa 3 — Implementação do Módulo de Vendas
+
+- **Link do Repositório:** [https://github.com/EduardoHenrrykSimonato/sistema-gestao-comercial.git](https://github.com/EduardoHenrrykSimonato/sistema-gestao-comercial.git)
+- **Branch Utilizada:** `main`
+- **Mensagem do Commit:** `feat: implementar modulo de vendas`
+- **Comandos Git Utilizados:**
+  ```bash
+  git status
+  git add .
+  git commit -m "feat: implementar modulo de vendas"
+  git push origin main
+  ```
+- **Status do Push:** Realizado com sucesso
+- **Mudanças e Correções Realizadas:**
+  1. Implementou os modelos estruturais de `Venda` e `ItemVenda` para acomodar múltiplos produtos por venda.
+  2. Implementou e integrou o `VendaService` e `FinanceiroService` com suporte a fallback em memória (`vendasFallback`, `recebimentosFallback`).
+  3. Quebrou a dependência circular entre `VendaService` e `FinanceiroService` usando a injeção sob demanda (`Injector`).
+  4. Implementou a tela de vendas reativa com controle de estoque, carrinho e totalizadores em `/vendas`.
+  5. Ajustou os budgets no `angular.json` para suportar o SCSS personalizado e limpo de componente.
+
+

@@ -117,12 +117,24 @@ Registra os recebimentos (pagamentos de vendas).
 
 ---
 
-## Relacionamentos
+## Relacionamentos e Fluxo de Dados
 
-- `vendas.cliente_id` → `clientes.id`
-- `itens_venda.venda_id` → `vendas.id`
-- `itens_venda.produto_id` → `produtos.id`
-- `recebimentos.venda_id` → `vendas.id`
+### 1. Relacionamento entre Venda e Cliente
+- Uma venda é vinculada a um único cliente por meio da chave estrangeira `vendas.cliente_id` que aponta para `clientes.id` (relação 1:N, onde um cliente pode ter várias vendas, mas uma venda pertence a apenas um cliente).
+
+### 2. Relacionamento entre Venda e Itens da Venda (`itens_venda`)
+- Uma venda pode conter um ou vários produtos. A tabela `itens_venda` funciona como uma tabela associativa contendo a chave estrangeira `venda_id` referenciando `vendas.id` (relação 1:N, onde uma venda tem vários itens detalhados).
+
+### 3. Relacionamento entre Itens da Venda (`itens_venda`) e Produtos
+- Cada item registrado no carrinho possui a chave estrangeira `itens_venda.produto_id` apontando para `produtos.id`, armazenando também uma cópia estática do `valor_unitario` e `quantidade` no momento exato da transação comercial.
+
+### 4. Relação entre Venda e Recebimento
+- Ao finalizar uma venda com status `"pendente"`, o sistema gera automaticamente um registro associado na tabela `recebimentos` referenciando `recebimentos.venda_id` -> `vendas.id` (relação 1:1) com o valor total da venda e status `"pendente"`. Isso alimenta o fluxo de caixa a receber.
+
+### 5. Baixa de Estoque
+- Durante o fluxo de finalização da venda, para cada item de produto em `itens_venda`, o estoque é reduzido diretamente da tabela `produtos` executando a instrução SQL:
+  `UPDATE produtos SET estoque = estoque - ? WHERE id = ?`
+- A interface de vendas bloqueia qualquer adição caso a quantidade desejada exceda a quantidade disponível em `produtos.estoque`.
 
 ## SQL de Criação
 

@@ -82,19 +82,24 @@ flowchart TD
 ## Fluxo de Venda
 
 ```mermaid
-flowchart LR
-    A["Selecionar Cliente"] --> B["Adicionar Produtos"]
-    B --> C["Calcular Total"]
-    C --> D["Finalizar Venda"]
-    D --> E["Reduz Estoque"]
-    D --> F["Gera Pendência"]
-    F --> G["Registrar Recebimento"]
-    G --> H["Marca como Paga"]
+flowchart TD
+    Login["Login"] --> Home["Home"]
+    Home --> Venda["Venda"]
+    Venda --> SelCliente["Selecionar Cliente"]
+    SelCliente --> SelProd["Selecionar Produto"]
+    SelProd --> InfQtd["Informar Quantidade"]
+    InfQtd --> ValEst{"Validar Estoque?"}
+    ValEst -- Sim --> AddProd["Adicionar Produto"]
+    ValEst -- Não --> AlertEst["Alert: Estoque Insuficiente"] --> InfQtd
+    AddProd --> CalcTotal["Calcular Total"]
+    CalcTotal --> FinVenda["Finalizar Venda"]
+    FinVenda --> BaixEst["Baixar Estoque"]
+    FinVenda --> GerReceb["Gerar Recebimento Pendente"]
 ```
 
 ---
 
-## Diagrama de Classes (Módulo Cadastro)
+## Diagrama de Classes (Módulos Cadastro, Vendas e Financeiro)
 
 ```mermaid
 classDiagram
@@ -111,36 +116,63 @@ classDiagram
 
     class UsuarioService {
         -databaseService: DatabaseService
-        +listarTodos()
+        +listar()
         +buscarPorId(id)
-        +cadastrar(usuario)
+        +inserir(usuario)
         +atualizar(usuario)
-        +remover(id)
+        +excluir(id)
     }
 
     class ProdutoService {
         -databaseService: DatabaseService
-        +listarTodos()
+        +listar()
         +buscarPorId(id)
-        +cadastrar(produto)
+        +inserir(produto)
         +atualizar(produto)
-        +remover(id)
+        +excluir(id)
         +atualizarEstoque(produtoId, quantidade)
         +verificarEstoque(produtoId, quantidade)
     }
 
     class ClienteService {
         -databaseService: DatabaseService
-        +listarTodos()
+        +listar()
         +buscarPorId(id)
-        +cadastrar(cliente)
+        +inserir(cliente)
         +atualizar(cliente)
-        +remover(id)
+        +excluir(id)
+    }
+
+    class VendaService {
+        -databaseService: DatabaseService
+        -clienteService: ClienteService
+        -produtoService: ProdutoService
+        -financeiroService: FinanceiroService
+        +criarVenda(venda, itens)
+        +listarVendas()
+        +listarItensPorVenda(venda_id)
+        +calcularTotal(itens)
+        +validarEstoque(produto_id, quantidade)
+        +baixarEstoque(produto_id, quantidade)
+    }
+
+    class FinanceiroService {
+        -databaseService: DatabaseService
+        -vendaService: VendaService
+        +gerarRecebimentoPendente(venda_id, valor)
+        +listarRecebimentos()
+        +registrarRecebimento(recebimento)
     }
 
     UsuarioService --> DatabaseService
     ProdutoService --> DatabaseService
     ClienteService --> DatabaseService
+    VendaService --> DatabaseService
+    VendaService --> ClienteService
+    VendaService --> ProdutoService
+    VendaService --> FinanceiroService
+    FinanceiroService --> DatabaseService
+    FinanceiroService --> VendaService
 ```
 
 ---
