@@ -51,8 +51,10 @@ export class ProdutosPage implements OnInit {
   }
 
   async carregarProdutos() {
+    console.log('Listando produtos...');
     try {
-      this.produtos = await this.produtoService.listarTodos();
+      this.produtos = await this.produtoService.listar();
+      console.log('Produtos carregados:', this.produtos);
     } catch (error) {
       console.error('Erro ao carregar produtos:', error);
     }
@@ -94,18 +96,22 @@ export class ProdutosPage implements OnInit {
       estoque: estoqueNum
     };
 
+    console.log('Salvando produto...');
+    console.log('Produto enviado ao service:', produtoDados);
+
     try {
       if (this.produtoIdParaEditar !== null) {
         // Edit mode
         produtoDados.id = this.produtoIdParaEditar;
         await this.produtoService.atualizar(produtoDados);
-        alert('Produto atualizado com sucesso!');
+        alert('Produto saved com sucesso.');
       } else {
         // Create mode
-        await this.produtoService.cadastrar(produtoDados);
-        alert('Produto cadastrado com sucesso!');
+        await this.produtoService.inserir(produtoDados);
+        alert('Produto salvo com sucesso.');
       }
 
+      console.log('Produto salvo com sucesso');
       this.limparFormulario();
       await this.carregarProdutos();
     } catch (error) {
@@ -129,7 +135,7 @@ export class ProdutosPage implements OnInit {
     if (!confirmar) return;
 
     try {
-      await this.produtoService.remover(id);
+      await this.produtoService.excluir(id);
       alert('Produto excluído com sucesso!');
       
       // Se estiver editando o produto excluído, limpa o form

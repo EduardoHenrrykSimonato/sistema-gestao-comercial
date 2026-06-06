@@ -55,7 +55,7 @@ export class ClientesPage implements OnInit {
 
   async carregarClientes() {
     try {
-      this.clientes = await this.clienteService.listarTodos();
+      this.clientes = await this.clienteService.listar();
     } catch (error) {
       console.error('Erro ao carregar clientes:', error);
     }
@@ -84,7 +84,7 @@ export class ClientesPage implements OnInit {
         alert('Cliente atualizado com sucesso!');
       } else {
         // Create mode
-        await this.clienteService.cadastrar(clienteDados);
+        await this.clienteService.inserir(clienteDados);
         alert('Cliente cadastrado com sucesso!');
       }
 
@@ -112,7 +112,7 @@ export class ClientesPage implements OnInit {
     if (!confirmar) return;
 
     try {
-      await this.clienteService.remover(id);
+      await this.clienteService.excluir(id);
       alert('Cliente excluído com sucesso!');
       
       // Se estiver editando o cliente excluído, limpa o form

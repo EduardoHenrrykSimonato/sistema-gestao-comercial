@@ -13,15 +13,18 @@
 - Campos: nome, usuário (login), senha, perfil.
 - O campo "usuário" deve ser único.
 - Limpeza e validação completa de campos vazios com alertas.
+- Possui fallback funcional em memória para execução de CRUD completo no navegador.
 
 ### RF03 — Cadastro de Produtos `[✅ Atendido — Etapa 2]`
 - O sistema deve permitir cadastrar, consultar/listar, editar e excluir produtos.
 - Campos: nome, categoria, preço, estoque.
 - Destaque claro do controle de estoque e de estoque baixo (<= 5).
+- Possui fallback funcional em memória para execução de CRUD completo no navegador.
 
 ### RF04 — Cadastro de Clientes `[✅ Atendido — Etapa 2]`
 - O sistema deve permitir cadastrar, consultar/listar, editar e excluir clientes.
 - Campos: nome, CPF/CNPJ, telefone, e-mail, endereço.
+- Possui fallback funcional em memória para execução de CRUD completo no navegador.
 
 ### RF05 — Controle de Estoque `[📋 Parcialmente Atendido (CRUD/UI) — Etapa 2 / Lógica de Vendas na Etapa 3]`
 - O estoque deve ser reduzido automaticamente ao realizar uma venda.
@@ -56,7 +59,7 @@
 
 ### RNF02 — Banco de Dados `[✅ Atendido]`
 - O sistema deve utilizar SQLite como banco de dados local.
-- Possui fallback LocalStorage automático para desenvolvimento em navegadores.
+- Possui fallback em memória funcional automático para desenvolvimento e testes em navegadores.
 
 ### RNF03 — Arquitetura `[✅ Atendido]`
 - O sistema deve utilizar services separados para cada módulo.

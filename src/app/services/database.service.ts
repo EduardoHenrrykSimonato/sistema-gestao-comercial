@@ -13,6 +13,19 @@ export class DatabaseService {
   private useFallback = false;
   private readonly DB_NAME = 'gestao_comercial_db';
 
+  // Singleton e Fallback em memória
+  private initialized = false;
+  private initializingPromise: Promise<void> | null = null;
+  private webFallbackAtivo = false;
+
+  public produtosFallback: any[] = [];
+  public clientesFallback: any[] = [];
+  public usuariosFallback: any[] = [];
+
+  public produtoId = 1;
+  public clienteId = 1;
+  public usuarioId = 1;
+
   constructor() {
     this.sqlite = new SQLiteConnection(CapacitorSQLite);
   }
@@ -22,82 +35,97 @@ export class DatabaseService {
    * Cria as tabelas e insere dados padrão se necessário.
    */
   async initializeDatabase(): Promise<void> {
-    if (this.isInitialized) {
-      console.log('Banco já está inicializado.');
-      console.log('Banco inicializado');
+    if (this.isInitialized || this.initialized) {
       return;
     }
-
-    try {
-      const platform = Capacitor.getPlatform();
-      console.log('Iniciando inicialização do banco. Plataforma:', platform);
-
-      // Para web, inicializa o jeep-sqlite
-      if (platform === 'web') {
-        console.log('Inicializando SQLite Web...');
-        console.log('Carregando WASM em assets/sql-wasm.wasm');
-        // Configura timeout de 2 segundos para o web store não travar se o jeep-sqlite falhar
-        const initWebPromise = this.initWebStore();
-        const timeoutPromise = new Promise((_, reject) =>
-          setTimeout(() => reject(new Error('Timeout ao inicializar jeep-sqlite')), 2000)
-        );
-        await Promise.race([initWebPromise, timeoutPromise]);
-        console.log('SQLite Web inicializado com sucesso');
-      }
-
-      console.log('Verificando consistência de conexões...');
-      const retCC = (await this.sqlite.checkConnectionsConsistency()).result;
-      console.log('Consistência verificada:', retCC);
-
-      console.log('Verificando se conexão existe...');
-      const isConnection = (await this.sqlite.isConnection(this.DB_NAME, false)).result;
-      console.log('Conexão existe:', isConnection);
-
-      if (retCC && isConnection) {
-        console.log('Recuperando conexão existente...');
-        this.db = await this.sqlite.retrieveConnection(this.DB_NAME, false);
-      } else {
-        console.log('Criando nova conexão...');
-        this.db = await this.sqlite.createConnection(
-          this.DB_NAME,
-          false,
-          'no-encryption',
-          1,
-          false
-        );
-      }
-
-      console.log('Abrindo conexão com o banco...');
-      await this.db.open();
-      console.log('Conexão aberta com sucesso.');
-
-      console.log('Criando tabelas...');
-      await this.createTables();
-      console.log('Tabelas verificadas/criadas.');
-
-      console.log('Inserindo dados padrão (se necessário)...');
-      await this.seedDefaultData();
-      console.log('Dados padrão verificados/inseridos.');
-
-      this.isInitialized = true;
-      this.useFallback = false;
-      console.log('Banco inicializado');
-    } catch (error) {
-      console.error('Erro ao inicializar SQLite Web:', error);
-      console.log('Fallback web ativo para desenvolvimento');
-      console.log('Ativando fallback de banco de dados em LocalStorage...');
-      
-      this.useFallback = true;
-      this.isInitialized = true;
-      
-      try {
-        this.initFallbackDb();
-      } catch (fallbackError) {
-        console.error('Erro ao inicializar o fallback de banco:', fallbackError);
-      }
-
-      console.log('Banco inicializado');
+    if (this.initializingPromise) {
+      return this.initializingPromise;
     }
+
+    this.initializingPromise = (async () => {
+      try {
+        const platform = Capacitor.getPlatform();
+        console.log('Iniciando inicialização do banco. Plataforma:', platform);
+
+        // Para web, inicializa o jeep-sqlite
+        if (platform === 'web') {
+          console.log('Inicializando SQLite Web...');
+          console.log('Carregando WASM em assets/sql-wasm.wasm');
+          // Configura timeout de 2 segundos para o web store não travar se o jeep-sqlite falhar
+          const initWebPromise = this.initWebStore();
+          const timeoutPromise = new Promise((_, reject) =>
+            setTimeout(() => reject(new Error('Timeout ao inicializar jeep-sqlite')), 2000)
+          );
+          await Promise.race([initWebPromise, timeoutPromise]);
+          console.log('SQLite Web inicializado com sucesso');
+        }
+
+        console.log('Verificando consistência de conexões...');
+        const retCC = (await this.sqlite.checkConnectionsConsistency()).result;
+        console.log('Consistência verificada:', retCC);
+
+        console.log('Verificando se conexão existe...');
+        const isConnection = (await this.sqlite.isConnection(this.DB_NAME, false)).result;
+        console.log('Conexão existe:', isConnection);
+
+        if (retCC && isConnection) {
+          console.log('Recuperando conexão existente...');
+          this.db = await this.sqlite.retrieveConnection(this.DB_NAME, false);
+        } else {
+          console.log('Criando nova conexão...');
+          this.db = await this.sqlite.createConnection(
+            this.DB_NAME,
+            false,
+            'no-encryption',
+            1,
+            false
+          );
+        }
+
+        console.log('Abrindo conexão com o banco...');
+        await this.db.open();
+        console.log('Conexão aberta com sucesso.');
+
+        console.log('Criando tabelas...');
+        await this.createTables();
+        console.log('Tabelas verificadas/criadas.');
+
+        console.log('Inserindo dados padrão (se necessário)...');
+        await this.seedDefaultData();
+        console.log('Dados padrão verificados/inseridos.');
+
+        this.isInitialized = true;
+        this.initialized = true;
+        this.webFallbackAtivo = false;
+        this.useFallback = false;
+        console.log('Banco inicializado');
+      } catch (error) {
+        console.error('Erro ao inicializar SQLite Web:', error);
+        console.log('Fallback web ativo para desenvolvimento');
+        console.log('Ativando fallback de banco de dados em LocalStorage...');
+        
+        this.webFallbackAtivo = true;
+        this.useFallback = true;
+        this.isInitialized = true;
+        this.initialized = true;
+        
+        try {
+          this.initFallbackDb();
+        } catch (fallbackError) {
+          console.error('Erro ao inicializar o fallback de banco:', fallbackError);
+        }
+
+        console.log('Banco inicializado');
+      } finally {
+        this.initializingPromise = null;
+      }
+    })();
+
+    return this.initializingPromise;
+  }
+
+  isWebFallbackAtivo(): boolean {
+    return this.webFallbackAtivo;
   }
 
   /**

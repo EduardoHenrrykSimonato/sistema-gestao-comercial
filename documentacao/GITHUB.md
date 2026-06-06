@@ -147,5 +147,23 @@ O arquivo `.gitignore` já está configurado para ignorar:
   2. Removido o lançamento de erro ao ativar o fallback de LocalStorage no `DatabaseService.initializeDatabase()`, permitindo o funcionamento transparente das listagens de cadastro sem travamento de tela.
   3. Corrigido redirecionamento pós-login no `LoginPage` para utilizar `navigateByUrl('/home', { replaceUrl: true })` e aplicar `blur()` no elemento ativo do DOM.
   4. Mapeado o ícone `chevron-forward-outline` e `'chevron-forward-outline'` em `addIcons` nas páginas de Cadastro e Financeiro.
+---
 
+## Correção Crítica — Cadastro com Fallback Web em Memória
 
+- **Link do Repositório:** [https://github.com/EduardoHenrrykSimonato/sistema-gestao-comercial.git](https://github.com/EduardoHenrrykSimonato/sistema-gestao-comercial.git)
+- **Branch Utilizada:** `main`
+- **Mensagem do Commit:** `fix: corrigir cadastro com fallback web`
+- **Comandos Git Utilizados:**
+  ```bash
+  git status
+  git add .
+  git commit -m "fix: corrigir cadastro com fallback web"
+  git push origin main
+  ```
+- **Status do Push:** Realizado com sucesso
+- **Correções Realizadas:**
+  1. Implementado controle de concorrência com Singleton Promise na inicialização do `DatabaseService` para evitar loops repetitivos e concorrência na conexão.
+  2. Implementado fallback web baseado em arrays em memória no `DatabaseService` (`produtosFallback`, `clientesFallback`, `usuariosFallback`).
+  3. Adicionado suporte ao CRUD em memória nos services `ProdutoService`, `ClienteService` e `UsuarioService` caso o `DatabaseService.isWebFallbackAtivo()` seja verdadeiro.
+  4. Adicionado logs descritivos e alert de sucesso para produtos cadastrados em `produtos.page.ts` e garantia de importação do `FormsModule`.

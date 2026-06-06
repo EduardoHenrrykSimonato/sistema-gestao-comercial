@@ -78,9 +78,10 @@ ionic capacitor run ios
 ## Possíveis Problemas
 
 ### Execução de Banco de Dados no Navegador (Desenvolvimento)
-O SQLite roda nativamente em aparelhos físicos/emuladores móveis. Para desenvolvimento web no browser (`ionic serve`), o sistema foi dotado de um **Fallback LocalStorage automático**. Se a inicialização do SQLite falhar no navegador, o sistema persistirá os cadastros em `LocalStorage`. Isso elimina problemas de carregamento de dependências Wasm e permite testar todo o fluxo imediatamente no navegador.
-* **Nota sobre o Login:** Para testes no navegador com `ionic serve`, o login com `admin` / `admin123` sempre funcionará por meio do fallback web caso o SQLite ou jeep-sqlite não estejam disponíveis ou demorem a inicializar.
-* **Nota sobre o sql-wasm.wasm:** O arquivo `sql-wasm.wasm` deve ser servido a partir de `assets/sql-wasm.wasm`. Em caso de teste com `ionic serve`, é recomendável validar o caminho acessando `http://localhost:8100/assets/sql-wasm.wasm` no navegador para garantir que o arquivo é baixado ou aberto sem erros de 404.
+O SQLite roda nativamente em aparelhos físicos/emuladores móveis. Para desenvolvimento web no browser (`ionic serve`), o sistema foi dotado de um **Fallback em Memória funcional**. Se a inicialização do SQLite ou do WebAssembly (`sql-wasm.wasm`) falhar no navegador (como erros de `LinkError` no Chrome), o sistema ativará automaticamente os arrays em memória. Isso elimina problemas de carregamento/linkagem de dependências Wasm e permite testar todo o CRUD do fluxo de cadastro imediatamente no navegador.
+* **Nota sobre o Login:** Para testes no navegador com `ionic serve`, o login com `admin` / `admin123` sempre funcionará por meio do fallback web.
+* **Nota sobre o sql-wasm.wasm:** O arquivo `sql-wasm.wasm` deve ser servido a partir de `assets/sql-wasm.wasm`.
+* **Nota sobre os dados em memória:** Em caso de uso de fallback em memória para os testes acadêmicos, lembre-se de que os dados cadastrados em memória são perdidos ao atualizar a página (refresh) no navegador.
 
 ### Erro de porta em uso
 Se a porta 8100 estiver em uso, o Ionic vai sugerir outra porta automaticamente.

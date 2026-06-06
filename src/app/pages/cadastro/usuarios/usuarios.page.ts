@@ -52,7 +52,7 @@ export class UsuariosPage implements OnInit {
 
   async carregarUsuarios() {
     try {
-      this.usuarios = await this.usuarioService.listarTodos();
+      this.usuarios = await this.usuarioService.listar();
     } catch (error) {
       console.error('Erro ao carregar usuários:', error);
     }
@@ -92,7 +92,7 @@ export class UsuariosPage implements OnInit {
         alert('Usuário atualizado com sucesso!');
       } else {
         // Create mode
-        await this.usuarioService.cadastrar(usuarioDados);
+        await this.usuarioService.inserir(usuarioDados);
         alert('Usuário cadastrado com sucesso!');
       }
 
@@ -119,7 +119,7 @@ export class UsuariosPage implements OnInit {
     if (!confirmar) return;
 
     try {
-      await this.usuarioService.remover(id);
+      await this.usuarioService.excluir(id);
       alert('Usuário excluído com sucesso!');
       
       // Se estiver editando o usuário excluído, limpa o form

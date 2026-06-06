@@ -319,6 +319,47 @@ O fluxo de login admin/admin123 conclui redirecionando o navegador para a tela H
 
 ---
 
+## Correção crítica - Cadastro não salva no navegador
+
+**Data:** 05/06/2026
+
+### Problema encontrado
+Na tela Cadastro > Produtos, ao preencher os campos e clicar em SALVAR, o produto não era cadastrado e não aparecia na lista "Produtos em Estoque" no browser.
+
+### Tela afetada
+- Cadastro de Produtos (`/cadastro/produtos`)
+- Cadastro de Clientes (`/cadastro/clientes`)
+- Cadastro de Usuários (`/cadastro/usuarios`)
+
+### Erro exibido no Console
+```
+ERROR Error: LinkError: WebAssembly.instantiate(): Import #34 "a" "I": function import requires a callable
+```
+Isso impedia a correta inicialização do SQLite Web/WASM e causava múltiplas tentativas concorrentes repetidas de inicialização do banco, deixando o sistema instável e quebrando o cadastro.
+
+### Causa provável
+Falha/incompatibilidade de carregamento ou link do arquivo WebAssembly `sql-wasm.wasm` da biblioteca `sql.js` no Chrome e falta de controle de inicialização única (concorrência) no `DatabaseService`, fazendo com que múltiplos acessos simultâneos ao banco ao mesmo tempo tentassem disparar conexões concorrentes.
+
+### Arquivos alterados
+- [src/app/services/database.service.ts](file:///c:/Projetos/sistema-gestao-comercial/src/app/services/database.service.ts)
+- [src/app/services/produto.service.ts](file:///c:/Projetos/sistema-gestao-comercial/src/app/services/produto.service.ts)
+- [src/app/services/cliente.service.ts](file:///c:/Projetos/sistema-gestao-comercial/src/app/services/cliente.service.ts)
+- [src/app/services/usuario.service.ts](file:///c:/Projetos/sistema-gestao-comercial/src/app/services/usuario.service.ts)
+- [src/app/pages/cadastro/produtos/produtos.page.ts](file:///c:/Projetos/sistema-gestao-comercial/src/app/pages/cadastro/produtos/produtos.page.ts)
+- [src/app/pages/cadastro/clientes/clientes.page.ts](file:///c:/Projetos/sistema-gestao-comercial/src/app/pages/cadastro/clientes/clientes.page.ts)
+- [src/app/pages/cadastro/usuarios/usuarios.page.ts](file:///c:/Projetos/sistema-gestao-comercial/src/app/pages/cadastro/usuarios/usuarios.page.ts)
+
+### Solução aplicada
+1. **Controle de Concorrência (Singleton Promise)**: Implementado controle de concorrência com `initialized`, `initializingPromise` e `webFallbackAtivo` no `DatabaseService.initializeDatabase()` para garantir que apenas uma tentativa de inicialização de banco ocorra, e conexões simultâneas aguardem a mesma Promise.
+2. **Fallback Web em Memória**: Adicionado suporte a arrays em memória (`produtosFallback`, `clientesFallback`, `usuariosFallback`) e geradores de ID correspondentes no `DatabaseService` para guardar e atualizar temporariamente os dados durante os testes no browser.
+3. **Mapeamento de CRUD nos Services**: Refatorado `ProdutoService`, `ClienteService` e `UsuarioService` para verificar se `databaseService.isWebFallbackAtivo()` é verdadeiro. Em caso afirmativo, os métodos de inserção, listagem, atualização, exclusão e busca por ID lêem e gravam diretamente nos arrays em memória do `DatabaseService`.
+4. **Logs e Validação da Tela de Produtos**: Adicionado logs temporários recomendados na tela de produtos e garantido a chamada correta para exibir o `alert("Produto salvo com sucesso.")`, limpeza do formulário e recarga reativa imediata da listagem de produtos.
+
+### Resultado esperado
+O cadastro de produtos, clientes e usuários funciona de maneira robusta no navegador Chrome através de um fallback fluído e funcional em memória, sem que a instabilidade ou erros de WASM impeçam a execução e validação das telas do projeto comercial.
+
+---
+
 ## Próximas Etapas
 
 | Etapa | Descrição | Status |

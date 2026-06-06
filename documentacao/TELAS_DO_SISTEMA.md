@@ -57,7 +57,7 @@ Documentação das telas do sistema, atualizada a cada etapa do desenvolvimento.
   - Senha de acesso obrigatória
   - Perfil de acesso obrigatório (select)
 - **Ações disponíveis:** CRUD completo com persistência imediata e atualização automática da listagem.
-- **Status:** ✅ Implementada (Etapa 2)
+- **Status:** ✅ Implementada com fallback web em memória para testes no browser (Etapa 2)
 - **Screenshots/Prints futuros:** (Reservado para capturas de tela)
 
 ---
@@ -80,7 +80,7 @@ Documentação das telas do sistema, atualizada a cada etapa do desenvolvimento.
   - Preço obrigatório, numérico e maior que zero (> 0)
   - Estoque obrigatório, numérico e maior ou igual a zero (>= 0)
 - **Ações disponíveis:** CRUD completo, destaque visual para produtos com estoque controlado e indicador visual para estoque baixo (<= 5).
-- **Status:** ✅ Implementada (Etapa 2)
+- **Status:** ✅ Implementada com fallback web em memória para testes no browser e estoque baixo (Etapa 2)
 - **Screenshots/Prints futuros:** (Reservado para capturas de tela)
 
 ---
@@ -102,7 +102,7 @@ Documentação das telas do sistema, atualizada a cada etapa do desenvolvimento.
 - **Validações:**
   - Nome completo obrigatório
 - **Ações disponíveis:** CRUD completo com campos opcionais estruturados de contato.
-- **Status:** ✅ Implementada (Etapa 2)
+- **Status:** ✅ Implementada com fallback web em memória para testes no browser (Etapa 2)
 - **Screenshots/Prints futuros:** (Reservado para capturas de tela)
 
 ---
