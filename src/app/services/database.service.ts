@@ -34,14 +34,15 @@ export class DatabaseService {
 
       // Para web, inicializa o jeep-sqlite
       if (platform === 'web') {
-        console.log('Plataforma Web detectada. Inicializando jeep-sqlite...');
+        console.log('Inicializando SQLite Web...');
+        console.log('Carregando WASM em assets/sql-wasm.wasm');
         // Configura timeout de 2 segundos para o web store não travar se o jeep-sqlite falhar
         const initWebPromise = this.initWebStore();
         const timeoutPromise = new Promise((_, reject) =>
           setTimeout(() => reject(new Error('Timeout ao inicializar jeep-sqlite')), 2000)
         );
         await Promise.race([initWebPromise, timeoutPromise]);
-        console.log('jeep-sqlite inicializado.');
+        console.log('SQLite Web inicializado com sucesso');
       }
 
       console.log('Verificando consistência de conexões...');
@@ -82,7 +83,8 @@ export class DatabaseService {
       this.useFallback = false;
       console.log('Banco inicializado');
     } catch (error) {
-      console.error('❌ Erro ao inicializar o banco de dados SQLite:', error);
+      console.error('Erro ao inicializar SQLite Web:', error);
+      console.log('Fallback web ativo para desenvolvimento');
       console.log('Ativando fallback de banco de dados em LocalStorage...');
       
       this.useFallback = true;
@@ -95,8 +97,6 @@ export class DatabaseService {
       }
 
       console.log('Banco inicializado');
-      // Lança erro controlado para que o AuthService saiba que o SQLite falhou
-      throw new Error('SQLite não disponível. Fallback ativado.');
     }
   }
 

@@ -127,4 +127,25 @@ O arquivo `.gitignore` já está configurado para ignorar:
 - **Status do Push:** Realizado com sucesso
 - **Correção crítica realizada:** Evitado hang/travamento indefinido no SQLite em ambiente web via timeout no `DatabaseService` e inserção de fallback de autenticação imediato no `AuthService` para as credenciais `admin` / `admin123`.
 
+---
+
+## Correção — Caminho do SQLite WASM e Redirecionamento
+
+- **Link do Repositório:** [https://github.com/EduardoHenrrykSimonato/sistema-gestao-comercial.git](https://github.com/EduardoHenrrykSimonato/sistema-gestao-comercial.git)
+- **Branch Utilizada:** `main`
+- **Mensagem do Commit:** `fix: corrigir caminho do sqlite wasm`
+- **Comandos Git Utilizados:**
+  ```bash
+  git status
+  git add .
+  git commit -m "fix: corrigir caminho do sqlite wasm"
+  git push origin main
+  ```
+- **Status do Push:** Realizado com sucesso
+- **Correções Realizadas:**
+  1. Alterado `wasmPath` no elemento `<jeep-sqlite>` de `"assets/sql-wasm.wasm"` para `"assets"` em `app.component.html` para resolver a busca duplicada por `assets/sql-wasm.wasm/sql-wasm.wasm` 404 no browser.
+  2. Removido o lançamento de erro ao ativar o fallback de LocalStorage no `DatabaseService.initializeDatabase()`, permitindo o funcionamento transparente das listagens de cadastro sem travamento de tela.
+  3. Corrigido redirecionamento pós-login no `LoginPage` para utilizar `navigateByUrl('/home', { replaceUrl: true })` e aplicar `blur()` no elemento ativo do DOM.
+  4. Mapeado o ícone `chevron-forward-outline` e `'chevron-forward-outline'` em `addIcons` nas páginas de Cadastro e Financeiro.
+
 

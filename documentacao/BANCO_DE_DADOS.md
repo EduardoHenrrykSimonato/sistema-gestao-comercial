@@ -3,8 +3,10 @@
 O sistema utiliza **SQLite** como banco de dados local e principal, acessado via plugin `@capacitor-community/sqlite`.
 
 > [!NOTE]
-> **Fallback Web (Ambiente de Desenvolvimento):**
-> Para evitar travamentos ou problemas de compatibilidade Wasm no navegador durante a execução com `ionic serve`, o sistema implementa um fallback web temporário em `LocalStorage` que emula a persistência e a consulta de dados. Esse fallback é usado exclusivamente no browser e não substitui o SQLite, que continua sendo o banco principal e definitivo do aplicativo em dispositivos físicos ou emuladores.
+> **SQLite Web / WASM e Fallback Web (Ambiente de Desenvolvimento):**
+> - O SQLite continua sendo o banco de dados principal e definitivo do aplicativo em dispositivos físicos ou emuladores (Android/iOS).
+> - No navegador, o SQLite Web utiliza WebAssembly (`sql.js`) para simular o banco local. O arquivo `sql-wasm.wasm` fica localizado no diretório `/assets/sql-wasm.wasm` para carregamento correto.
+> - Se o SQLite Web falhar ou houver problemas em ambiente de navegador, o sistema ativa automaticamente um fallback temporário baseado em `LocalStorage` que emula as tabelas e o CRUD de dados de forma transparente, permitindo que todas as telas carreguem e testem sem quebras ou travamentos.
 
 ## Nome do Banco
 

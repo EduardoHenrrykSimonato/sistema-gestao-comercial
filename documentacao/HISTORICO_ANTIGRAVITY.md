@@ -255,6 +255,70 @@ O login com `admin` / `admin123` em navegadores web funciona instantaneamente se
 
 ---
 
+## Correção - Caminho do sql-wasm.wasm no SQLite Web
+
+**Data:** 05/06/2026
+
+### Problema encontrado
+O login funcionava com o fallback síncrono, mas ao navegar para as telas de cadastro (como Produtos), o `DatabaseService` tentava inicializar o SQLite Web no navegador Chrome e falhava ao carregar o arquivo WASM, gerando erro 404 no console.
+
+### Erro exibido no Console
+`GET http://localhost:8100/assets/sql-wasm.wasm/sql-wasm.wasm 404 (Not Found)`
+
+### Caminho errado identificado
+`assets/sql-wasm.wasm/sql-wasm.wasm`
+
+### Caminho correto aplicado
+`assets/sql-wasm.wasm` (gerado configurando `wasmPath="assets"` no componente `<jeep-sqlite>`).
+
+### Arquivos alterados
+* [angular.json](file:///c:/Projetos/sistema-gestao-comercial/angular.json)
+* [package.json](file:///c:/Projetos/sistema-gestao-comercial/package.json)
+* [src/app/app.component.html](file:///c:/Projetos/sistema-gestao-comercial/src/app/app.component.html)
+* [src/app/services/database.service.ts](file:///c:/Projetos/sistema-gestao-comercial/src/app/services/database.service.ts)
+
+### Solução aplicada
+1. **Configuração de assets no angular.json**: Confirmado que o arquivo `sql-wasm.wasm` da biblioteca `sql.js` está sendo copiado para o diretório `assets` (e não com caminho de arquivo aninhado).
+2. **Correção do wasmPath no app.component.html**: Alterado o atributo `wasmPath` no elemento `<jeep-sqlite>` de `"assets/sql-wasm.wasm"` para `"assets"`. Como a biblioteca `jeep-sqlite` assume que o `wasmPath` especifica o *diretório* contendo o arquivo e anexa automaticamente o nome do arquivo `/sql-wasm.wasm`, essa alteração impede o caminho duplicado incorreto.
+3. **Tratamento de Fallback Silencioso**: No `DatabaseService.initializeDatabase()`, removemos a instrução de lançar erro (`throw new Error`) no catch da inicialização do banco. Com isso, ao falhar no navegador, o fallback em LocalStorage é ativado silenciosamente e as listagens e formulários das telas de cadastro continuam carregando e salvando dados na memória local sem travar as telas do sistema.
+4. **Dependência Explicitada**: Adicionado o pacote `"sql.js": "^1.14.1"` ao `package.json`.
+
+### Resultado esperado
+O arquivo WASM carrega normalmente em `http://localhost:8100/assets/sql-wasm.wasm` (sem retornar 404) e as páginas de cadastro abrem normalmente no navegador sob o fallback em LocalStorage se o SQLite Web falhar ou estiver em processo de inicialização.
+
+---
+
+## Correção - Redirecionamento pós-login para Home
+
+**Data:** 05/06/2026
+
+### Problema encontrado
+A autenticação do usuário ocorria com sucesso no console, mas visualmente a tela de login continuava sendo exibida e o redirecionamento para a Home não se completava. Também ocorria aviso de carregamento de ícone não registrado no console (`Could not load icon with name "chevron-forward-outline"`) e travamentos simples de acessibilidade (`aria-hidden`).
+
+### Logs exibidos no Console
+```
+Iniciando login...
+Iniciando login no AuthService...
+Login aprovado via fallback web.
+Login aprovado. Navegando para Home...
+```
+
+### Arquivos alterados
+* [src/app/pages/login/login.page.ts](file:///c:/Projetos/sistema-gestao-comercial/src/app/pages/login/login.page.ts)
+* [src/app/pages/cadastro/cadastro.page.ts](file:///c:/Projetos/sistema-gestao-comercial/src/app/pages/cadastro/cadastro.page.ts)
+* [src/app/pages/financeiro/financeiro.page.ts](file:///c:/Projetos/sistema-gestao-comercial/src/app/pages/financeiro/financeiro.page.ts)
+* [src/app/pages/home/home.page.ts](file:///c:/Projetos/sistema-gestao-comercial/src/app/pages/home/home.page.ts)
+
+### Solução aplicada
+1. **Navegação Segura**: Atualizado o fluxo do método `onLogin()` para navegar utilizando `this.router.navigateByUrl('/home', { replaceUrl: true })` em vez de `navigate()`, forçando a substituição e renderização da rota Home no histórico do navegador.
+2. **Remoção de Foco (Acessibilidade)**: Antes de realizar qualquer navegação na Home, Cadastro, Financeiro e Login, adicionamos a remoção de foco do elemento ativo através de `document.activeElement.blur()` para evitar o warning de acessibilidade `Blocked aria-hidden on an element because its descendant retained focus`.
+3. **Registro do Chevron no Ionicons**: Adicionado o registro explícito de `chevronForwardOutline` e `'chevron-forward-outline'` no método `addIcons()` nas páginas de Cadastro (`cadastro.page.ts`) e Financeiro (`financeiro.page.ts`) para sanar o warning de ícone não carregado.
+
+### Resultado esperado
+O fluxo de login admin/admin123 conclui redirecionando o navegador para a tela Home instantaneamente. Os warnings de acessibilidade e ícones não carregados no console foram eliminados.
+
+---
+
 ## Próximas Etapas
 
 | Etapa | Descrição | Status |

@@ -79,3 +79,7 @@ Cada pasta contém 3 arquivos por página:
 - `*.page.ts` — Componente (lógica)
 - `*.page.html` — Template (visual)
 - `*.page.scss` — Estilos (aparência)
+
+## Correções Visuais e de Dependências Recentes
+- **Mapeamento de Ícones:** Os componentes de submenus como `CadastroPage` e `FinanceiroPage` importam e registram explicitamente o ícone `chevronForwardOutline` em `addIcons` para sanar warnings de recursos no console do navegador Chrome.
+- **WASM Local:** O arquivo `sql-wasm.wasm` da biblioteca `sql.js` está explicitamente mapeado no `package.json` e configurado no `angular.json` para ser servido a partir da pasta `/assets/` do projeto, eliminando erros 404 no browser.

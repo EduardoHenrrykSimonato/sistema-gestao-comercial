@@ -89,10 +89,18 @@ export class HomePage {
   }
 
   navigateTo(route: string) {
+    const activeElement = document.activeElement as HTMLElement;
+    if (activeElement) {
+      activeElement.blur();
+    }
     this.router.navigateByUrl(route);
   }
 
   logout() {
+    const activeElement = document.activeElement as HTMLElement;
+    if (activeElement) {
+      activeElement.blur();
+    }
     this.authService.logout();
     this.router.navigateByUrl('/login', { replaceUrl: true });
   }

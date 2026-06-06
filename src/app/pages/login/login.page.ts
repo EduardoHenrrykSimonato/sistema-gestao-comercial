@@ -55,7 +55,13 @@ export class LoginPage {
 
       if (autenticado) {
         console.log('Login aprovado. Navegando para Home...');
-        await this.router.navigate(['/home']);
+
+        const activeElement = document.activeElement as HTMLElement;
+        if (activeElement) {
+          activeElement.blur();
+        }
+
+        await this.router.navigateByUrl('/home', { replaceUrl: true });
       } else {
         alert('Usuário ou senha inválidos.');
       }

@@ -11,9 +11,9 @@ Documentação das telas do sistema, atualizada a cada etapa do desenvolvimento.
 - **Ações:** Botão "Entrar" (`onLogin()`).
 - **Validações:** Campos vazios exibem `alert('Preencha usuário e senha.')`.
 - **Mensagens de erro:** Credenciais incorretas exibem `alert('Usuário ou senha inválidos.')`. Falhas de sistema exibem `alert('Erro ao realizar login. Tente novamente.')`.
-- **Redirecionamento:** Após sucesso na autenticação, o usuário é redirecionado para a Home (`/home`).
+- **Redirecionamento:** Após sucesso na autenticação, o foco do elemento ativo do DOM é removido (`activeElement.blur()`) para evitar avisos de acessibilidade do navegador e a navegação segura é realizada através de `this.router.navigateByUrl('/home', { replaceUrl: true })`, garantindo que o usuário seja levado à tela Home de forma limpa.
 - **Observação sobre Fallback Web:** O aplicativo conta com um mecanismo de fallback web que permite acesso imediato usando as credenciais padrão (`admin` / `admin123`) caso o banco de dados SQLite não esteja disponível no navegador durante a execução via `ionic serve`.
-- **Status:** ✅ Implementada com fallback web (Etapa 2)
+- **Status:** ✅ Implementada com fallback web e navegação segura corrigida (Etapa 2)
 
 ---
 

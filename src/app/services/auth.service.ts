@@ -22,8 +22,9 @@ export class AuthService {
   async login(usuario: string, senha: string): Promise<boolean> {
     console.log('Iniciando login no AuthService...');
 
+    // Fallback web para desenvolvimento com ionic serve
     if (usuario === 'admin' && senha === 'admin123') {
-      console.log('Login via fallback web realizado com sucesso.');
+      console.log('Login aprovado via fallback web.');
       const mockUser: Usuario = {
         id: 1,
         nome: 'Administrador',
@@ -38,6 +39,7 @@ export class AuthService {
 
     try {
       await this.databaseService.initializeDatabase();
+
       const user = await this.databaseService.buscarUsuarioPorCredenciais(usuario, senha);
 
       if (user) {
@@ -50,10 +52,10 @@ export class AuthService {
       console.log('Usuário não encontrado.');
       return false;
     } catch (error) {
-      console.error('Erro no login SQLite:', error);
+      console.error('Erro ao consultar SQLite:', error);
 
       if (usuario === 'admin' && senha === 'admin123') {
-        console.log('Fallback web liberou acesso.');
+        console.log('Fallback web liberou o login após erro no SQLite.');
         const mockUser: Usuario = {
           id: 1,
           nome: 'Administrador',

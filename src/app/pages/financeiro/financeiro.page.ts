@@ -21,10 +21,14 @@ import { cashOutline, chevronForwardOutline } from 'ionicons/icons';
 export class FinanceiroPage {
 
   constructor(private router: Router) {
-    addIcons({ cashOutline, chevronForwardOutline });
+    addIcons({ cashOutline, chevronForwardOutline, 'chevron-forward-outline': chevronForwardOutline });
   }
 
   navigateTo(route: string) {
+    const activeElement = document.activeElement as HTMLElement;
+    if (activeElement) {
+      activeElement.blur();
+    }
     this.router.navigateByUrl(route);
   }
 }

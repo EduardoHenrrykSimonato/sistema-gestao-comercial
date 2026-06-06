@@ -6,7 +6,7 @@ import {
   IonCard, IonCardContent, IonIcon, IonGrid, IonRow, IonCol
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { peopleOutline, cubeOutline, personOutline } from 'ionicons/icons';
+import { peopleOutline, cubeOutline, personOutline, chevronForwardOutline } from 'ionicons/icons';
 
 interface SubMenuItem {
   title: string;
@@ -53,10 +53,14 @@ export class CadastroPage {
   ];
 
   constructor(private router: Router) {
-    addIcons({ peopleOutline, cubeOutline, personOutline });
+    addIcons({ peopleOutline, cubeOutline, personOutline, 'chevron-forward-outline': chevronForwardOutline });
   }
 
   navigateTo(route: string) {
+    const activeElement = document.activeElement as HTMLElement;
+    if (activeElement) {
+      activeElement.blur();
+    }
     this.router.navigateByUrl(route);
   }
 }
