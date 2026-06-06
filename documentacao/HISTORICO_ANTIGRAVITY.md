@@ -224,6 +224,37 @@ O projeto compila normalmente sem erros de resolução de módulos ou tipos em r
 
 ---
 
+## Correção crítica - Login travado em ENTRANDO
+
+**Data:** 05/06/2026
+
+### Problema encontrado
+Ao tentar efetuar o login, o botão de login ficava travado em "ENTRANDO..." infinitamente e não redirecionava para a tela Home.
+
+### Tela afetada
+- Login (`/login`)
+
+### Causa provável
+Hangs causados por chamadas assíncronas bloqueantes no SQLite durante testes no navegador (`ionic serve`), ou falhas na montagem do web-store que faziam com que `initializeDatabase()` ou `checkConnectionsConsistency()` aguardassem indefinidamente por resoluções de Promises.
+
+### Arquivos alterados
+* [src/app/pages/login/login.page.ts](file:///c:/Projetos/sistema-gestao-comercial/src/app/pages/login/login.page.ts)
+* [src/app/pages/login/login.page.html](file:///c:/Projetos/sistema-gestao-comercial/src/app/pages/login/login.page.html)
+* [src/app/services/auth.service.ts](file:///c:/Projetos/sistema-gestao-comercial/src/app/services/auth.service.ts)
+* [src/app/services/database.service.ts](file:///c:/Projetos/sistema-gestao-comercial/src/app/services/database.service.ts)
+
+### Solução aplicada
+1. **Fallback Web Imediato no AuthService**: O `AuthService` agora faz validação imediata do login padrão `admin` / `admin123` e cria o mock de sessão local antes de tentar abrir conexões SQLite do Capacitor que poderiam travar no browser.
+2. **Método de Busca por Credenciais**: Criado o método `buscarUsuarioPorCredenciais(usuario, senha)` no `DatabaseService` que resolve a query SQLite de login.
+3. **Prevenção de Loops no Init**: Removida a inicialização automática do banco no `ionViewWillEnter()` de `LoginPage`, deixando-a sob demanda e encapsulada na Promise de login do `AuthService` com timeouts controlados.
+4. **Timeout e Try/Catch no DatabaseService**: Incluído um timeout de 2 segundos para inicializar o web store do SQLite. Caso a conexão falhe ou exceda o tempo limite, o erro é capturado e ativa-se o fallback LocalStorage.
+5. **Estrutura de Feedback Visual**: O botão do formulário de login foi ajustado para usar spans (`<span *ngIf="!loading">`) e habilitar/desabilitar de acordo com a variável `loading`.
+
+### Resultado esperado após a correção
+O login com `admin` / `admin123` em navegadores web funciona instantaneamente sem travar e redireciona de imediato o usuário para a Home.
+
+---
+
 ## Próximas Etapas
 
 | Etapa | Descrição | Status |

@@ -37,18 +37,10 @@ export class LoginPage {
   }
 
   async ionViewWillEnter() {
-    // Inicializa o banco de dados no login
-    try {
-      await this.databaseService.initializeDatabase();
-    } catch (error) {
-      console.error('Erro ao inicializar banco:', error);
-    }
+    // Banco será inicializado sob demanda no login
   }
 
   async onLogin() {
-    console.log('Iniciando login...');
-    this.errorMessage = '';
-
     if (!this.usuario || !this.senha) {
       alert('Preencha usuário e senha.');
       return;
@@ -57,20 +49,19 @@ export class LoginPage {
     this.loading = true;
 
     try {
-      // Garante a inicialização do banco antes de chamar o login
-      await this.databaseService.initializeDatabase();
+      console.log('Iniciando login...');
 
-      const success = await this.authService.login(this.usuario, this.senha);
+      const autenticado = await this.authService.login(this.usuario, this.senha);
 
-      if (success) {
-        console.log('Navegando para Home');
-        this.router.navigate(['/home']);
+      if (autenticado) {
+        console.log('Login aprovado. Navegando para Home...');
+        await this.router.navigate(['/home']);
       } else {
         alert('Usuário ou senha inválidos.');
       }
     } catch (error) {
+      console.error('Erro ao realizar login:', error);
       alert('Erro ao realizar login. Tente novamente.');
-      console.error('Erro no login:', error);
     } finally {
       this.loading = false;
     }

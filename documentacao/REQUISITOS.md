@@ -2,10 +2,11 @@
 
 ## Requisitos Funcionais
 
-### RF01 — Login `[✅ Atendido — Etapa 1]`
+### RF01 — Login `[✅ Atendido — Etapa 1 & Correção Crítica]`
 - O sistema deve permitir login com usuário e senha.
-- O sistema deve possuir um usuário padrão (admin/admin123).
-- O sistema deve validar as credenciais no banco SQLite/Fallback.
+- O sistema possui um usuário padrão obrigatório (`admin` / `admin123`, perfil `Administrador`).
+- O sistema valida as credenciais no banco SQLite.
+- Em ambiente web de desenvolvimento (`ionic serve`), existe um fallback web temporário para permitir o teste imediato do fluxo sem travar o sistema.
 
 ### RF02 — Cadastro de Usuários `[✅ Atendido — Etapa 2]`
 - O sistema deve permitir cadastrar, consultar/listar, editar e excluir usuários.

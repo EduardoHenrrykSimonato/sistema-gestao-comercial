@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import {
   IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonIcon,
   IonCard, IonCardContent, IonItem, IonInput, IonButton,
-  IonList, IonListHeader, IonLabel
+  IonList
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
@@ -22,7 +22,7 @@ import { Produto } from '../../../models/produto.model';
     CommonModule, FormsModule,
     IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonIcon,
     IonCard, IonCardContent, IonItem, IonInput, IonButton,
-    IonList, IonListHeader, IonLabel
+    IonList
   ]
 })
 export class ProdutosPage implements OnInit {

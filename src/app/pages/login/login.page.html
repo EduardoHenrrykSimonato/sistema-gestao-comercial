@@ -44,7 +44,8 @@
         >
           <ion-spinner *ngIf="loading" name="crescent" slot="start"></ion-spinner>
           <ion-icon *ngIf="!loading" name="log-in-outline" slot="start"></ion-icon>
-          {{ loading ? 'ENTRANDO...' : 'ENTRAR' }}
+          <span *ngIf="!loading">ENTRAR</span>
+          <span *ngIf="loading">ENTRANDO...</span>
         </ion-button>
 
         <p class="hint-text">

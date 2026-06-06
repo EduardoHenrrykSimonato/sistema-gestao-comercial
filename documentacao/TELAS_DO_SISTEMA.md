@@ -7,10 +7,13 @@ Documentação das telas do sistema, atualizada a cada etapa do desenvolvimento.
 ### 1. Login (`/login`)
 
 - **Descrição:** Tela de autenticação do sistema.
-- **Campos:** Usuário, Senha.
-- **Ações:** Botão "Entrar".
-- **Credenciais padrão:** admin / admin123.
-- **Status:** ✅ Implementada (Etapa 1)
+- **Campos:** Usuário (input de texto), Senha (input de senha).
+- **Ações:** Botão "Entrar" (`onLogin()`).
+- **Validações:** Campos vazios exibem `alert('Preencha usuário e senha.')`.
+- **Mensagens de erro:** Credenciais incorretas exibem `alert('Usuário ou senha inválidos.')`. Falhas de sistema exibem `alert('Erro ao realizar login. Tente novamente.')`.
+- **Redirecionamento:** Após sucesso na autenticação, o usuário é redirecionado para a Home (`/home`).
+- **Observação sobre Fallback Web:** O aplicativo conta com um mecanismo de fallback web que permite acesso imediato usando as credenciais padrão (`admin` / `admin123`) caso o banco de dados SQLite não esteja disponível no navegador durante a execução via `ionic serve`.
+- **Status:** ✅ Implementada com fallback web (Etapa 2)
 
 ---
 

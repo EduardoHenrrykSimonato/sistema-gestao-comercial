@@ -23,25 +23,40 @@ export class DatabaseService {
    */
   async initializeDatabase(): Promise<void> {
     if (this.isInitialized) {
+      console.log('Banco já está inicializado.');
       console.log('Banco inicializado');
       return;
     }
 
     try {
       const platform = Capacitor.getPlatform();
+      console.log('Iniciando inicialização do banco. Plataforma:', platform);
 
       // Para web, inicializa o jeep-sqlite
       if (platform === 'web') {
-        await this.initWebStore();
+        console.log('Plataforma Web detectada. Inicializando jeep-sqlite...');
+        // Configura timeout de 2 segundos para o web store não travar se o jeep-sqlite falhar
+        const initWebPromise = this.initWebStore();
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('Timeout ao inicializar jeep-sqlite')), 2000)
+        );
+        await Promise.race([initWebPromise, timeoutPromise]);
+        console.log('jeep-sqlite inicializado.');
       }
 
-      // Verifica consistência da conexão
+      console.log('Verificando consistência de conexões...');
       const retCC = (await this.sqlite.checkConnectionsConsistency()).result;
+      console.log('Consistência verificada:', retCC);
+
+      console.log('Verificando se conexão existe...');
       const isConnection = (await this.sqlite.isConnection(this.DB_NAME, false)).result;
+      console.log('Conexão existe:', isConnection);
 
       if (retCC && isConnection) {
+        console.log('Recuperando conexão existente...');
         this.db = await this.sqlite.retrieveConnection(this.DB_NAME, false);
       } else {
+        console.log('Criando nova conexão...');
         this.db = await this.sqlite.createConnection(
           this.DB_NAME,
           false,
@@ -51,19 +66,37 @@ export class DatabaseService {
         );
       }
 
+      console.log('Abrindo conexão com o banco...');
       await this.db.open();
+      console.log('Conexão aberta com sucesso.');
+
+      console.log('Criando tabelas...');
       await this.createTables();
+      console.log('Tabelas verificadas/criadas.');
+
+      console.log('Inserindo dados padrão (se necessário)...');
       await this.seedDefaultData();
+      console.log('Dados padrão verificados/inseridos.');
 
       this.isInitialized = true;
+      this.useFallback = false;
       console.log('Banco inicializado');
     } catch (error) {
-      console.error('❌ Erro ao inicializar o banco de dados:', error);
-      // Fallback if platform is web or if SQLite is not available
+      console.error('❌ Erro ao inicializar o banco de dados SQLite:', error);
+      console.log('Ativando fallback de banco de dados em LocalStorage...');
+      
       this.useFallback = true;
       this.isInitialized = true;
-      this.initFallbackDb();
+      
+      try {
+        this.initFallbackDb();
+      } catch (fallbackError) {
+        console.error('Erro ao inicializar o fallback de banco:', fallbackError);
+      }
+
       console.log('Banco inicializado');
+      // Lança erro controlado para que o AuthService saiba que o SQLite falhou
+      throw new Error('SQLite não disponível. Fallback ativado.');
     }
   }
 
@@ -427,6 +460,26 @@ export class DatabaseService {
       lastId: result.changes?.lastId || 0,
       changes: result.changes?.changes || 0
     };
+  }
+
+  /**
+   * Busca um usuário por credenciais de usuário e senha.
+   */
+  async buscarUsuarioPorCredenciais(usuario: string, senha: string): Promise<any> {
+    try {
+      console.log('Buscando usuário por credenciais no banco:', usuario);
+      const result = await this.query(
+        'SELECT * FROM usuarios WHERE usuario = ? AND senha = ?',
+        [usuario, senha]
+      );
+      if (result && result.length > 0) {
+        return result[0];
+      }
+      return null;
+    } catch (error) {
+      console.error('Erro ao buscar usuário por credenciais:', error);
+      return null;
+    }
   }
 
   /**

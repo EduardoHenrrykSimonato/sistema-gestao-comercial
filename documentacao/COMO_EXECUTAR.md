@@ -79,6 +79,7 @@ ionic capacitor run ios
 
 ### Execução de Banco de Dados no Navegador (Desenvolvimento)
 O SQLite roda nativamente em aparelhos físicos/emuladores móveis. Para desenvolvimento web no browser (`ionic serve`), o sistema foi dotado de um **Fallback LocalStorage automático**. Se a inicialização do SQLite falhar no navegador, o sistema persistirá os cadastros em `LocalStorage`. Isso elimina problemas de carregamento de dependências Wasm e permite testar todo o fluxo imediatamente no navegador.
+* **Nota sobre o Login:** Para testes no navegador com `ionic serve`, o login com `admin` / `admin123` sempre funcionará por meio do fallback web caso o SQLite ou jeep-sqlite não estejam disponíveis ou demorem a inicializar.
 
 ### Erro de porta em uso
 Se a porta 8100 estiver em uso, o Ionic vai sugerir outra porta automaticamente.

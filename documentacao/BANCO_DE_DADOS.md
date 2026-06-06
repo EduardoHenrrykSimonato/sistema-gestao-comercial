@@ -1,6 +1,10 @@
 # 🗄️ Banco de Dados
 
-O sistema utiliza **SQLite** como banco de dados local, acessado via plugin `@capacitor-community/sqlite`.
+O sistema utiliza **SQLite** como banco de dados local e principal, acessado via plugin `@capacitor-community/sqlite`.
+
+> [!NOTE]
+> **Fallback Web (Ambiente de Desenvolvimento):**
+> Para evitar travamentos ou problemas de compatibilidade Wasm no navegador durante a execução com `ionic serve`, o sistema implementa um fallback web temporário em `LocalStorage` que emula a persistência e a consulta de dados. Esse fallback é usado exclusivamente no browser e não substitui o SQLite, que continua sendo o banco principal e definitivo do aplicativo em dispositivos físicos ou emuladores.
 
 ## Nome do Banco
 

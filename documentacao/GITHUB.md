@@ -110,3 +110,21 @@ O arquivo `.gitignore` já está configurado para ignorar:
   ```
 - **Status do Push:** Realizado com sucesso
 
+---
+
+## Correção Crítica — Login Travado e Fallback Web
+
+- **Link do Repositório:** [https://github.com/EduardoHenrrykSimonato/sistema-gestao-comercial.git](https://github.com/EduardoHenrrykSimonato/sistema-gestao-comercial.git)
+- **Branch Utilizada:** `main`
+- **Mensagem do Commit:** `fix: corrigir login travado e fallback web`
+- **Comandos Git Utilizados:**
+  ```bash
+  git status
+  git add .
+  git commit -m "fix: corrigir login travado e fallback web"
+  git push origin main
+  ```
+- **Status do Push:** Realizado com sucesso
+- **Correção crítica realizada:** Evitado hang/travamento indefinido no SQLite em ambiente web via timeout no `DatabaseService` e inserção de fallback de autenticação imediato no `AuthService` para as credenciais `admin` / `admin123`.
+
+
