@@ -132,10 +132,45 @@ Documentação das telas do sistema, atualizada a cada etapa do desenvolvimento.
 
 ---
 
+### 8. Financeiro (`/financeiro`)
+
+- **Objetivo da tela:** Submenu do módulo financeiro com acesso ao módulo Contas a Receber.
+- **Ações:** Card/botão para navegar até Contas a Receber e botão Voltar para Home.
+- **Status:** ✅ Implementada (Etapa 4)
+
+---
+
+### 9. Contas a Receber (`/financeiro/receber`)
+
+- **Objetivo da tela:** Listar recebimentos pendentes e pagos, registrar pagamentos de vendas.
+- **Resumo Financeiro:** Exibe dois cards resumo no topo com contadores de pendentes e recebidos.
+- **Abas (Segment):** Aba "Pendentes" e aba "Recebidos" com badge de contagem.
+- **Cards de Recebimento Pendente:**
+  - Exibe número da venda, nome do cliente, data da venda, quantidade de produtos e valor total.
+  - Badge visual de status "Pendente" (vermelho).
+  - Botão "Registrar" para abrir formulário inline de confirmação de pagamento.
+- **Formulário de Confirmação (Inline):**
+  - Forma de pagamento (select: Dinheiro, Cartão Crédito, Cartão Débito, PIX, Boleto, Transferência).
+  - Data de recebimento (input date, pré-preenchido com data atual).
+  - Botões "Cancelar" e "Confirmar".
+- **Cards de Recebimento Pago:**
+  - Exibe número da venda, nome do cliente, data de recebimento, forma de pagamento e valor recebido.
+  - Badge visual de status "Recebido" (verde).
+- **Validações:**
+  - Forma de pagamento obrigatória.
+  - Data de recebimento obrigatória.
+- **Ações ao confirmar:**
+  - Atualiza o recebimento com forma de pagamento, data e status "recebido".
+  - Marca a venda correspondente como "paga".
+  - Recarrega ambas as listas automaticamente.
+- **Status:** ✅ Implementada com fallback web em memória para testes no browser (Etapa 4)
+- **Screenshots/Prints futuros:** (Reservado para capturas de tela)
+
+---
+
 ## Telas Pendentes
 
 | Tela | Rota | Etapa Prevista |
 |---|---|---|
-| Financeiro | `/financeiro` | Etapa 4 |
-| Contas a Receber | `/financeiro/receber` | Etapa 4 |
 | Relatórios | `/relatorios` | Etapa 5 |
+

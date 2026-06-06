@@ -7,31 +7,435 @@ ion-toolbar {
   --background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
 }
 
-.placeholder-container {
+.page-header {
+  padding: 16px 20px 8px;
+  color: #ffffff;
+
+  h2 {
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0 0 4px;
+  }
+
+  p {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.45);
+    margin: 0;
+  }
+}
+
+/* ═══════════════ Summary Cards ═══════════════ */
+.summary-row {
+  display: flex;
+  gap: 12px;
+  padding: 12px 20px 4px;
+}
+
+.summary-card {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+
+  .summary-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    ion-icon {
+      font-size: 20px;
+    }
+  }
+
+  .summary-info {
+    display: flex;
+    flex-direction: column;
+
+    .summary-label {
+      font-size: 10px;
+      color: rgba(255, 255, 255, 0.5);
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    .summary-value {
+      font-size: 22px;
+      font-weight: 800;
+      color: #ffffff;
+    }
+  }
+
+  &.pendente {
+    .summary-icon {
+      background: rgba(255, 118, 117, 0.12);
+      ion-icon { color: #ff7675; }
+    }
+  }
+
+  &.pago {
+    .summary-icon {
+      background: rgba(85, 239, 196, 0.12);
+      ion-icon { color: #55efc4; }
+    }
+  }
+}
+
+/* ═══════════════ Segment ═══════════════ */
+.segment-container {
+  padding: 16px 20px 8px;
+
+  ion-segment {
+    --background: rgba(255, 255, 255, 0.04);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  ion-segment-button {
+    --color: rgba(255, 255, 255, 0.5);
+    --color-checked: #ffffff;
+    --indicator-color: rgba(233, 69, 96, 0.2);
+    --indicator-height: 100%;
+    --border-radius: 10px;
+    min-height: 42px;
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+
+    ion-icon {
+      font-size: 16px;
+      margin-right: 6px;
+    }
+
+    ion-badge {
+      margin-left: 6px;
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 8px;
+      --background: #e94560;
+    }
+  }
+}
+
+/* ═══════════════ Loading ═══════════════ */
+.loading-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 60vh;
-  text-align: center;
-  padding: 24px;
-  color: #ffffff;
+  padding: 48px 24px;
+  color: rgba(255, 255, 255, 0.5);
 
-  ion-icon {
-    font-size: 64px;
-    color: rgba(255, 255, 255, 0.2);
-    margin-bottom: 16px;
-  }
-
-  h2 {
-    font-size: 22px;
-    font-weight: 700;
-    margin: 0 0 8px;
+  .spinner {
+    width: 36px;
+    height: 36px;
+    border: 3px solid rgba(255, 255, 255, 0.1);
+    border-top-color: #e94560;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin-bottom: 12px;
   }
 
   p {
-    font-size: 14px;
-    color: rgba(255, 255, 255, 0.4);
+    font-size: 13px;
     margin: 0;
   }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ═══════════════ List Section ═══════════════ */
+.list-section {
+  padding: 12px 16px 24px;
+}
+
+.empty-list {
+  text-align: center;
+  padding: 48px 24px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 16px;
+  border: 1px dashed rgba(255, 255, 255, 0.06);
+  margin-top: 8px;
+
+  ion-icon {
+    font-size: 52px;
+    color: rgba(255, 255, 255, 0.12);
+    margin-bottom: 12px;
+  }
+
+  h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.6);
+    margin: 0 0 6px;
+  }
+
+  p {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.3);
+    margin: 0;
+  }
+}
+
+/* ═══════════════ Recebimento Cards ═══════════════ */
+.recebimentos-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.recebimento-card {
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 16px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+
+  &.selecionado {
+    border-color: rgba(233, 69, 96, 0.3);
+    box-shadow: 0 0 24px rgba(233, 69, 96, 0.08);
+  }
+}
+
+.card-header {
+  margin-bottom: 12px;
+}
+
+.card-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  h4 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0;
+  }
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 8px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+
+  ion-icon {
+    font-size: 12px;
+  }
+
+  &.pendente {
+    background: rgba(255, 118, 117, 0.12);
+    color: #ff7675;
+  }
+
+  &.pago {
+    background: rgba(85, 239, 196, 0.12);
+    color: #55efc4;
+  }
+}
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.info-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.55);
+
+  ion-icon {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.35);
+    flex-shrink: 0;
+  }
+}
+
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.valor-container {
+  display: flex;
+  flex-direction: column;
+
+  .valor-label {
+    font-size: 9px;
+    color: rgba(255, 255, 255, 0.4);
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    margin-bottom: 2px;
+  }
+
+  .valor-amount {
+    font-size: 20px;
+    font-weight: 800;
+    color: #ff7675;
+
+    &.recebido {
+      color: #55efc4;
+    }
+  }
+}
+
+.confirmar-btn {
+  --background: linear-gradient(135deg, #e94560 0%, #c23152 100%);
+  --border-radius: 10px;
+  --box-shadow: 0 4px 12px rgba(233, 69, 96, 0.2);
+  height: 38px;
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+/* ═══════════════ Form Confirmação ═══════════════ */
+.form-confirmacao {
+  margin-top: 16px;
+  animation: slideDown 0.3s ease;
+
+  .form-divider {
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(233, 69, 96, 0.25) 50%,
+      transparent 100%
+    );
+    margin-bottom: 16px;
+  }
+
+  h5 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0 0 16px;
+
+    ion-icon {
+      color: #e94560;
+      font-size: 18px;
+    }
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.input-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  margin-left: 4px;
+}
+
+.custom-input {
+  --background: rgba(255, 255, 255, 0.04);
+  --border-radius: 12px;
+  --padding-start: 12px;
+  --padding-end: 12px;
+  --min-height: 48px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  transition: border-color 0.3s ease;
+
+  &:focus-within {
+    border-color: #e94560;
+  }
+
+  ion-icon.item-icon-left {
+    color: rgba(255, 255, 255, 0.4);
+    margin-right: 8px;
+    font-size: 18px;
+  }
+
+  ion-input {
+    --color: #ffffff;
+    --placeholder-color: rgba(255, 255, 255, 0.4);
+    font-size: 14px;
+  }
+}
+
+.select-item {
+  .custom-select {
+    --placeholder-color: rgba(255, 255, 255, 0.4);
+    --placeholder-opacity: 1;
+    color: #ffffff;
+    font-size: 14px;
+    width: 100%;
+    padding: 0;
+  }
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.cancel-btn {
+  flex: 1;
+  --border-color: rgba(255, 255, 255, 0.15);
+  --color: rgba(255, 255, 255, 0.6);
+  --border-radius: 10px;
+  height: 44px;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.confirm-btn {
+  flex: 2;
+  --background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
+  --border-radius: 10px;
+  --box-shadow: 0 4px 12px rgba(0, 184, 148, 0.25);
+  height: 44px;
+  font-weight: 600;
+  font-size: 13px;
 }

@@ -8,9 +8,203 @@
 </ion-header>
 
 <ion-content class="page-content">
-  <div class="placeholder-container">
-    <ion-icon name="construct-outline"></ion-icon>
+  <div class="page-header">
     <h2>Contas a Receber</h2>
-    <p>Esta tela será implementada na próxima etapa.</p>
+    <p>Gerencie os pagamentos pendentes e registre recebimentos</p>
   </div>
+
+  <!-- Resumo financeiro -->
+  <div class="summary-row">
+    <div class="summary-card pendente">
+      <div class="summary-icon">
+        <ion-icon name="time-outline"></ion-icon>
+      </div>
+      <div class="summary-info">
+        <span class="summary-label">Pendentes</span>
+        <span class="summary-value">{{ recebimentosPendentes.length }}</span>
+      </div>
+    </div>
+    <div class="summary-card pago">
+      <div class="summary-icon">
+        <ion-icon name="checkmark-done-outline"></ion-icon>
+      </div>
+      <div class="summary-info">
+        <span class="summary-label">Recebidos</span>
+        <span class="summary-value">{{ recebimentosPagos.length }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Segmento de abas -->
+  <div class="segment-container">
+    <ion-segment [value]="segmentoAtivo" (ionChange)="onSegmentChange($event)" mode="ios">
+      <ion-segment-button value="pendentes">
+        <ion-icon name="time-outline"></ion-icon>
+        <ion-label>Pendentes</ion-label>
+        <ion-badge *ngIf="recebimentosPendentes.length > 0" color="danger">{{ recebimentosPendentes.length }}</ion-badge>
+      </ion-segment-button>
+      <ion-segment-button value="pagos">
+        <ion-icon name="checkmark-done-outline"></ion-icon>
+        <ion-label>Recebidos</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="carregando" class="loading-container">
+    <div class="spinner"></div>
+    <p>Carregando recebimentos...</p>
+  </div>
+
+  <!-- LISTA DE PENDENTES -->
+  <div class="list-section" *ngIf="segmentoAtivo === 'pendentes' && !carregando">
+
+    <div *ngIf="recebimentosPendentes.length === 0" class="empty-list">
+      <ion-icon name="receipt-outline"></ion-icon>
+      <h3>Nenhum pagamento pendente</h3>
+      <p>Todas as contas estão em dia!</p>
+    </div>
+
+    <div class="recebimentos-list" *ngIf="recebimentosPendentes.length > 0">
+      <div class="recebimento-card pendente" *ngFor="let rec of recebimentosPendentes"
+           [class.selecionado]="recebimentoSelecionado?.id === rec.id">
+
+        <div class="card-header">
+          <div class="card-title-row">
+            <h4>Venda #{{ rec.venda_id }}</h4>
+            <span class="status-badge pendente">
+              <ion-icon name="time-outline"></ion-icon>
+              Pendente
+            </span>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <div class="info-row">
+            <ion-icon name="person-outline"></ion-icon>
+            <span>{{ rec.cliente_nome }}</span>
+          </div>
+          <div class="info-row">
+            <ion-icon name="calendar-outline"></ion-icon>
+            <span>{{ rec.data_venda }}</span>
+          </div>
+          <div class="info-row" *ngIf="rec.itens_count">
+            <ion-icon name="cart-outline"></ion-icon>
+            <span>{{ rec.itens_count }} produto(s)</span>
+          </div>
+        </div>
+
+        <div class="card-footer">
+          <div class="valor-container">
+            <span class="valor-label">Valor</span>
+            <span class="valor-amount">R$ {{ rec.valor | number:'1.2-2' }}</span>
+          </div>
+          <ion-button class="confirmar-btn" (click)="abrirConfirmacao(rec)"
+                      *ngIf="recebimentoSelecionado?.id !== rec.id">
+            <ion-icon name="cash-outline" slot="start"></ion-icon>
+            Registrar
+          </ion-button>
+        </div>
+
+        <!-- Formulário de confirmação inline -->
+        <div class="form-confirmacao" *ngIf="recebimentoSelecionado?.id === rec.id">
+          <div class="form-divider"></div>
+          <h5>
+            <ion-icon name="wallet-outline"></ion-icon>
+            Registrar Pagamento
+          </h5>
+
+          <div class="input-group">
+            <ion-label class="input-label">Forma de Pagamento</ion-label>
+            <ion-item lines="none" class="custom-input select-item">
+              <ion-icon name="card-outline" class="item-icon-left"></ion-icon>
+              <ion-select
+                placeholder="Selecione a forma"
+                [(ngModel)]="formaPagamento"
+                interface="popover"
+                class="custom-select"
+              >
+                <ion-select-option value="Dinheiro">Dinheiro</ion-select-option>
+                <ion-select-option value="Cartão Crédito">Cartão Crédito</ion-select-option>
+                <ion-select-option value="Cartão Débito">Cartão Débito</ion-select-option>
+                <ion-select-option value="PIX">PIX</ion-select-option>
+                <ion-select-option value="Boleto">Boleto</ion-select-option>
+                <ion-select-option value="Transferência">Transferência</ion-select-option>
+              </ion-select>
+            </ion-item>
+          </div>
+
+          <div class="input-group">
+            <ion-label class="input-label">Data de Recebimento</ion-label>
+            <ion-item lines="none" class="custom-input">
+              <ion-icon name="calendar-outline" class="item-icon-left"></ion-icon>
+              <ion-input
+                type="date"
+                [(ngModel)]="dataRecebimento"
+              ></ion-input>
+            </ion-item>
+          </div>
+
+          <div class="form-actions">
+            <ion-button fill="outline" class="cancel-btn" (click)="cancelarConfirmacao()">
+              <ion-icon name="close-circle-outline" slot="start"></ion-icon>
+              Cancelar
+            </ion-button>
+            <ion-button class="confirm-btn" (click)="confirmarRecebimento()" [disabled]="confirmando">
+              <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
+              {{ confirmando ? 'Processando...' : 'Confirmar' }}
+            </ion-button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LISTA DE PAGOS -->
+  <div class="list-section" *ngIf="segmentoAtivo === 'pagos' && !carregando">
+
+    <div *ngIf="recebimentosPagos.length === 0" class="empty-list">
+      <ion-icon name="checkmark-done-outline"></ion-icon>
+      <h3>Nenhum recebimento registrado</h3>
+      <p>Os pagamentos confirmados aparecerão aqui.</p>
+    </div>
+
+    <div class="recebimentos-list" *ngIf="recebimentosPagos.length > 0">
+      <div class="recebimento-card pago" *ngFor="let rec of recebimentosPagos">
+
+        <div class="card-header">
+          <div class="card-title-row">
+            <h4>Venda #{{ rec.venda_id }}</h4>
+            <span class="status-badge pago">
+              <ion-icon name="checkmark-done-outline"></ion-icon>
+              Recebido
+            </span>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <div class="info-row">
+            <ion-icon name="person-outline"></ion-icon>
+            <span>{{ rec.cliente_nome }}</span>
+          </div>
+          <div class="info-row">
+            <ion-icon name="calendar-outline"></ion-icon>
+            <span>Recebido em: {{ rec.data_recebimento }}</span>
+          </div>
+          <div class="info-row">
+            <ion-icon name="card-outline"></ion-icon>
+            <span>{{ rec.forma_pagamento }}</span>
+          </div>
+        </div>
+
+        <div class="card-footer">
+          <div class="valor-container">
+            <span class="valor-label">Valor Recebido</span>
+            <span class="valor-amount recebido">R$ {{ rec.valor | number:'1.2-2' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </ion-content>

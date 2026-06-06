@@ -37,10 +37,12 @@
 - O sistema deve calcular o total da venda automaticamente.
 - Ao finalizar, a venda deve gerar um valor a receber.
 
-### RF07 — Financeiro (Receber) `[📋 Pendente — Etapa 4]`
+### RF07 — Financeiro (Receber) `[✅ Atendido — Etapa 4]`
 - O sistema deve controlar vendas pendentes e pagas.
 - Ao registrar o recebimento, a venda deve ser marcada como paga.
 - O recebimento deve registrar: valor, data e forma de pagamento.
+- Formas de pagamento disponíveis: Dinheiro, Cartão Crédito, Cartão Débito, PIX, Boleto, Transferência.
+- Possui fallback funcional em memória para execução completa no navegador.
 
 ### RF08 — Relatórios `[📋 Pendente — Etapa 5]`
 - Relatório de produtos cadastrados.

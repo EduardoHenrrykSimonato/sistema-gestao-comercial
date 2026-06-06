@@ -136,6 +136,13 @@ Registra os recebimentos (pagamentos de vendas).
   `UPDATE produtos SET estoque = estoque - ? WHERE id = ?`
 - A interface de vendas bloqueia qualquer adição caso a quantidade desejada exceda a quantidade disponível em `produtos.estoque`.
 
+### 6. Confirmação de Recebimento
+- Ao registrar o recebimento de uma venda pendente na tela Contas a Receber, o sistema executa duas operações:
+  1. **Atualizar Recebimento**: O registro na tabela `recebimentos` é atualizado com `status = 'recebido'`, `forma_pagamento` preenchida (Dinheiro, Cartão Crédito, Cartão Débito, PIX, Boleto ou Transferência) e `data_recebimento` informada.
+  2. **Marcar Venda como Paga**: O registro correspondente na tabela `vendas` é atualizado com `status = 'paga'` através do SQL:
+     `UPDATE vendas SET status = 'paga' WHERE id = ?`
+- Formas de pagamento disponíveis: Dinheiro, Cartão Crédito, Cartão Débito, PIX, Boleto, Transferência.
+
 ## SQL de Criação
 
 As tabelas são criadas automaticamente pelo `DatabaseService` ao inicializar o aplicativo. O código fonte está em:

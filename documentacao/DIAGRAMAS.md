@@ -150,10 +150,13 @@ classDiagram
         -financeiroService: FinanceiroService
         +criarVenda(venda, itens)
         +listarVendas()
+        +listarPendentes()
+        +listarPagas()
         +listarItensPorVenda(venda_id)
         +calcularTotal(itens)
         +validarEstoque(produto_id, quantidade)
         +baixarEstoque(produto_id, quantidade)
+        +marcarComoPaga(vendaId)
     }
 
     class FinanceiroService {
@@ -161,7 +164,10 @@ classDiagram
         -vendaService: VendaService
         +gerarRecebimentoPendente(venda_id, valor)
         +listarRecebimentos()
+        +buscarPorId(id)
         +registrarRecebimento(recebimento)
+        +listarPorVenda(vendaId)
+        +remover(id)
     }
 
     UsuarioService --> DatabaseService
@@ -201,4 +207,29 @@ flowchart TD
     Confirm -- Não --> Form
     Confirm -- Sim --> QueryDel["Executar DELETE no Banco"] --> Refresh
 ```
+
+---
+
+## Fluxo do Módulo Financeiro / Receber
+
+```mermaid
+flowchart TD
+    Home["Home"] --> Fin["Financeiro"]
+    Fin --> Receber["Contas a Receber"]
+    Receber --> ListaPend["Listar Recebimentos Pendentes"]
+    Receber --> ListaPag["Listar Recebimentos Pagos"]
+
+    ListaPend --> SelRec["Selecionar Recebimento Pendente"]
+    SelRec --> FormPag["Abrir Formulário de Pagamento"]
+    FormPag --> InfForma["Informar Forma de Pagamento"]
+    InfForma --> InfData["Informar Data de Recebimento"]
+    InfData --> ValidPag{"Dados Válidos?"}
+    ValidPag -- Não --> AlertErr["Exibir alert() de erro"] --> FormPag
+    ValidPag -- Sim --> ConfPag["Confirmar Recebimento"]
+    ConfPag --> AtuRec["Atualizar Recebimento → Status: Recebido"]
+    AtuRec --> AtuVenda["Marcar Venda como Paga"]
+    AtuVenda --> AlertSuc["Exibir alert() de sucesso"]
+    AlertSuc --> Reload["Recarregar Listas"] --> Receber
+```
+
 

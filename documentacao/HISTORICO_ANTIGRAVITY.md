@@ -437,12 +437,62 @@ O fluxo de vendas funciona reativamente no navegador via fallback web (e em disp
 
 ---
 
+## Etapa 4 - Implementação do Módulo Financeiro / Receber
+
+**Data:** 06/06/2026
+
+### Prompt Utilizado nesta Etapa
+> [USER_REQUEST]
+> Vamos iniciar a Etapa 4 do projeto sistema-gestao-comercial.
+> Nesta etapa, implemente completamente o módulo Financeiro / Receber...
+
+### O que foi solicitado
+- Criar tela de recebimentos funcional (`src/app/pages/financeiro/receber`) permitindo listar recebimentos pendentes e pagos, registrar pagamento informando forma e data, marcar a venda correspondente como paga e atualizar o financeiro automaticamente.
+- Implementar formulário inline de confirmação de pagamento diretamente no card do recebimento.
+- Manter design premium dark glassmorphism com abas (segment), summary cards, badges de status e animações.
+- Atualizar toda a documentação em Markdown.
+
+### O que foi implementado
+1. **ReceberPage completa** ([receber.page.ts](file:///c:/Projetos/sistema-gestao-comercial/src/app/pages/financeiro/receber/receber.page.ts), [receber.page.html](file:///c:/Projetos/sistema-gestao-comercial/src/app/pages/financeiro/receber/receber.page.html), [receber.page.scss](file:///c:/Projetos/sistema-gestao-comercial/src/app/pages/financeiro/receber/receber.page.scss)):
+   - **Resumo financeiro** com 2 summary cards (pendentes e recebidos) no topo.
+   - **Abas Pendentes/Recebidos** via `ion-segment` com badge de contagem.
+   - **Cards detalhados** de recebimento mostrando venda, cliente, data, quantidade de produtos e valor.
+   - **Formulário inline** de confirmação de pagamento com forma de pagamento (Dinheiro, Cartão Crédito, Cartão Débito, PIX, Boleto, Transferência) e data de recebimento.
+   - **Animações** de slide-down no formulário e spinner de carregamento.
+   - **Estados vazios** com ícones e mensagens informativas.
+2. **FinanceiroService atualizado** com métodos `listarRecebimentos()`, `buscarPorId()`, `registrarRecebimento()`, `listarPorVenda()` e `remover()` com fallback web completo.
+3. **VendaService atualizado** com métodos `marcarComoPaga()`, `listarPendentes()` e `listarPagas()`.
+4. **Interface `RecebimentoExibicao`** criada no componente para enriquecer os dados de recebimento com informações da venda (nome do cliente, data da venda, quantidade de itens).
+
+### Regras de negócio implementadas
+1. Ao finalizar uma venda, um recebimento pendente é gerado automaticamente.
+2. Na tela Contas a Receber, o recebimento pendente aparece na aba "Pendentes".
+3. Ao clicar "Registrar", o formulário inline abre com data pré-preenchida.
+4. Forma de pagamento e data de recebimento são obrigatórios.
+5. Ao confirmar: recebimento atualizado para "recebido", venda marcada como "paga", listas recarregadas.
+6. Recebimentos confirmados migram para a aba "Recebidos" automaticamente.
+
+### Arquivos alterados
+- [src/app/pages/financeiro/receber/receber.page.ts](file:///c:/Projetos/sistema-gestao-comercial/src/app/pages/financeiro/receber/receber.page.ts)
+- [src/app/pages/financeiro/receber/receber.page.html](file:///c:/Projetos/sistema-gestao-comercial/src/app/pages/financeiro/receber/receber.page.html)
+- [src/app/pages/financeiro/receber/receber.page.scss](file:///c:/Projetos/sistema-gestao-comercial/src/app/pages/financeiro/receber/receber.page.scss)
+- [documentacao/REQUISITOS.md](file:///c:/Projetos/sistema-gestao-comercial/documentacao/REQUISITOS.md)
+- [documentacao/TELAS_DO_SISTEMA.md](file:///c:/Projetos/sistema-gestao-comercial/documentacao/TELAS_DO_SISTEMA.md)
+- [documentacao/DIAGRAMAS.md](file:///c:/Projetos/sistema-gestao-comercial/documentacao/DIAGRAMAS.md)
+- [documentacao/HISTORICO_ANTIGRAVITY.md](file:///c:/Projetos/sistema-gestao-comercial/documentacao/HISTORICO_ANTIGRAVITY.md)
+
+### Resultado esperado da etapa
+O fluxo completo de recebimento funciona reativamente no navegador via fallback web (e em dispositivos nativos via SQLite). Ao finalizar uma venda, o recebimento pendente aparece na tela Contas a Receber. Ao registrar o pagamento, o recebimento é confirmado e a venda marcada como paga em ambas as telas.
+
+---
+
 ## Próximas Etapas
 
 | Etapa | Descrição | Status |
 |---|---|---|
 | 2 | Implementar telas de Cadastro (Produtos, Clientes, Usuários) | ✅ Concluída |
 | 3 | Implementar módulo de Vendas | ✅ Concluída |
-| 4 | Implementar módulo Financeiro | 🔲 Pendente |
+| 4 | Implementar módulo Financeiro / Receber | ✅ Concluída |
 | 5 | Implementar Relatórios | 🔲 Pendente |
 | 6 | Ajustes finais e testes | 🔲 Pendente |
+

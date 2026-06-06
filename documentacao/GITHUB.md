@@ -210,4 +210,28 @@ O arquivo `.gitignore` já está configurado para ignorar:
   4. Implementou a tela de vendas reativa com controle de estoque, carrinho e totalizadores em `/vendas`.
   5. Ajustou os budgets no `angular.json` para suportar o SCSS personalizado e limpo de componente.
 
+---
+
+## Etapa 4 — Implementação do Módulo Financeiro / Receber
+
+- **Link do Repositório:** [https://github.com/EduardoHenrrykSimonato/sistema-gestao-comercial.git](https://github.com/EduardoHenrrykSimonato/sistema-gestao-comercial.git)
+- **Branch Utilizada:** `main`
+- **Mensagem do Commit:** `feat: implementar modulo financeiro receber`
+- **Comandos Git Utilizados:**
+  ```bash
+  git status
+  git add .
+  git commit -m "feat: implementar modulo financeiro receber"
+  git push origin main
+  ```
+- **Status do Push:** Pendente (a ser executado nesta etapa)
+- **Mudanças e Correções Realizadas:**
+  1. Implementou a tela Financeiro / Receber (`src/app/pages/financeiro/receber`) para listar recebimentos pendentes e pagos.
+  2. Adicionou cards de resumo financeiro (pendentes e recebidos) e filtros reativos por abas (`ion-segment`).
+  3. Desenvolveu formulário inline diretamente nos cards para registrar o recebimento (com forma de pagamento e data de recebimento).
+  4. Atualizou o status do recebimento para "recebido" e atualizou a venda relacionada para "paga" de forma transacional.
+  5. Refatorou os serviços `FinanceiroService` e `VendaService` para fornecer suporte a consultas e atualizações tanto via SQLite quanto fallback web.
+  6. Atualizou todos os diagramas de classe, fluxogramas e modelagem do banco de dados na documentação do projeto.
+
+
 
