@@ -3,14 +3,360 @@
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/home" text="" color="light"></ion-back-button>
     </ion-buttons>
-    <ion-title>Relatórios</ion-title>
+    <ion-title>Módulo de Relatórios</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="page-content">
-  <div class="placeholder-container">
-    <ion-icon name="construct-outline"></ion-icon>
-    <h2>Módulo de Relatórios</h2>
-    <p>Esta tela será implementada na próxima etapa.</p>
+  <!-- Filtro por Tipo de Relatório -->
+  <div class="segment-container">
+    <ion-segment [(ngModel)]="filtroTipo" (ionChange)="onTipoChange($event)" scrollable class="custom-segment">
+      <ion-segment-button value="todos">
+        <ion-label>Todos</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="resumo">
+        <ion-label>Resumo</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="produtos">
+        <ion-label>Produtos</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="clientes">
+        <ion-label>Clientes</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="vendas">
+        <ion-label>Vendas</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="recebimentos">
+        <ion-label>Recebimentos</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </div>
+
+  <!-- Barra de Busca (Ocultada no tipo Resumo) -->
+  <div class="search-container" *ngIf="filtroTipo !== 'resumo'">
+    <ion-searchbar [(ngModel)]="buscaTermo" placeholder="Buscar por nome ou categoria..." class="custom-searchbar"></ion-searchbar>
+  </div>
+
+  <!-- Filtros Auxiliares Condicionais -->
+  <div class="sub-filters-container" *ngIf="filtroTipo === 'todos' || filtroTipo === 'vendas' || filtroTipo === 'recebimentos'">
+    <!-- Filtro de Vendas -->
+    <div class="filter-item" *ngIf="filtroTipo === 'todos' || filtroTipo === 'vendas'">
+      <ion-item lines="none" class="custom-select-item">
+        <ion-label>Filtro de Vendas:</ion-label>
+        <ion-select [(ngModel)]="filtroStatusVenda" interface="popover">
+          <ion-select-option value="todas">Todas</ion-select-option>
+          <ion-select-option value="pendentes">Pendentes</ion-select-option>
+          <ion-select-option value="pagas">Pagas</ion-select-option>
+        </ion-select>
+      </ion-item>
+    </div>
+
+    <!-- Filtro de Recebimentos -->
+    <div class="filter-item" *ngIf="filtroTipo === 'todos' || filtroTipo === 'recebimentos'">
+      <ion-item lines="none" class="custom-select-item">
+        <ion-label>Filtro Financeiro:</ion-label>
+        <ion-select [(ngModel)]="filtroStatusRecebimento" interface="popover">
+          <ion-select-option value="todos">Todos</ion-select-option>
+          <ion-select-option value="pendentes">Pendentes</ion-select-option>
+          <ion-select-option value="pagos">Pagos</ion-select-option>
+        </ion-select>
+      </ion-item>
+    </div>
+  </div>
+
+  <!-- Spinner de Carregamento -->
+  <div class="loader-container" *ngIf="carregando">
+    <div class="spinner"></div>
+    <p>Carregando relatórios...</p>
+  </div>
+
+  <!-- CONTEÚDO DOS RELATÓRIOS -->
+  <div class="reports-container" *ngIf="!carregando">
+
+    <!-- 1. SEÇÃO: RESUMO GERAL -->
+    <div class="report-section" *ngIf="filtroTipo === 'todos' || filtroTipo === 'resumo'">
+      <div class="section-title">
+        <ion-icon name="stats-chart-outline"></ion-icon>
+        <h2>Resumo Geral do Sistema</h2>
+      </div>
+
+      <ion-grid class="summary-grid">
+        <ion-row>
+          <!-- Produtos Cadastrados -->
+          <ion-col size="12" size-sm="6" size-md="4">
+            <div class="summary-card glass-card border-blue">
+              <div class="card-icon bg-blue">
+                <ion-icon name="cube-outline"></ion-icon>
+              </div>
+              <div class="card-info">
+                <h3>Produtos</h3>
+                <p class="metric-value">{{ totalProdutos }}</p>
+                <span class="metric-subtitle">Cadastrados no sistema</span>
+              </div>
+            </div>
+          </ion-col>
+
+          <!-- Clientes Cadastrados -->
+          <ion-col size="12" size-sm="6" size-md="4">
+            <div class="summary-card glass-card border-green">
+              <div class="card-icon bg-green">
+                <ion-icon name="people-outline"></ion-icon>
+              </div>
+              <div class="card-info">
+                <h3>Clientes</h3>
+                <p class="metric-value">{{ totalClientes }}</p>
+                <span class="metric-subtitle">Clientes registrados</span>
+              </div>
+            </div>
+          </ion-col>
+
+          <!-- Total de Vendas -->
+          <ion-col size="12" size-sm="6" size-md="4">
+            <div class="summary-card glass-card border-purple">
+              <div class="card-icon bg-purple">
+                <ion-icon name="cart-outline"></ion-icon>
+              </div>
+              <div class="card-info">
+                <h3>Total de Vendas</h3>
+                <p class="metric-value">{{ totalVendasCount }}</p>
+                <span class="metric-subtitle">Vendas finalizadas</span>
+              </div>
+            </div>
+          </ion-col>
+
+          <!-- Vendas Pendentes vs Pagas -->
+          <ion-col size="12" size-sm="6" size-md="6">
+            <div class="summary-card glass-card border-orange">
+              <div class="card-icon bg-orange">
+                <ion-icon name="time-outline"></ion-icon>
+              </div>
+              <div class="card-info">
+                <h3>Vendas por Status</h3>
+                <div class="metric-split">
+                  <div>
+                    <span class="split-label">Pagas:</span>
+                    <span class="split-val text-green">{{ vendasPagasCount }}</span>
+                  </div>
+                  <div class="split-divider"></div>
+                  <div>
+                    <span class="split-label">Pendentes:</span>
+                    <span class="split-val text-red">{{ vendasPendentesCount }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ion-col>
+
+          <!-- Caixa Financeiro Geral -->
+          <ion-col size="12" size-md="6">
+            <div class="summary-card glass-card border-gold">
+              <div class="card-icon bg-gold">
+                <ion-icon name="cash-outline"></ion-icon>
+              </div>
+              <div class="card-info">
+                <h3>Faturamento e Caixa</h3>
+                <div class="financial-details">
+                  <div class="fin-row">
+                    <span>Total Vendido:</span>
+                    <strong class="text-white">R$ {{ formatarMoeda(valorTotalVendido) }}</strong>
+                  </div>
+                  <div class="fin-row">
+                    <span>Total Recebido:</span>
+                    <strong class="text-green">R$ {{ formatarMoeda(valorTotalRecebido) }}</strong>
+                  </div>
+                  <div class="fin-row">
+                    <span>Total Pendente:</span>
+                    <strong class="text-red">R$ {{ formatarMoeda(valorTotalPendente) }}</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </div>
+
+    <!-- 2. SEÇÃO: RELATÓRIO DE PRODUTOS -->
+    <div class="report-section" *ngIf="filtroTipo === 'todos' || filtroTipo === 'produtos'">
+      <div class="section-title">
+        <ion-icon name="cube-outline"></ion-icon>
+        <h2>Relatório de Produtos</h2>
+      </div>
+
+      <div class="glass-card table-wrapper">
+        <table class="report-table" *ngIf="getProdutosFiltrados().length > 0">
+          <thead>
+            <tr>
+              <th>Cód.</th>
+              <th>Nome</th>
+              <th>Categoria</th>
+              <th class="text-right">Preço</th>
+              <th class="text-center">Estoque</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let prod of getProdutosFiltrados()" [class.low-stock-row]="prod.estoque <= 5">
+              <td>#{{ prod.id }}</td>
+              <td class="font-bold">{{ prod.nome }}</td>
+              <td>{{ prod.categoria }}</td>
+              <td class="text-right">R$ {{ formatarMoeda(prod.preco) }}</td>
+              <td class="text-center font-bold">{{ prod.estoque }}</td>
+              <td>
+                <span class="badge badge-red pulse" *ngIf="prod.estoque <= 5">
+                  <ion-icon name="alert-circle-outline"></ion-icon> Estoque Baixo
+                </span>
+                <span class="badge badge-green" *ngIf="prod.estoque > 5">Estável</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Mensagem de lista vazia -->
+        <div class="empty-state" *ngIf="getProdutosFiltrados().length === 0">
+          <ion-icon name="cube-outline"></ion-icon>
+          <h3>Nenhum produto cadastrado</h3>
+          <p>Não há produtos correspondentes aos filtros ativos.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. SEÇÃO: RELATÓRIO DE CLIENTES -->
+    <div class="report-section" *ngIf="filtroTipo === 'todos' || filtroTipo === 'clientes'">
+      <div class="section-title">
+        <ion-icon name="people-outline"></ion-icon>
+        <h2>Relatório de Clientes</h2>
+      </div>
+
+      <div class="glass-card table-wrapper">
+        <table class="report-table" *ngIf="getClientesFiltrados().length > 0">
+          <thead>
+            <tr>
+              <th>Cód.</th>
+              <th>Nome</th>
+              <th>CPF/CNPJ</th>
+              <th>Telefone</th>
+              <th>E-mail</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let cli of getClientesFiltrados()">
+              <td>#{{ cli.id }}</td>
+              <td class="font-bold text-blue">{{ cli.nome }}</td>
+              <td>{{ cli.cpf_cnpj }}</td>
+              <td>{{ cli.telefone || 'Não informado' }}</td>
+              <td>{{ cli.email || 'Não informado' }}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Mensagem de lista vazia -->
+        <div class="empty-state" *ngIf="getClientesFiltrados().length === 0">
+          <ion-icon name="people-outline"></ion-icon>
+          <h3>Nenhum cliente cadastrado</h3>
+          <p>Não há clientes correspondentes aos filtros ativos.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. SEÇÃO: RELATÓRIO DE VENDAS -->
+    <div class="report-section" *ngIf="filtroTipo === 'todos' || filtroTipo === 'vendas'">
+      <div class="section-title">
+        <ion-icon name="cart-outline"></ion-icon>
+        <h2>Relatório de Vendas Realizadas</h2>
+      </div>
+
+      <div class="glass-card table-wrapper">
+        <table class="report-table" *ngIf="getVendasFiltradas().length > 0">
+          <thead>
+            <tr>
+              <th>Cód. Venda</th>
+              <th>Cliente</th>
+              <th>Data</th>
+              <th class="text-center">Qtd. Itens</th>
+              <th class="text-right">Total</th>
+              <th class="text-center">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let venda of getVendasFiltradas()">
+              <td>#{{ venda.id }}</td>
+              <td class="font-bold text-white">{{ venda.cliente_nome }}</td>
+              <td>{{ venda.data_venda | date:'dd/MM/yyyy' }}</td>
+              <td class="text-center">{{ venda.itens?.length || 0 }}</td>
+              <td class="text-right font-bold text-green">R$ {{ formatarMoeda(venda.total) }}</td>
+              <td class="text-center">
+                <span class="badge badge-green" *ngIf="venda.status === 'paga'">
+                  <ion-icon name="checkmark-circle-outline"></ion-icon> Paga
+                </span>
+                <span class="badge badge-red" *ngIf="venda.status === 'pendente'">
+                  <ion-icon name="time-outline"></ion-icon> Pendente
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Mensagem de lista vazia -->
+        <div class="empty-state" *ngIf="getVendasFiltradas().length === 0">
+          <ion-icon name="cart-outline"></ion-icon>
+          <h3>Nenhuma venda realizada</h3>
+          <p>Não há vendas registradas correspondentes aos filtros selecionados.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. SEÇÃO: RELATÓRIO DE RECEBIMENTOS -->
+    <div class="report-section" *ngIf="filtroTipo === 'todos' || filtroTipo === 'recebimentos'">
+      <div class="section-title">
+        <ion-icon name="cash-outline"></ion-icon>
+        <h2>Relatório de Contas a Receber</h2>
+      </div>
+
+      <div class="glass-card table-wrapper">
+        <table class="report-table" *ngIf="getRecebimentosFiltrados().length > 0">
+          <thead>
+            <tr>
+              <th>Cód. Rec.</th>
+              <th>Venda</th>
+              <th>Cliente</th>
+              <th>Data Pagamento</th>
+              <th>Forma Pagamento</th>
+              <th class="text-right">Valor</th>
+              <th class="text-center">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let rec of getRecebimentosFiltrados()">
+              <td>#{{ rec.id }}</td>
+              <td>#{{ rec.venda_id }}</td>
+              <td class="font-bold text-white">{{ rec.cliente_nome }}</td>
+              <td>{{ rec.status === 'recebido' ? (rec.data_recebimento | date:'dd/MM/yyyy') : 'Aguardando' }}</td>
+              <td>
+                <span class="payment-method">{{ rec.forma_pagamento }}</span>
+              </td>
+              <td class="text-right font-bold text-green">R$ {{ formatarMoeda(rec.valor) }}</td>
+              <td class="text-center">
+                <span class="badge badge-green" *ngIf="rec.status === 'recebido'">
+                  <ion-icon name="checkmark-done-outline"></ion-icon> Recebido
+                </span>
+                <span class="badge badge-red" *ngIf="rec.status === 'pendente'">
+                  <ion-icon name="alert-circle-outline"></ion-icon> Pendente
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Mensagem de lista vazia -->
+        <div class="empty-state" *ngIf="getRecebimentosFiltrados().length === 0">
+          <ion-icon name="cash-outline"></ion-icon>
+          <h3>Nenhum recebimento encontrado</h3>
+          <p>Não há contas a receber ou recebidas sob os filtros atuais.</p>
+        </div>
+      </div>
+    </div>
+
   </div>
 </ion-content>
+

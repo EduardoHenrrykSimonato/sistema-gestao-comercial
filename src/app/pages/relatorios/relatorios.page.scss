@@ -4,34 +4,422 @@ ion-toolbar {
 }
 
 .page-content {
-  --background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+  --background: linear-gradient(180deg, #121225 0%, #0c0d19 100%);
+  color: #ffffff;
 }
 
-.placeholder-container {
+// ----------------- SEGMENT & BUSCA -----------------
+.segment-container {
+  padding: 12px 16px 4px;
+}
+
+.custom-segment {
+  --background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 4px;
+
+  ion-segment-button {
+    --color: rgba(255, 255, 255, 0.6);
+    --color-checked: #ffffff;
+    --indicator-box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    --indicator-color: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+    font-weight: 500;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+    border-radius: 8px;
+    min-height: 38px;
+  }
+}
+
+.search-container {
+  padding: 8px 16px 4px;
+}
+
+.custom-searchbar {
+  --background: rgba(255, 255, 255, 0.05);
+  --color: #ffffff;
+  --placeholder-color: rgba(255, 255, 255, 0.4);
+  --icon-color: rgba(255, 255, 255, 0.5);
+  --clear-button-color: rgba(255, 255, 255, 0.5);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: none;
+  padding: 0;
+}
+
+// ----------------- FILTROS ADICIONAIS -----------------
+.sub-filters-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 8px 16px;
+
+  .filter-item {
+    flex: 1 1 200px;
+  }
+}
+
+.custom-select-item {
+  --background: rgba(255, 255, 255, 0.03);
+  --color: #ffffff;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  margin: 0;
+
+  ion-label {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.5);
+    margin-right: 8px;
+  }
+
+  ion-select {
+    --placeholder-color: #ffffff;
+    font-size: 14px;
+    font-weight: 600;
+  }
+}
+
+// ----------------- CORPO DOS RELATÓRIOS -----------------
+.reports-container {
+  padding: 8px 16px 32px;
+}
+
+.report-section {
+  margin-bottom: 24px;
+  animation: fadeIn 0.4s ease-out;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  padding-left: 4px;
+
+  ion-icon {
+    font-size: 20px;
+    color: #4facfe;
+  }
+
+  h2 {
+    font-size: 16px;
+    font-weight: 700;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: rgba(255, 255, 255, 0.9);
+  }
+}
+
+// ----------------- GLASS CARDS -----------------
+.glass-card {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 16px;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+}
+
+// ----------------- SUMMARY CARDS (RESUMO) -----------------
+.summary-grid {
+  padding: 0;
+  
+  ion-row {
+    margin: 0 -8px;
+  }
+
+  ion-col {
+    padding: 8px;
+  }
+}
+
+.summary-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  height: 100%;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.3);
+  }
+
+  // Diferentes bordas brilhantes
+  &.border-blue { border-left: 4px solid #3b82f6; }
+  &.border-green { border-left: 4px solid #10b981; }
+  &.border-purple { border-left: 4px solid #8b5cf6; }
+  &.border-orange { border-left: 4px solid #f97316; }
+  &.border-gold { border-left: 4px solid #eab308; }
+
+  .card-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    
+    ion-icon {
+      font-size: 24px;
+      color: #ffffff;
+    }
+
+    &.bg-blue { background: rgba(59, 130, 246, 0.15); ion-icon { color: #3b82f6; } }
+    &.bg-green { background: rgba(16, 185, 129, 0.15); ion-icon { color: #10b981; } }
+    &.bg-purple { background: rgba(139, 92, 246, 0.15); ion-icon { color: #8b5cf6; } }
+    &.bg-orange { background: rgba(249, 115, 22, 0.15); ion-icon { color: #f97316; } }
+    &.bg-gold { background: rgba(234, 179, 8, 0.15); ion-icon { color: #eab308; } }
+  }
+
+  .card-info {
+    flex: 1;
+
+    h3 {
+      font-size: 12px;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.5);
+      margin: 0 0 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .metric-value {
+      font-size: 26px;
+      font-weight: 800;
+      margin: 0;
+      line-height: 1.1;
+      color: #ffffff;
+    }
+
+    .metric-subtitle {
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.35);
+    }
+
+    // Filtro bipartido
+    .metric-split {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 4px;
+
+      .split-label {
+        font-size: 11px;
+        color: rgba(255, 255, 255, 0.4);
+      }
+
+      .split-val {
+        font-size: 16px;
+        font-weight: 700;
+        margin-left: 4px;
+      }
+
+      .split-divider {
+        width: 1px;
+        height: 20px;
+        background: rgba(255, 255, 255, 0.1);
+      }
+    }
+
+    // Detalhes financeiros
+    .financial-details {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-top: 4px;
+
+      .fin-row {
+        display: flex;
+        justify-content: space-between;
+        font-size: 13px;
+
+        span {
+          color: rgba(255, 255, 255, 0.4);
+        }
+      }
+    }
+  }
+}
+
+// ----------------- TABELAS DE RELATÓRIO -----------------
+.table-wrapper {
+  overflow-x: auto;
+  padding: 0;
+  border-radius: 16px;
+}
+
+.report-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  text-align: left;
+
+  th {
+    background: rgba(255, 255, 255, 0.05);
+    color: rgba(255, 255, 255, 0.6);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  td {
+    padding: 14px 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    color: rgba(255, 255, 255, 0.8);
+    vertical-align: middle;
+  }
+
+  tbody tr {
+    transition: background-color 0.15s ease;
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.02);
+    }
+  }
+}
+
+// Estilo para estoque baixo
+.low-stock-row {
+  background: rgba(239, 68, 68, 0.03);
+  
+  &:hover {
+    background-color: rgba(239, 68, 68, 0.06) !important;
+  }
+
+  td {
+    color: #fca5a5;
+  }
+}
+
+// ----------------- BADGES & DETALHES -----------------
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+
+  ion-icon {
+    font-size: 13px;
+  }
+
+  &.badge-green {
+    background: rgba(16, 185, 129, 0.15);
+    color: #10b981;
+  }
+
+  &.badge-red {
+    background: rgba(239, 68, 68, 0.15);
+    color: #ef4444;
+  }
+}
+
+.payment-method {
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.06);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+// Utilidades de texto
+.font-bold { font-weight: 600; }
+.text-right { text-align: right; }
+.text-center { text-align: center; }
+.text-white { color: #ffffff !important; }
+.text-green { color: #10b981 !important; }
+.text-red { color: #ef4444 !important; }
+.text-blue { color: #4facfe !important; }
+
+// ----------------- PULSE ANIMATION -----------------
+.pulse {
+  animation: pulse-animation 2s infinite;
+}
+
+@keyframes pulse-animation {
+  0% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 6px rgba(239, 68, 68, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+  }
+}
+
+// ----------------- EMPTY STATE -----------------
+.empty-state {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 60vh;
+  padding: 32px 16px;
   text-align: center;
-  padding: 24px;
-  color: #ffffff;
 
   ion-icon {
-    font-size: 64px;
-    color: rgba(255, 255, 255, 0.2);
-    margin-bottom: 16px;
+    font-size: 40px;
+    color: rgba(255, 255, 255, 0.15);
+    margin-bottom: 8px;
   }
 
-  h2 {
-    font-size: 22px;
-    font-weight: 700;
-    margin: 0 0 8px;
+  h3 {
+    font-size: 15px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.7);
+    margin: 0 0 4px;
   }
 
   p {
-    font-size: 14px;
-    color: rgba(255, 255, 255, 0.4);
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.35);
     margin: 0;
   }
 }
+
+// ----------------- LOADER / SPINNER -----------------
+.loader-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 40vh;
+  color: rgba(255, 255, 255, 0.5);
+
+  p {
+    font-size: 13px;
+    margin-top: 12px;
+  }
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  border-top-color: #4facfe;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+

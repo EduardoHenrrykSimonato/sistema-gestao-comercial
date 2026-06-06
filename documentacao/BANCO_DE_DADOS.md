@@ -143,6 +143,14 @@ Registra os recebimentos (pagamentos de vendas).
      `UPDATE vendas SET status = 'paga' WHERE id = ?`
 - Formas de pagamento disponíveis: Dinheiro, Cartão Crédito, Cartão Débito, PIX, Boleto, Transferência.
 
+### 7. Consultas de Relatórios
+O módulo de relatórios lê dados consolidados a partir de todas as principais entidades da base de dados:
+- **Produtos (`produtos`)**: Carrega dados gerais (`SELECT * FROM produtos ORDER BY nome`) para o relatório de estoque, filtrando itens com estoque baixo (`estoque <= 5`).
+- **Clientes (`clientes`)**: Lista todos os clientes cadastrados (`SELECT * FROM clientes ORDER BY nome`).
+- **Vendas (`vendas`)**: Consulta os registros de faturamento (`SELECT v.*, c.nome as cliente_nome FROM vendas v INNER JOIN clientes c ON v.cliente_id = c.id`) para alimentar os totais de vendas gerais, pagas e pendentes.
+- **Itens da Venda (`itens_venda`)**: Conta a quantidade de itens associados a cada venda para exibir no relatório analítico.
+- **Recebimentos (`recebimentos`)**: Mapeia os fluxos de caixa recebidos e pendentes (`SELECT * FROM recebimentos`) para totalizar as receitas de caixa líquidas vs. faturamento em aberto.
+
 ## SQL de Criação
 
 As tabelas são criadas automaticamente pelo `DatabaseService` ao inicializar o aplicativo. O código fonte está em:

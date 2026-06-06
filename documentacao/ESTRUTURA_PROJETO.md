@@ -71,8 +71,8 @@ Classes responsáveis pela lógica de negócio e acesso ao banco de dados.
 | `UsuarioService` | Lógica de CRUD para usuários vinculada ao banco |
 | `ProdutoService` | Lógica de CRUD para produtos e controle de quantidade de estoque |
 | `ClienteService` | Lógica de CRUD para clientes vinculada ao banco |
-| `VendaService` | Lógica de CRUD para vendas e redução de estoque |
-| `FinanceiroService` | Lógica de CRUD para recebimentos de vendas |
+| `VendaService` | Lógica de CRUD para vendas, redução de estoque e consultas consolidadas/filtradas para relatórios |
+| `FinanceiroService` | Lógica de CRUD para recebimentos de vendas e totalizadores/métricas financeiras para relatórios |
 
 ### Pages (`src/app/pages/`)
 Cada pasta contém 3 arquivos por página:

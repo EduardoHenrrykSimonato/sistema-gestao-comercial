@@ -191,6 +191,45 @@ export class FinanceiroService {
   }
 
   /**
+   * Lista todos os recebimentos do sistema.
+   */
+  async listarTodosRecebimentos(): Promise<Recebimento[]> {
+    return await this.listarRecebimentos();
+  }
+
+  /**
+   * Lista recebimentos com status pendente.
+   */
+  async listarRecebimentosPendentes(): Promise<Recebimento[]> {
+    const todos = await this.listarRecebimentos();
+    return todos.filter(r => r.status === 'pendente');
+  }
+
+  /**
+   * Lista recebimentos com status recebido (pago).
+   */
+  async listarRecebimentosPagos(): Promise<Recebimento[]> {
+    const todos = await this.listarRecebimentos();
+    return todos.filter(r => r.status === 'recebido');
+  }
+
+  /**
+   * Calcula o valor total recebido (pagos).
+   */
+  async calcularTotalRecebido(): Promise<number> {
+    const pagos = await this.listarRecebimentosPagos();
+    return pagos.reduce((total, r) => total + r.valor, 0);
+  }
+
+  /**
+   * Calcula o valor total pendente.
+   */
+  async calcularTotalPendente(): Promise<number> {
+    const pendentes = await this.listarRecebimentosPendentes();
+    return pendentes.reduce((total, r) => total + r.valor, 0);
+  }
+
+  /**
    * Remove um recebimento pelo ID.
    */
   async remover(id: number): Promise<void> {

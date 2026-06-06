@@ -44,12 +44,13 @@
 - Formas de pagamento disponíveis: Dinheiro, Cartão Crédito, Cartão Débito, PIX, Boleto, Transferência.
 - Possui fallback funcional em memória para execução completa no navegador.
 
-### RF08 — Relatórios `[📋 Pendente — Etapa 5]`
-- Relatório de produtos cadastrados.
+### RF08 — Relatórios `[✅ Atendido — Etapa 5]`
+- Relatório de produtos cadastrados (com indicação visual para estoque baixo <= 5).
 - Relatório de clientes cadastrados.
-- Relatório de vendas realizadas.
-- Relatório de vendas pendentes.
-- Relatório de recebimentos.
+- Relatório de vendas realizadas (filtradas por status: Todas, Pendentes, Pagas).
+- Relatório de recebimentos (filtrados por status: Todos, Pendentes, Pagos).
+- Resumo geral consolidado (totalizadores de produtos, clientes, vendas por status e faturamento/caixa geral).
+- Campo de busca unificado para filtrar dados por nome de produto/categoria ou nome de cliente.
 
 ---
 

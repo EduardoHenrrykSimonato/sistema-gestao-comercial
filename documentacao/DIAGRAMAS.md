@@ -152,8 +152,11 @@ classDiagram
         +listarVendas()
         +listarPendentes()
         +listarPagas()
+        +listarVendasPendentes()
+        +listarVendasPagas()
         +listarItensPorVenda(venda_id)
         +calcularTotal(itens)
+        +calcularTotalVendido()
         +validarEstoque(produto_id, quantidade)
         +baixarEstoque(produto_id, quantidade)
         +marcarComoPaga(vendaId)
@@ -164,10 +167,15 @@ classDiagram
         -vendaService: VendaService
         +gerarRecebimentoPendente(venda_id, valor)
         +listarRecebimentos()
+        +listarTodosRecebimentos()
+        +listarRecebimentosPendentes()
+        +listarRecebimentosPagos()
         +buscarPorId(id)
         +registrarRecebimento(recebimento)
         +listarPorVenda(vendaId)
         +remover(id)
+        +calcularTotalRecebido()
+        +calcularTotalPendente()
     }
 
     UsuarioService --> DatabaseService
@@ -232,4 +240,16 @@ flowchart TD
     AlertSuc --> Reload["Recarregar Listas"] --> Receber
 ```
 
+---
 
+## Fluxo do Módulo de Relatórios
+
+```mermaid
+flowchart TD
+    Login["Login"] --> Home["Home"]
+    Home --> Relatorios["Relatórios"]
+    Relatorios --> SelTipo["Selecionar Tipo de Relatório"]
+    SelTipo --> Query["Consultar Dados (SQLite / Fallback)"]
+    Query --> ShowData["Exibir Informações"]
+    ShowData --> Filter["Aplicar Filtros (Busca / Status)"] --> ShowData
+```

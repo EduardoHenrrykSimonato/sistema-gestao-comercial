@@ -486,6 +486,66 @@ O fluxo completo de recebimento funciona reativamente no navegador via fallback 
 
 ---
 
+## Etapa 5 - Implementação do Módulo de Relatórios
+
+**Data:** 06/06/2026
+
+### Prompt Utilizado nesta Etapa
+> [USER_REQUEST]
+> Vamos iniciar a Etapa 5 do projeto sistema-gestao-comercial.
+> Nesta etapa, implemente completamente o módulo de Relatórios...
+
+### O que foi solicitado
+- Criar a tela de relatórios funcional em `src/app/pages/relatorios` que permita consultar de forma organizada produtos cadastrados (destacando estoque baixo), clientes cadastrados, vendas realizadas (filtradas por status), recebimentos (filtrados por status) e o Resumo Geral (com totais de quantidades e valores).
+- Implementar filtros de busca por nome/categoria de produtos e clientes, e filtros por status de venda e financeiro.
+- Manter o fallback web em funcionamento para testes transparentes no navegador Chrome com `ionic serve`.
+- Executar e testar o build do projeto sem erros ou warnings.
+- Atualizar todas as documentações em Markdown e realizar o push das alterações para o GitHub.
+
+### O que foi implementado
+1. **RelatoriosPage completa** ([relatorios.page.ts](file:///c:/Projetos/sistema-gestao-comercial/src/app/pages/relatorios/relatorios.page.ts), [relatorios.page.html](file:///c:/Projetos/sistema-gestao-comercial/src/app/pages/relatorios/relatorios.page.html), [relatorios.page.scss](file:///c:/Projetos/sistema-gestao-comercial/src/app/pages/relatorios/relatorios.page.scss)):
+   - **Resumo Geral**: Painel contendo cards informativos com o total de produtos e clientes cadastrados, vendas realizadas, faturamento total, total de vendas por status (Pagas/Pendentes), total recebido e total pendente.
+   - **Filtro de Relatório por Tipo**: Segmento contendo opções para visualizar: Todos, Resumo Geral, Produtos, Clientes, Vendas e Recebimentos.
+   - **Filtro Auxiliar por Status**: Seletores em popover dinâmicos para vendas (Todas, Pendentes, Pagas) e recebimentos (Todos, Pendentes, Pagos).
+   - **Campo de Busca Unificado**: Barra de busca reativa por texto para encontrar produtos e clientes rapidamente pelo nome ou categoria.
+   - **Tabelas de Detalhamento**:
+     - *Produtos*: Código, Nome, Categoria, Preço, Estoque e Destaque Visual de Alerta (vermelho piscante) para produtos com estoque baixo.
+     - *Clientes*: Código, Nome, CPF/CNPJ, Telefone e E-mail.
+     - *Vendas*: Código da venda, Nome do Cliente, Data, Qtd. de Itens, Valor Total e Badge indicativo de status.
+     - *Recebimentos*: Código do recebimento, Venda, Cliente, Data de Pagamento, Forma de Pagamento, Valor e Badge indicativo de status.
+2. **Métodos criados no VendaService** (`venda.service.ts`):
+   - `listarVendasPendentes()`, `listarVendasPagas()`, `calcularTotalVendido()`.
+3. **Métodos criados no FinanceiroService** (`financeiro.service.ts`):
+   - `listarTodosRecebimentos()`, `listarRecebimentosPendentes()`, `listarRecebimentosPagos()`, `calcularTotalRecebido()`, `calcularTotalPendente()`.
+
+### Regras de negócio criadas
+1. Produtos com quantidade em estoque menor ou igual a 5 são destacados na linha e recebem o badge "Estoque Baixo" com efeito pulse vermelho de atenção.
+2. O Resumo Geral consolida todas as informações do banco de dados ou do fallback dinamicamente.
+3. Tratamento elegante para listas vazias, exibindo ícone e mensagem condicional informativa.
+4. Carregamento reativo automático ativado por meio do ciclo de vida `ionViewWillEnter` do Ionic.
+
+### Arquivos alterados
+- [src/app/pages/relatorios/relatorios.page.ts](file:///c:/Projetos/sistema-gestao-comercial/src/app/pages/relatorios/relatorios.page.ts)
+- [src/app/pages/relatorios/relatorios.page.html](file:///c:/Projetos/sistema-gestao-comercial/src/app/pages/relatorios/relatorios.page.html)
+- [src/app/pages/relatorios/relatorios.page.scss](file:///c:/Projetos/sistema-gestao-comercial/src/app/pages/relatorios/relatorios.page.scss)
+- [src/app/services/venda.service.ts](file:///c:/Projetos/sistema-gestao-comercial/src/app/services/venda.service.ts)
+- [src/app/services/financeiro.service.ts](file:///c:/Projetos/sistema-gestao-comercial/src/app/services/financeiro.service.ts)
+- [documentacao/HISTORICO_ANTIGRAVITY.md](file:///c:/Projetos/sistema-gestao-comercial/documentacao/HISTORICO_ANTIGRAVITY.md)
+- [documentacao/TELAS_DO_SISTEMA.md](file:///c:/Projetos/sistema-gestao-comercial/documentacao/TELAS_DO_SISTEMA.md)
+- [documentacao/REQUISITOS.md](file:///c:/Projetos/sistema-gestao-comercial/documentacao/REQUISITOS.md)
+- [documentacao/ESTRUTURA_PROJETO.md](file:///c:/Projetos/sistema-gestao-comercial/documentacao/ESTRUTURA_PROJETO.md)
+- [documentacao/BANCO_DE_DADOS.md](file:///c:/Projetos/sistema-gestao-comercial/documentacao/BANCO_DE_DADOS.md)
+- [documentacao/DIAGRAMAS.md](file:///c:/Projetos/sistema-gestao-comercial/documentacao/DIAGRAMAS.md)
+- [documentacao/GITHUB.md](file:///c:/Projetos/sistema-gestao-comercial/documentacao/GITHUB.md)
+
+### Soluções e Ajustes Aplicados
+- Resolvido alertas de compilação da ferramenta de análise do Angular (NG8113) removendo todas as diretivas e módulos Ionic standalone importados na página de relatórios que não eram utilizados no HTML correspondente, resultando em um build totalmente livre de erros e warnings.
+
+### Resultado esperado da etapa
+Acesso total ao consolidado operacional e financeiro do sistema. O gestor pode alternar entre abas de relatórios específicos, buscar itens pelo nome, filtrar por status operacional (vendas e faturamento pendente/pago), e identificar imediatamente itens que necessitam de reposição no estoque.
+
+---
+
 ## Próximas Etapas
 
 | Etapa | Descrição | Status |
@@ -493,6 +553,7 @@ O fluxo completo de recebimento funciona reativamente no navegador via fallback 
 | 2 | Implementar telas de Cadastro (Produtos, Clientes, Usuários) | ✅ Concluída |
 | 3 | Implementar módulo de Vendas | ✅ Concluída |
 | 4 | Implementar módulo Financeiro / Receber | ✅ Concluída |
-| 5 | Implementar Relatórios | 🔲 Pendente |
+| 5 | Implementar Relatórios | ✅ Concluída |
 | 6 | Ajustes finais e testes | 🔲 Pendente |
+
 

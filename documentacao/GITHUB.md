@@ -233,5 +233,26 @@ O arquivo `.gitignore` já está configurado para ignorar:
   5. Refatorou os serviços `FinanceiroService` e `VendaService` para fornecer suporte a consultas e atualizações tanto via SQLite quanto fallback web.
   6. Atualizou todos os diagramas de classe, fluxogramas e modelagem do banco de dados na documentação do projeto.
 
+---
 
+## Etapa 5 — Implementação do Módulo de Relatórios
+
+- **Link do Repositório:** [https://github.com/EduardoHenrrykSimonato/sistema-gestao-comercial.git](https://github.com/EduardoHenrrykSimonato/sistema-gestao-comercial.git)
+- **Branch Utilizada:** `main`
+- **Mensagem do Commit:** `feat: implementar modulo de relatorios`
+- **Comandos Git Utilizados:**
+  ```bash
+  git status
+  git add .
+  git commit -m "feat: implementar modulo de relatorios"
+  git push origin main
+  ```
+- **Status do Push:** Pendente (a ser executado nesta etapa)
+- **Mudanças e Correções Realizadas:**
+  1. Implementou a tela de Relatórios (`src/app/pages/relatorios`) com Resumo Geral (dashboard de métricas), relatórios tabulares de Produtos, Clientes, Vendas e Recebimentos.
+  2. Adicionou filtros reativos por tipo de relatório (`ion-segment`), busca por nome (`ion-searchbar`) e filtros de status para vendas e recebimentos (`ion-select`).
+  3. Implementou destaque visual (badge vermelho pulsante) para produtos com estoque baixo (≤ 5 unidades).
+  4. Adicionou métodos de consulta consolidada nos services: `listarVendasPendentes()`, `listarVendasPagas()`, `calcularTotalVendido()`, `listarTodosRecebimentos()`, `listarRecebimentosPendentes()`, `listarRecebimentosPagos()`, `calcularTotalRecebido()`, `calcularTotalPendente()`.
+  5. Atualizou todas as documentações Markdown (HISTORICO, TELAS, REQUISITOS, ESTRUTURA, BANCO_DE_DADOS, DIAGRAMAS, GITHUB).
+  6. Build executado com sucesso sem erros e sem warnings.
 

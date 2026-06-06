@@ -303,11 +303,33 @@ export class VendaService {
   }
 
   /**
+   * Alias de listarPendentes solicitado pela especificação.
+   */
+  async listarVendasPendentes(): Promise<Venda[]> {
+    return this.listarPendentes();
+  }
+
+  /**
    * Lista vendas pagas.
    */
   async listarPagas(): Promise<Venda[]> {
     const todas = await this.listarVendas();
     return todas.filter(v => v.status === 'paga');
+  }
+
+  /**
+   * Alias de listarPagas solicitado pela especificação.
+   */
+  async listarVendasPagas(): Promise<Venda[]> {
+    return this.listarPagas();
+  }
+
+  /**
+   * Calcula o total financeiro de todas as vendas realizadas.
+   */
+  async calcularTotalVendido(): Promise<number> {
+    const todas = await this.listarVendas();
+    return todas.reduce((total, venda) => total + venda.total, 0);
   }
 
   /**

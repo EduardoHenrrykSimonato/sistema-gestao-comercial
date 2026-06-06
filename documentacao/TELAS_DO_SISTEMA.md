@@ -168,9 +168,27 @@ Documentação das telas do sistema, atualizada a cada etapa do desenvolvimento.
 
 ---
 
+### 10. Relatórios (`/relatorios`)
+
+- **Objetivo da tela:** Permitir ao gestor visualizar consolidados operacionais e financeiros detalhados do sistema.
+- **Seções Disponíveis:**
+  - **Resumo Geral (Dashboard)**: Cards com estatísticas consolidadas contendo contagem de produtos e clientes cadastrados, total de vendas realizadas (com detalhe de pagas vs pendentes), faturamento bruto acumulado, total recebido em caixa e total pendente de recebimento.
+  - **Relatório de Produtos**: Lista exibindo código (ID), nome, categoria, preço, quantidade em estoque e status. Adiciona realce em vermelho e badge animado de alerta para estoques baixos (estoque <= 5).
+  - **Relatório de Clientes**: Lista exibindo código (ID), nome, CPF/CNPJ, telefone e e-mail.
+  - **Relatório de Vendas**: Lista com código da venda, nome do cliente, data da venda, quantidade de itens inclusos, valor total e badge com status (Paga ou Pendente).
+  - **Relatório de Recebimentos**: Histórico mostrando o código, código da venda associada, nome do cliente, data do recebimento (ou indicação de pendente), forma de pagamento, valor total e badge do status financeiro (Recebido ou Pendente).
+- **Filtros e Busca:**
+  - *Filtro por Tipo*: Permite selecionar uma aba específica para ocultar as demais (Todos, Resumo, Produtos, Clientes, Vendas, Recebimentos).
+  - *Barra de Busca*: Permite digitar o nome do produto/categoria ou nome do cliente para filtrar dinamicamente as tabelas de listagem.
+  - *Filtros de Status*: Filtros popover específicos para vendas (Todas, Pendentes, Pagas) e recebimentos (Todos, Pendentes, Pagos).
+- **Mensagens para Ausência de Dados (Empty States):** Exibição de um estado vazio personalizado (ícone descritivo e texto instrutivo) caso a listagem selecionada não possua registros correspondentes na base ou fallback (ex: "Nenhum produto cadastrado").
+- **Status:** ✅ Implementada com fallback web completo em memória para execução no browser (Etapa 5)
+- **Screenshots/Prints futuros:** (Reservado para capturas de tela)
+
+---
+
 ## Telas Pendentes
 
 | Tela | Rota | Etapa Prevista |
 |---|---|---|
-| Relatórios | `/relatorios` | Etapa 5 |
-
+| (Todas as telas obrigatórias foram implementadas com sucesso) | - | - |
