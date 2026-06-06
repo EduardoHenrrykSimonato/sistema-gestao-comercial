@@ -1,0 +1,56 @@
+<ion-content class="login-content">
+  <div class="login-container">
+    <div class="login-header">
+      <div class="logo-icon">
+        <ion-icon name="storefront-outline"></ion-icon>
+      </div>
+      <h1>Gestão Comercial</h1>
+      <p>Sistema de Gestão Comercial</p>
+    </div>
+
+    <ion-card class="login-card">
+      <ion-card-content>
+        <div class="input-group">
+          <ion-item lines="none" class="custom-input">
+            <ion-icon name="person-outline" slot="start"></ion-icon>
+            <ion-input
+              type="text"
+              placeholder="Usuário"
+              [(ngModel)]="usuario"
+              (keyup.enter)="onLogin()"
+            ></ion-input>
+          </ion-item>
+
+          <ion-item lines="none" class="custom-input">
+            <ion-icon name="lock-closed-outline" slot="start"></ion-icon>
+            <ion-input
+              type="password"
+              placeholder="Senha"
+              [(ngModel)]="senha"
+              (keyup.enter)="onLogin()"
+            ></ion-input>
+          </ion-item>
+        </div>
+
+        <ion-text color="danger" *ngIf="errorMessage">
+          <p class="error-text">{{ errorMessage }}</p>
+        </ion-text>
+
+        <ion-button
+          expand="block"
+          class="login-btn"
+          (click)="onLogin()"
+          [disabled]="loading"
+        >
+          <ion-spinner *ngIf="loading" name="crescent" slot="start"></ion-spinner>
+          <ion-icon *ngIf="!loading" name="log-in-outline" slot="start"></ion-icon>
+          {{ loading ? 'ENTRANDO...' : 'ENTRAR' }}
+        </ion-button>
+
+        <p class="hint-text">
+          Usuário padrão: <strong>admin</strong> / Senha: <strong>admin123</strong>
+        </p>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>

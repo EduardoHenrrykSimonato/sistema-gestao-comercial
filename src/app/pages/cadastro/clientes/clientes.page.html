@@ -1,0 +1,126 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/cadastro" text="" color="light"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Clientes</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="page-content">
+  <div class="page-header">
+    <h2>Gerenciar Clientes</h2>
+    <p>Cadastre e consulte os clientes cadastrados</p>
+  </div>
+
+  <!-- Form Card -->
+  <ion-card class="custom-card">
+    <ion-card-content>
+      <div class="form-title">
+        <ion-icon [name]="clienteIdParaEditar ? 'pencil-outline' : 'people-outline'"></ion-icon>
+        <h3>{{ clienteIdParaEditar ? 'Editar Cliente' : 'Novo Cliente' }}</h3>
+      </div>
+
+      <div class="input-group">
+        <ion-item lines="none" class="custom-input">
+          <ion-input
+            type="text"
+            placeholder="Nome Completo"
+            [(ngModel)]="nome"
+          ></ion-input>
+        </ion-item>
+
+        <ion-item lines="none" class="custom-input">
+          <ion-input
+            type="text"
+            placeholder="CPF ou CNPJ"
+            [(ngModel)]="cpf_cnpj"
+          ></ion-input>
+        </ion-item>
+
+        <ion-item lines="none" class="custom-input">
+          <ion-input
+            type="tel"
+            placeholder="Telefone de Contato"
+            [(ngModel)]="telefone"
+          ></ion-input>
+        </ion-item>
+
+        <ion-item lines="none" class="custom-input">
+          <ion-input
+            type="email"
+            placeholder="E-mail"
+            [(ngModel)]="email"
+          ></ion-input>
+        </ion-item>
+
+        <ion-item lines="none" class="custom-input">
+          <ion-input
+            type="text"
+            placeholder="Endereço Completo"
+            [(ngModel)]="endereco"
+          ></ion-input>
+        </ion-item>
+      </div>
+
+      <div class="form-buttons">
+        <ion-button fill="outline" class="clear-btn" (click)="limparFormulario()">
+          <ion-icon name="close-circle-outline" slot="start"></ion-icon>
+          Limpar
+        </ion-button>
+        <ion-button class="save-btn" (click)="onSalvar()">
+          <ion-icon name="save-outline" slot="start"></ion-icon>
+          {{ clienteIdParaEditar ? 'Atualizar' : 'Salvar' }}
+        </ion-button>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- List -->
+  <div class="list-section">
+    <h3>Clientes Cadastrados</h3>
+    
+    <div *ngIf="clientes.length === 0" class="empty-list">
+      <ion-icon name="people-outline"></ion-icon>
+      <p>Nenhum cliente cadastrado.</p>
+    </div>
+
+    <ion-list lines="none" class="custom-list" *ngIf="clientes.length > 0">
+      <div class="list-item-card" *ngFor="let c of clientes">
+        <div class="item-info">
+          <h4>{{ c.nome }}</h4>
+          <p class="contacts-row">
+            <span *ngIf="c.cpf_cnpj" class="info-span">
+              <ion-icon name="document-text-outline"></ion-icon>
+              {{ c.cpf_cnpj }}
+            </span>
+            <span *ngIf="c.telefone" class="info-span">
+              <ion-icon name="call-outline"></ion-icon>
+              {{ c.telefone }}
+            </span>
+          </p>
+          <p *ngIf="c.email" class="email-row">
+            <span class="info-span">
+              <ion-icon name="mail-outline"></ion-icon>
+              {{ c.email }}
+            </span>
+          </p>
+          <p *ngIf="c.endereco" class="address-row">
+            <span class="info-span">
+              <ion-icon name="map-outline"></ion-icon>
+              {{ c.endereco }}
+            </span>
+          </p>
+        </div>
+        <div class="item-actions">
+          <ion-button fill="clear" color="primary" class="action-btn" (click)="onEditar(c)">
+            <ion-icon name="pencil-outline" slot="icon-only"></ion-icon>
+          </ion-button>
+          <ion-button fill="clear" color="danger" class="action-btn" (click)="onExcluir(c.id)">
+            <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+          </ion-button>
+        </div>
+      </div>
+    </ion-list>
+  </div>
+</ion-content>

@@ -1,0 +1,36 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home" text="" color="light"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Financeiro</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="page-content">
+  <div class="page-header">
+    <h2>Financeiro</h2>
+    <p>Controle de contas a receber</p>
+  </div>
+
+  <ion-grid class="menu-grid">
+    <ion-row>
+      <ion-col size="12">
+        <ion-card class="menu-card" (click)="navigateTo('/financeiro/receber')" button>
+          <ion-card-content>
+            <div class="card-row">
+              <div class="card-icon" style="background: linear-gradient(135deg, #f39c12 0%, #fdcb6e 100%)">
+                <ion-icon name="cash-outline"></ion-icon>
+              </div>
+              <div class="card-info">
+                <h3>Contas a Receber</h3>
+                <p>Gerenciar recebimentos de vendas</p>
+              </div>
+              <ion-icon name="chevron-forward-outline" class="arrow-icon"></ion-icon>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

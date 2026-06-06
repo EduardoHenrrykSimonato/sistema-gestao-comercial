@@ -1,0 +1,36 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home" text="" color="light"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Cadastro</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="page-content">
+  <div class="page-header">
+    <h2>Cadastro</h2>
+    <p>Selecione uma opção abaixo</p>
+  </div>
+
+  <ion-grid class="menu-grid">
+    <ion-row>
+      <ion-col size="12" *ngFor="let item of subMenuItems">
+        <ion-card class="menu-card" (click)="navigateTo(item.route)" button>
+          <ion-card-content>
+            <div class="card-row">
+              <div class="card-icon" [style.background]="item.gradient">
+                <ion-icon [name]="item.icon"></ion-icon>
+              </div>
+              <div class="card-info">
+                <h3>{{ item.title }}</h3>
+                <p>{{ item.description }}</p>
+              </div>
+              <ion-icon name="chevron-forward-outline" class="arrow-icon"></ion-icon>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

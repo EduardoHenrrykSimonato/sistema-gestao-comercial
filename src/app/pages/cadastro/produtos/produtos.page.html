@@ -1,0 +1,110 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/cadastro" text="" color="light"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Produtos</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="page-content">
+  <div class="page-header">
+    <h2>Gerenciar Produtos</h2>
+    <p>Cadastre, consulte e controle o estoque de produtos</p>
+  </div>
+
+  <!-- Form Card -->
+  <ion-card class="custom-card">
+    <ion-card-content>
+      <div class="form-title">
+        <ion-icon [name]="produtoIdParaEditar ? 'pencil-outline' : 'cube-outline'"></ion-icon>
+        <h3>{{ produtoIdParaEditar ? 'Editar Produto' : 'Novo Produto' }}</h3>
+        <span class="stock-badge">
+          <ion-icon name="alert-circle-outline"></ion-icon>
+          Estoque Controlado
+        </span>
+      </div>
+
+      <div class="input-group">
+        <ion-item lines="none" class="custom-input">
+          <ion-input
+            type="text"
+            placeholder="Nome do Produto"
+            [(ngModel)]="nome"
+          ></ion-input>
+        </ion-item>
+
+        <ion-item lines="none" class="custom-input">
+          <ion-input
+            type="text"
+            placeholder="Categoria (ex: Bebidas, Alimentos)"
+            [(ngModel)]="categoria"
+          ></ion-input>
+        </ion-item>
+
+        <ion-item lines="none" class="custom-input">
+          <ion-input
+            type="number"
+            placeholder="Preço de Venda (R$)"
+            [(ngModel)]="preco"
+          ></ion-input>
+        </ion-item>
+
+        <ion-item lines="none" class="custom-input">
+          <ion-input
+            type="number"
+            placeholder="Quantidade em Estoque"
+            [(ngModel)]="estoque"
+          ></ion-input>
+        </ion-item>
+      </div>
+
+      <div class="form-buttons">
+        <ion-button fill="outline" class="clear-btn" (click)="limparFormulario()">
+          <ion-icon name="close-circle-outline" slot="start"></ion-icon>
+          Limpar
+        </ion-button>
+        <ion-button class="save-btn" (click)="onSalvar()">
+          <ion-icon name="save-outline" slot="start"></ion-icon>
+          {{ produtoIdParaEditar ? 'Atualizar' : 'Salvar' }}
+        </ion-button>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- List -->
+  <div class="list-section">
+    <h3>Produtos em Estoque</h3>
+    
+    <div *ngIf="produtos.length === 0" class="empty-list">
+      <ion-icon name="cube-outline"></ion-icon>
+      <p>Nenhum produto cadastrado.</p>
+    </div>
+
+    <ion-list lines="none" class="custom-list" *ngIf="produtos.length > 0">
+      <div class="list-item-card" *ngFor="let p of produtos">
+        <div class="item-info">
+          <div class="product-title-row">
+            <h4>{{ p.nome }}</h4>
+            <span class="category-tag" *ngIf="p.categoria">{{ p.categoria }}</span>
+          </div>
+          <p>
+            <span class="price-text">R$ {{ p.preco | number:'1.2-2' }}</span>
+            <span class="divider">|</span>
+            <span class="stock-text" [class.low-stock]="p.estoque <= 5">
+              Estoque: <strong>{{ p.estoque }}</strong> un.
+            </span>
+          </p>
+        </div>
+        <div class="item-actions">
+          <ion-button fill="clear" color="primary" class="action-btn" (click)="onEditar(p)">
+            <ion-icon name="pencil-outline" slot="icon-only"></ion-icon>
+          </ion-button>
+          <ion-button fill="clear" color="danger" class="action-btn" (click)="onExcluir(p.id)">
+            <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+          </ion-button>
+        </div>
+      </div>
+    </ion-list>
+  </div>
+</ion-content>

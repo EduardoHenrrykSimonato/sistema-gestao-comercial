@@ -1,0 +1,45 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-title>
+      <div class="toolbar-title">
+        <ion-icon name="storefront-outline"></ion-icon>
+        Gestão Comercial
+      </div>
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="logout()" class="logout-btn">
+        <ion-icon name="log-out-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="home-content">
+  <div class="welcome-section">
+    <h2>Olá, {{ usuarioNome }}! 👋</h2>
+    <p>O que deseja fazer hoje?</p>
+  </div>
+
+  <ion-grid class="menu-grid">
+    <ion-row>
+      <ion-col size="6" *ngFor="let item of menuItems">
+        <ion-card class="menu-card" (click)="navigateTo(item.route)" button>
+          <ion-card-content>
+            <div class="card-icon" [style.background]="item.gradient">
+              <ion-icon [name]="item.icon"></ion-icon>
+            </div>
+            <h3>{{ item.title }}</h3>
+            <p>{{ item.description }}</p>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <div class="logout-section">
+    <ion-button expand="block" fill="outline" class="logout-full-btn" (click)="logout()">
+      <ion-icon name="log-out-outline" slot="start"></ion-icon>
+      Sair do Sistema
+    </ion-button>
+  </div>
+</ion-content>

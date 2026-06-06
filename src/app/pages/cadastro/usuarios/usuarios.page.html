@@ -1,0 +1,105 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/cadastro" text="" color="light"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Usuários</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="page-content">
+  <div class="page-header">
+    <h2>Gerenciar Usuários</h2>
+    <p>Cadastre, edite e remova usuários do sistema</p>
+  </div>
+
+  <!-- Form Card -->
+  <ion-card class="custom-card">
+    <ion-card-content>
+      <div class="form-title">
+        <ion-icon [name]="usuarioIdParaEditar ? 'pencil-outline' : 'person-add-outline'"></ion-icon>
+        <h3>{{ usuarioIdParaEditar ? 'Editar Usuário' : 'Novo Usuário' }}</h3>
+      </div>
+
+      <div class="input-group">
+        <ion-item lines="none" class="custom-input">
+          <ion-input
+            type="text"
+            placeholder="Nome Completo"
+            [(ngModel)]="nome"
+          ></ion-input>
+        </ion-item>
+
+        <ion-item lines="none" class="custom-input">
+          <ion-input
+            type="text"
+            placeholder="Nome de Usuário (Login)"
+            [(ngModel)]="usuario"
+          ></ion-input>
+        </ion-item>
+
+        <ion-item lines="none" class="custom-input">
+          <ion-input
+            type="password"
+            placeholder="Senha de Acesso"
+            [(ngModel)]="senha"
+          ></ion-input>
+        </ion-item>
+
+        <ion-item lines="none" class="custom-input select-item">
+          <ion-select
+            placeholder="Selecione o Perfil"
+            [(ngModel)]="perfil"
+            interface="popover"
+            class="custom-select"
+          >
+            <ion-select-option value="Administrador">Administrador</ion-select-option>
+            <ion-select-option value="Vendedor">Vendedor</ion-select-option>
+            <ion-select-option value="Financeiro">Financeiro</ion-select-option>
+          </ion-select>
+        </ion-item>
+      </div>
+
+      <div class="form-buttons">
+        <ion-button fill="outline" class="clear-btn" (click)="limparFormulario()">
+          <ion-icon name="close-circle-outline" slot="start"></ion-icon>
+          Limpar
+        </ion-button>
+        <ion-button class="save-btn" (click)="onSalvar()">
+          <ion-icon name="save-outline" slot="start"></ion-icon>
+          {{ usuarioIdParaEditar ? 'Atualizar' : 'Salvar' }}
+        </ion-button>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- List -->
+  <div class="list-section">
+    <h3>Usuários Cadastrados</h3>
+    
+    <div *ngIf="usuarios.length === 0" class="empty-list">
+      <ion-icon name="person-outline"></ion-icon>
+      <p>Nenhum usuário encontrado.</p>
+    </div>
+
+    <ion-list lines="none" class="custom-list" *ngIf="usuarios.length > 0">
+      <div class="list-item-card" *ngFor="let u of usuarios">
+        <div class="item-info">
+          <h4>{{ u.nome }}</h4>
+          <p>
+            <span>Login: <strong>{{ u.usuario }}</strong></span>
+            <span class="perfil-tag" [class]="u.perfil.toLowerCase()">{{ u.perfil }}</span>
+          </p>
+        </div>
+        <div class="item-actions">
+          <ion-button fill="clear" color="primary" class="action-btn" (click)="onEditar(u)">
+            <ion-icon name="pencil-outline" slot="icon-only"></ion-icon>
+          </ion-button>
+          <ion-button fill="clear" color="danger" class="action-btn" (click)="onExcluir(u.id)">
+            <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+          </ion-button>
+        </div>
+      </div>
+    </ion-list>
+  </div>
+</ion-content>

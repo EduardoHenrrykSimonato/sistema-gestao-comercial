@@ -1,0 +1,260 @@
+ion-toolbar {
+  --background: transparent;
+  --color: #ffffff;
+}
+
+.page-content {
+  --background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+}
+
+.page-header {
+  padding: 16px 20px 8px;
+  color: #ffffff;
+
+  h2 {
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0 0 4px;
+  }
+
+  p {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.45);
+    margin: 0;
+  }
+}
+
+.custom-card {
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  margin: 12px 16px;
+
+  ion-card-content {
+    padding: 20px 16px;
+  }
+}
+
+.form-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  color: #e94560;
+
+  ion-icon {
+    font-size: 22px;
+  }
+
+  h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0;
+    flex: 1;
+  }
+
+  .stock-badge {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(0, 184, 148, 0.15);
+    color: #55efc4;
+    padding: 4px 8px;
+    border-radius: 20px;
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+
+    ion-icon {
+      font-size: 11px;
+      color: #55efc4;
+    }
+  }
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.custom-input {
+  --background: rgba(255, 255, 255, 0.04);
+  --border-radius: 12px;
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --min-height: 48px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  transition: border-color 0.3s ease;
+
+  &:focus-within {
+    border-color: #e94560;
+  }
+
+  ion-input {
+    --color: #ffffff;
+    --placeholder-color: rgba(255, 255, 255, 0.4);
+    font-size: 14px;
+  }
+}
+
+.form-buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.clear-btn {
+  flex: 1;
+  --border-color: rgba(255, 255, 255, 0.15);
+  --color: rgba(255, 255, 255, 0.6);
+  --border-radius: 10px;
+  height: 44px;
+  font-weight: 600;
+  font-size: 14px;
+
+  &:hover {
+    --border-color: rgba(255, 255, 255, 0.3);
+    --color: #ffffff;
+  }
+}
+
+.save-btn {
+  flex: 2;
+  --background: linear-gradient(135deg, #e94560 0%, #ff6b6b 100%);
+  --border-radius: 10px;
+  --box-shadow: 0 4px 12px rgba(233, 69, 96, 0.3);
+  height: 44px;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.list-section {
+  padding: 12px 16px 32px;
+
+  h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0 0 12px 4px;
+  }
+}
+
+.empty-list {
+  text-align: center;
+  padding: 32px 16px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 12px;
+  border: 1px dashed rgba(255, 255, 255, 0.06);
+
+  ion-icon {
+    font-size: 40px;
+    color: rgba(255, 255, 255, 0.15);
+    margin-bottom: 8px;
+  }
+
+  p {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.35);
+    margin: 0;
+  }
+}
+
+.custom-list {
+  background: transparent;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.list-item-card {
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 14px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .item-info {
+    flex: 1;
+
+    .product-title-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+
+      h4 {
+        font-size: 15px;
+        font-weight: 600;
+        color: #ffffff;
+        margin: 0;
+      }
+
+      .category-tag {
+        background: rgba(255, 255, 255, 0.08);
+        color: rgba(255, 255, 255, 0.7);
+        padding: 2px 6px;
+        border-radius: 6px;
+        font-size: 10px;
+      }
+    }
+
+    p {
+      font-size: 13px;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      .price-text {
+        color: #55efc4;
+        font-weight: 600;
+      }
+
+      .divider {
+        color: rgba(255, 255, 255, 0.15);
+      }
+
+      .stock-text {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 12px;
+
+        strong {
+          color: #ffffff;
+        }
+
+        &.low-stock {
+          color: #ff7675;
+
+          strong {
+            color: #ff7675;
+          }
+        }
+      }
+    }
+  }
+
+  .item-actions {
+    display: flex;
+    gap: 4px;
+
+    .action-btn {
+      --padding-start: 8px;
+      --padding-end: 8px;
+      margin: 0;
+      height: 36px;
+      width: 36px;
+
+      ion-icon {
+        font-size: 18px;
+      }
+    }
+  }
+}
