@@ -27,17 +27,17 @@ import { Produto } from '../../../models/produto.model';
 })
 export class ProdutosPage implements OnInit {
 
-  // Form fields
-  nome: string = '';
-  categoria: string = '';
-  preco: string = '';
-  estoque: string = '';
-
-  // Edit control
-  produtoIdParaEditar: number | null = null;
-
   // List
   produtos: Produto[] = [];
+
+  // Current product object
+  produto: any = {
+    id: undefined,
+    nome: '',
+    categoria: '',
+    preco: '',
+    estoque: ''
+  };
 
   constructor(private produtoService: ProdutoService) {
     addIcons({
@@ -60,75 +60,63 @@ export class ProdutosPage implements OnInit {
     }
   }
 
-  async onSalvar() {
-    // Validations
-    if (!this.nome || !this.nome.trim()) {
-      alert('Preencha o nome do produto.');
+  async salvarProduto() {
+    if (!this.produto.nome || this.produto.nome.trim() === '') {
+      alert('Informe o nome do produto.');
       return;
     }
 
-    if (this.preco === null || this.preco === undefined || this.preco === '') {
-      alert('Preencha o preço do produto.');
+    if (this.produto.preco === null || this.produto.preco === undefined || this.produto.preco === '' || Number(this.produto.preco) <= 0) {
+      alert('Informe um preço válido.');
       return;
     }
 
-    const precoNum = Number(this.preco);
-    if (isNaN(precoNum) || precoNum <= 0) {
-      alert('O preço deve ser um número maior que zero.');
+    if (this.produto.estoque === null || this.produto.estoque === undefined || this.produto.estoque === '' || Number(this.produto.estoque) < 0) {
+      alert('Informe um estoque válido.');
       return;
     }
-
-    if (this.estoque === null || this.estoque === undefined || this.estoque === '') {
-      alert('Preencha a quantidade em estoque.');
-      return;
-    }
-
-    const estoqueNum = Number(this.estoque);
-    if (isNaN(estoqueNum) || estoqueNum < 0 || !Number.isInteger(estoqueNum)) {
-      alert('O estoque deve ser um número inteiro maior ou igual a zero.');
-      return;
-    }
-
-    const produtoDados: Produto = {
-      nome: this.nome.trim(),
-      categoria: this.categoria ? this.categoria.trim() : '',
-      preco: precoNum,
-      estoque: estoqueNum
-    };
-
-    console.log('Salvando produto...');
-    console.log('Produto enviado ao service:', produtoDados);
 
     try {
-      if (this.produtoIdParaEditar !== null) {
-        // Edit mode
-        produtoDados.id = this.produtoIdParaEditar;
-        await this.produtoService.atualizar(produtoDados);
-        alert('Produto saved com sucesso.');
+      console.log('Salvando produto...');
+      console.log('Produto enviado ao service:', this.produto);
+
+      const produtoSalvar: Produto = {
+        id: this.produto.id,
+        nome: this.produto.nome.trim(),
+        categoria: this.produto.categoria ? this.produto.categoria.trim() : '',
+        preco: Number(this.produto.preco),
+        estoque: Number(this.produto.estoque)
+      };
+
+      if (produtoSalvar.id) {
+        await this.produtoService.atualizar(produtoSalvar);
+        alert('Produto atualizado com sucesso.');
       } else {
-        // Create mode
-        await this.produtoService.inserir(produtoDados);
+        await this.produtoService.inserir(produtoSalvar);
         alert('Produto salvo com sucesso.');
       }
 
-      console.log('Produto salvo com sucesso');
       this.limparFormulario();
       await this.carregarProdutos();
+
+      console.log('Produtos carregados:', this.produtos);
     } catch (error) {
       console.error('Erro ao salvar produto:', error);
       alert('Erro ao salvar produto.');
     }
   }
 
-  onEditar(p: Produto) {
-    this.produtoIdParaEditar = p.id || null;
-    this.nome = p.nome;
-    this.categoria = p.categoria;
-    this.preco = p.preco.toString();
-    this.estoque = p.estoque.toString();
+  editarProduto(produto: Produto) {
+    this.produto = {
+      id: produto.id,
+      nome: produto.nome,
+      categoria: produto.categoria,
+      preco: produto.preco.toString(),
+      estoque: produto.estoque.toString()
+    };
   }
 
-  async onExcluir(id: number | undefined) {
+  async excluirProduto(id: number | undefined) {
     if (!id) return;
 
     const confirmar = confirm('Deseja realmente excluir este produto?');
@@ -139,7 +127,7 @@ export class ProdutosPage implements OnInit {
       alert('Produto excluído com sucesso!');
       
       // Se estiver editando o produto excluído, limpa o form
-      if (this.produtoIdParaEditar === id) {
+      if (this.produto.id === id) {
         this.limparFormulario();
       }
       
@@ -151,10 +139,12 @@ export class ProdutosPage implements OnInit {
   }
 
   limparFormulario() {
-    this.nome = '';
-    this.categoria = '';
-    this.preco = '';
-    this.estoque = '';
-    this.produtoIdParaEditar = null;
+    this.produto = {
+      id: undefined,
+      nome: '',
+      categoria: '',
+      preco: '',
+      estoque: ''
+    };
   }
 }

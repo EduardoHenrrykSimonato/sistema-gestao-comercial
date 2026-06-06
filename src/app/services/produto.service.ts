@@ -7,30 +7,61 @@ import { Produto } from '../models/produto.model';
 })
 export class ProdutoService {
 
+  private produtosFallback: Produto[] = [];
+  private proximoId = 1;
+
   constructor(private databaseService: DatabaseService) {}
 
   /**
    * Cadastra um novo produto (Inserir).
    */
-  async inserir(produto: Produto): Promise<number> {
+  async inserir(produto: Produto): Promise<void> {
     if (this.databaseService.isWebFallbackAtivo()) {
-      const id = this.databaseService.produtoId++;
-      const novo = { ...produto, id };
-      this.databaseService.produtosFallback.push(novo);
-      return id;
+      const novoProduto = {
+        ...produto,
+        id: this.proximoId++
+      };
+      this.produtosFallback.push(novoProduto);
+      console.log('Produto salvo no fallback web:', novoProduto);
+      console.log('Lista fallback atual:', this.produtosFallback);
+      return;
     }
-    const result = await this.databaseService.run(
-      'INSERT INTO produtos (nome, categoria, preco, estoque) VALUES (?, ?, ?, ?)',
-      [produto.nome, produto.categoria, produto.preco, produto.estoque]
-    );
-    return result.lastId;
+    
+    try {
+      await this.databaseService.run(
+        'INSERT INTO produtos (nome, categoria, preco, estoque) VALUES (?, ?, ?, ?)',
+        [produto.nome, produto.categoria, produto.preco, produto.estoque]
+      );
+    } catch (error) {
+      console.error('Erro ao salvar produto no SQLite, ativando fallback:', error);
+      this.databaseService.ativarFallbackWeb();
+      const novoProduto = {
+        ...produto,
+        id: this.proximoId++
+      };
+      this.produtosFallback.push(novoProduto);
+      console.log('Produto salvo no fallback web (após erro):', novoProduto);
+    }
   }
 
   /**
    * Alias para cadastrar (retrocompatibilidade).
    */
   async cadastrar(produto: Produto): Promise<number> {
-    return this.inserir(produto);
+    const isFallback = this.databaseService.isWebFallbackAtivo();
+    await this.inserir(produto);
+    if (isFallback) {
+      return this.proximoId - 1;
+    }
+    try {
+      const result = await this.databaseService.run(
+        'INSERT INTO produtos (nome, categoria, preco, estoque) VALUES (?, ?, ?, ?)',
+        [produto.nome, produto.categoria, produto.preco, produto.estoque]
+      );
+      return result.lastId;
+    } catch (error) {
+      return this.proximoId - 1;
+    }
   }
 
   /**
@@ -38,9 +69,17 @@ export class ProdutoService {
    */
   async listar(): Promise<Produto[]> {
     if (this.databaseService.isWebFallbackAtivo()) {
-      return [...this.databaseService.produtosFallback];
+      console.log('Listando produtos do fallback web:', this.produtosFallback);
+      return [...this.produtosFallback];
     }
-    return await this.databaseService.query('SELECT * FROM produtos ORDER BY nome');
+    
+    try {
+      return await this.databaseService.query('SELECT * FROM produtos ORDER BY nome');
+    } catch (error) {
+      console.error('Erro ao listar produtos no SQLite, ativando fallback:', error);
+      this.databaseService.ativarFallbackWeb();
+      return [...this.produtosFallback];
+    }
   }
 
   /**
@@ -55,11 +94,17 @@ export class ProdutoService {
    */
   async buscarPorId(id: number): Promise<Produto | null> {
     if (this.databaseService.isWebFallbackAtivo()) {
-      const prod = this.databaseService.produtosFallback.find(p => p.id === id);
+      const prod = this.produtosFallback.find(p => p.id === id);
       return prod ? { ...prod } : null;
     }
-    const result = await this.databaseService.query('SELECT * FROM produtos WHERE id = ?', [id]);
-    return result.length > 0 ? result[0] as Produto : null;
+    try {
+      const result = await this.databaseService.query('SELECT * FROM produtos WHERE id = ?', [id]);
+      return result.length > 0 ? result[0] as Produto : null;
+    } catch (error) {
+      console.error('Erro ao buscar produto por ID no SQLite, usando fallback:', error);
+      const prod = this.produtosFallback.find(p => p.id === id);
+      return prod ? { ...prod } : null;
+    }
   }
 
   /**
@@ -67,16 +112,28 @@ export class ProdutoService {
    */
   async atualizar(produto: Produto): Promise<void> {
     if (this.databaseService.isWebFallbackAtivo()) {
-      const index = this.databaseService.produtosFallback.findIndex(p => p.id === produto.id);
+      const index = this.produtosFallback.findIndex(p => p.id === produto.id);
       if (index !== -1) {
-        this.databaseService.produtosFallback[index] = { ...produto };
+        this.produtosFallback[index] = { ...produto };
       }
+      console.log('Produto atualizado no fallback web:', produto);
+      console.log('Lista fallback atual:', this.produtosFallback);
       return;
     }
-    await this.databaseService.run(
-      'UPDATE produtos SET nome = ?, categoria = ?, preco = ?, estoque = ? WHERE id = ?',
-      [produto.nome, produto.categoria, produto.preco, produto.estoque, produto.id]
-    );
+    
+    try {
+      await this.databaseService.run(
+        'UPDATE produtos SET nome = ?, categoria = ?, preco = ?, estoque = ? WHERE id = ?',
+        [produto.nome, produto.categoria, produto.preco, produto.estoque, produto.id]
+      );
+    } catch (error) {
+      console.error('Erro ao atualizar produto no SQLite, usando fallback:', error);
+      this.databaseService.ativarFallbackWeb();
+      const index = this.produtosFallback.findIndex(p => p.id === produto.id);
+      if (index !== -1) {
+        this.produtosFallback[index] = { ...produto };
+      }
+    }
   }
 
   /**
@@ -84,10 +141,19 @@ export class ProdutoService {
    */
   async excluir(id: number): Promise<void> {
     if (this.databaseService.isWebFallbackAtivo()) {
-      this.databaseService.produtosFallback = this.databaseService.produtosFallback.filter(p => p.id !== id);
+      this.produtosFallback = this.produtosFallback.filter(p => p.id !== id);
+      console.log('Produto excluído no fallback web. ID:', id);
+      console.log('Lista fallback atual:', this.produtosFallback);
       return;
     }
-    await this.databaseService.run('DELETE FROM produtos WHERE id = ?', [id]);
+    
+    try {
+      await this.databaseService.run('DELETE FROM produtos WHERE id = ?', [id]);
+    } catch (error) {
+      console.error('Erro ao excluir produto no SQLite, usando fallback:', error);
+      this.databaseService.ativarFallbackWeb();
+      this.produtosFallback = this.produtosFallback.filter(p => p.id !== id);
+    }
   }
 
   /**
@@ -102,16 +168,25 @@ export class ProdutoService {
    */
   async atualizarEstoque(produtoId: number, novoEstoque: number): Promise<void> {
     if (this.databaseService.isWebFallbackAtivo()) {
-      const index = this.databaseService.produtosFallback.findIndex(p => p.id === produtoId);
+      const index = this.produtosFallback.findIndex(p => p.id === produtoId);
       if (index !== -1) {
-        this.databaseService.produtosFallback[index].estoque = novoEstoque;
+        this.produtosFallback[index].estoque = novoEstoque;
       }
       return;
     }
-    await this.databaseService.run(
-      'UPDATE produtos SET estoque = ? WHERE id = ?',
-      [novoEstoque, produtoId]
-    );
+    
+    try {
+      await this.databaseService.run(
+        'UPDATE produtos SET estoque = ? WHERE id = ?',
+        [novoEstoque, produtoId]
+      );
+    } catch (error) {
+      console.error('Erro ao atualizar estoque no SQLite, usando fallback:', error);
+      const index = this.produtosFallback.findIndex(p => p.id === produtoId);
+      if (index !== -1) {
+        this.produtosFallback[index].estoque = novoEstoque;
+      }
+    }
   }
 
   /**

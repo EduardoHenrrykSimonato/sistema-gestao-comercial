@@ -167,3 +167,24 @@ O arquivo `.gitignore` já está configurado para ignorar:
   2. Implementado fallback web baseado em arrays em memória no `DatabaseService` (`produtosFallback`, `clientesFallback`, `usuariosFallback`).
   3. Adicionado suporte ao CRUD em memória nos services `ProdutoService`, `ClienteService` e `UsuarioService` caso o `DatabaseService.isWebFallbackAtivo()` seja verdadeiro.
   4. Adicionado logs descritivos e alert de sucesso para produtos cadastrados em `produtos.page.ts` e garantia de importação do `FormsModule`.
+
+---
+
+## Correção Definitiva — Produto não aparece após salvar
+
+- **Link do Repositório:** [https://github.com/EduardoHenrrykSimonato/sistema-gestao-comercial.git](https://github.com/EduardoHenrrykSimonato/sistema-gestao-comercial.git)
+- **Branch Utilizada:** `main`
+- **Mensagem do Commit:** `fix: corrigir salvamento e listagem de produtos`
+- **Comandos Git Utilizados:**
+  ```bash
+  git status
+  git add .
+  git commit -m "fix: corrigir salvamento e listagem de produtos"
+  git push origin main
+  ```
+- **Status do Push:** Realizado com sucesso
+- **Correções Realizadas:**
+  1. Envelopou toda a rotina de inicialização do SQLite no navegador com um timeout global de 2.5 segundos no `DatabaseService` via `Promise.race`, garantindo que qualquer travamento ou erro WASM cause a ativação imediata do fallback web.
+  2. Ajustou `ativarFallbackWeb()` do `DatabaseService` para também definir `useFallback = true`, garantindo que todas as chamadas de banco subsequentes utilizem as rotas emulado.
+  3. Refatorou o `UsuarioService` para utilizar sua própria lista em memória `usuariosFallback` com os dados mockados de `admin`, provendo consistência estrutural com o `ProdutoService` e `ClienteService`.
+

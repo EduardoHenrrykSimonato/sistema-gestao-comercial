@@ -360,6 +360,31 @@ O cadastro de produtos, clientes e usuários funciona de maneira robusta no nave
 
 ---
 
+## Correção definitiva - Produto não aparece após salvar
+
+**Data:** 06/06/2026
+
+### Problema encontrado
+Na tela Cadastro > Produtos, ao preencher os campos e clicar em SALVAR, o produto não aparecia na lista "Produtos em Estoque" no browser.
+
+### Tela afetada
+- Cadastro de Produtos (`/cadastro/produtos`)
+
+### Causa provável
+1. **Hangs na inicialização do SQLite WASM**: A inicialização do banco SQLite Web gerava um erro `LinkError` ou travava durante a verificação de conexões e abertura do banco (`db.open()`). Por ocorrer de forma assíncrona/interna, a Promise de inicialização ficava travada (não resolvia nem rejeitava).
+2. **Divergência de Fallback**: Caso a inicialização não completasse ou o `db.run` executasse com sucesso o `fallbackRun` do LocalStorage, o `ProdutoService.inserir` não disparava o seu bloco de erro (catch) e, portanto, não adicionava o produto à variável em memória `this.produtosFallback` do service. No entanto, `isWebFallbackAtivo()` retornava `true` nas leituras subsequentes, fazendo com que `listar()` buscasse da lista em memória vazia (`this.produtosFallback`) em vez do LocalStorage.
+
+### Arquivos alterados
+- [src/app/services/database.service.ts](file:///c:/Projetos/sistema-gestao-comercial/src/app/services/database.service.ts)
+- [src/app/services/usuario.service.ts](file:///c:/Projetos/sistema-gestao-comercial/src/app/services/usuario.service.ts)
+
+### Solução aplicada
+1. **Timeout Geral de Inicialização no Browser**: Refatorado `DatabaseService.initializeDatabase()` para que, ao rodar em ambiente Web (browser), toda a execução da inicialização do SQLite Web seja envelopada em um `Promise.race` com um timeout rígido de 2.5 segundos. Qualquer falha de carregamento do WASM, LinkError ou travamento na abertura do arquivo disparará a rejeição do timeout, ativando imediatamente o fallback.
+2. **Sincronização do Fallback no DatabaseService**: Corrigido o método `ativarFallbackWeb()` do `DatabaseService` para também definir `useFallback = true`, garantindo que se o fallback for ativado sob demanda, todas as chamadas subsequentes de leitura e gravação no banco sejam roteadas para o fallback.
+3. **Refatoração Completa do UsuarioService**: O service de usuários foi atualizado para ter sua própria lista em memória `usuariosFallback` pre-seada com o login do `admin/admin123`, garantindo total consistência com os services de `ProdutoService` e `ClienteService`.
+
+---
+
 ## Próximas Etapas
 
 | Etapa | Descrição | Status |

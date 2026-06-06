@@ -47,52 +47,18 @@ export class DatabaseService {
         const platform = Capacitor.getPlatform();
         console.log('Iniciando inicialização do banco. Plataforma:', platform);
 
-        // Para web, inicializa o jeep-sqlite
         if (platform === 'web') {
-          console.log('Inicializando SQLite Web...');
-          console.log('Carregando WASM em assets/sql-wasm.wasm');
-          // Configura timeout de 2 segundos para o web store não travar se o jeep-sqlite falhar
-          const initWebPromise = this.initWebStore();
-          const timeoutPromise = new Promise((_, reject) =>
-            setTimeout(() => reject(new Error('Timeout ao inicializar jeep-sqlite')), 2000)
-          );
-          await Promise.race([initWebPromise, timeoutPromise]);
-          console.log('SQLite Web inicializado com sucesso');
-        }
-
-        console.log('Verificando consistência de conexões...');
-        const retCC = (await this.sqlite.checkConnectionsConsistency()).result;
-        console.log('Consistência verificada:', retCC);
-
-        console.log('Verificando se conexão existe...');
-        const isConnection = (await this.sqlite.isConnection(this.DB_NAME, false)).result;
-        console.log('Conexão existe:', isConnection);
-
-        if (retCC && isConnection) {
-          console.log('Recuperando conexão existente...');
-          this.db = await this.sqlite.retrieveConnection(this.DB_NAME, false);
+          // No web, tenta inicializar com timeout geral para evitar travamento por WASM/jeep-sqlite
+          await Promise.race([
+            this.inicializarBancoWeb(),
+            new Promise((_, reject) =>
+              setTimeout(() => reject(new Error('Timeout geral ao inicializar SQLite no Browser (WASM/jeep-sqlite)')), 2500)
+            )
+          ]);
         } else {
-          console.log('Criando nova conexão...');
-          this.db = await this.sqlite.createConnection(
-            this.DB_NAME,
-            false,
-            'no-encryption',
-            1,
-            false
-          );
+          // No mobile, inicializa normalmente
+          await this.inicializarBancoMobile();
         }
-
-        console.log('Abrindo conexão com o banco...');
-        await this.db.open();
-        console.log('Conexão aberta com sucesso.');
-
-        console.log('Criando tabelas...');
-        await this.createTables();
-        console.log('Tabelas verificadas/criadas.');
-
-        console.log('Inserindo dados padrão (se necessário)...');
-        await this.seedDefaultData();
-        console.log('Dados padrão verificados/inseridos.');
 
         this.isInitialized = true;
         this.initialized = true;
@@ -100,11 +66,8 @@ export class DatabaseService {
         this.useFallback = false;
         console.log('Banco inicializado');
       } catch (error) {
-        console.error('Erro ao inicializar SQLite Web:', error);
-        console.log('Fallback web ativo para desenvolvimento');
-        console.log('Ativando fallback de banco de dados em LocalStorage...');
-        
-        this.webFallbackAtivo = true;
+        console.error('Erro ao inicializar SQLite, ativando fallback:', error);
+        this.ativarFallbackWeb();
         this.useFallback = true;
         this.isInitialized = true;
         this.initialized = true;
@@ -124,8 +87,91 @@ export class DatabaseService {
     return this.initializingPromise;
   }
 
+  private async inicializarBancoWeb(): Promise<void> {
+    console.log('Inicializando SQLite Web...');
+    console.log('Carregando WASM em assets/sql-wasm.wasm');
+    await this.initWebStore();
+    console.log('SQLite Web inicializado com sucesso');
+    
+    console.log('Verificando consistência de conexões...');
+    const retCC = (await this.sqlite.checkConnectionsConsistency()).result;
+    console.log('Consistência verificada:', retCC);
+
+    console.log('Verificando se conexão existe...');
+    const isConnection = (await this.sqlite.isConnection(this.DB_NAME, false)).result;
+    console.log('Conexão existe:', isConnection);
+
+    if (retCC && isConnection) {
+      console.log('Recuperando conexão existente...');
+      this.db = await this.sqlite.retrieveConnection(this.DB_NAME, false);
+    } else {
+      console.log('Criando nova conexão...');
+      this.db = await this.sqlite.createConnection(
+        this.DB_NAME,
+        false,
+        'no-encryption',
+        1,
+        false
+      );
+    }
+
+    console.log('Abrindo conexão com o banco...');
+    await this.db.open();
+    console.log('Conexão aberta com sucesso.');
+
+    console.log('Criando tabelas...');
+    await this.createTables();
+    console.log('Tabelas verificadas/criadas.');
+
+    console.log('Inserindo dados padrão (se necessário)...');
+    await this.seedDefaultData();
+    console.log('Dados padrão verificados/inseridos.');
+  }
+
+  private async inicializarBancoMobile(): Promise<void> {
+    console.log('Verificando consistência de conexões...');
+    const retCC = (await this.sqlite.checkConnectionsConsistency()).result;
+    console.log('Consistência verificada:', retCC);
+
+    console.log('Verificando se conexão existe...');
+    const isConnection = (await this.sqlite.isConnection(this.DB_NAME, false)).result;
+    console.log('Conexão existe:', isConnection);
+
+    if (retCC && isConnection) {
+      console.log('Recuperando conexão existente...');
+      this.db = await this.sqlite.retrieveConnection(this.DB_NAME, false);
+    } else {
+      console.log('Criando nova conexão...');
+      this.db = await this.sqlite.createConnection(
+        this.DB_NAME,
+        false,
+        'no-encryption',
+        1,
+        false
+      );
+    }
+
+    console.log('Abrindo conexão com o banco...');
+    await this.db.open();
+    console.log('Conexão aberta com sucesso.');
+
+    console.log('Criando tabelas...');
+    await this.createTables();
+    console.log('Tabelas verificadas/criadas.');
+
+    console.log('Inserindo dados padrão (se necessário)...');
+    await this.seedDefaultData();
+    console.log('Dados padrão verificados/inseridos.');
+  }
+
   isWebFallbackAtivo(): boolean {
     return this.webFallbackAtivo;
+  }
+
+  ativarFallbackWeb(): void {
+    this.webFallbackAtivo = true;
+    this.useFallback = true;
+    console.warn('Fallback web ativado para desenvolvimento.');
   }
 
   /**

@@ -7,6 +7,9 @@ import { Cliente } from '../models/cliente.model';
 })
 export class ClienteService {
 
+  private clientesFallback: Cliente[] = [];
+  private proximoId = 1;
+
   constructor(private databaseService: DatabaseService) {}
 
   /**
@@ -14,16 +17,28 @@ export class ClienteService {
    */
   async inserir(cliente: Cliente): Promise<number> {
     if (this.databaseService.isWebFallbackAtivo()) {
-      const id = this.databaseService.clienteId++;
+      const id = this.proximoId++;
       const novo = { ...cliente, id };
-      this.databaseService.clientesFallback.push(novo);
+      this.clientesFallback.push(novo);
+      console.log('Cliente salvo no fallback web:', novo);
+      console.log('Lista fallback atual:', this.clientesFallback);
       return id;
     }
-    const result = await this.databaseService.run(
-      'INSERT INTO clientes (nome, cpf_cnpj, telefone, email, endereco) VALUES (?, ?, ?, ?, ?)',
-      [cliente.nome, cliente.cpf_cnpj, cliente.telefone, cliente.email, cliente.endereco]
-    );
-    return result.lastId;
+    
+    try {
+      const result = await this.databaseService.run(
+        'INSERT INTO clientes (nome, cpf_cnpj, telefone, email, endereco) VALUES (?, ?, ?, ?, ?)',
+        [cliente.nome, cliente.cpf_cnpj, cliente.telefone, cliente.email, cliente.endereco]
+      );
+      return result.lastId;
+    } catch (error) {
+      console.error('Erro ao salvar cliente no SQLite, usando fallback:', error);
+      this.databaseService.ativarFallbackWeb();
+      const id = this.proximoId++;
+      const novo = { ...cliente, id };
+      this.clientesFallback.push(novo);
+      return id;
+    }
   }
 
   /**
@@ -38,9 +53,17 @@ export class ClienteService {
    */
   async listar(): Promise<Cliente[]> {
     if (this.databaseService.isWebFallbackAtivo()) {
-      return [...this.databaseService.clientesFallback];
+      console.log('Listando clientes do fallback web:', this.clientesFallback);
+      return [...this.clientesFallback];
     }
-    return await this.databaseService.query('SELECT * FROM clientes ORDER BY nome');
+    
+    try {
+      return await this.databaseService.query('SELECT * FROM clientes ORDER BY nome');
+    } catch (error) {
+      console.error('Erro ao listar clientes no SQLite, usando fallback:', error);
+      this.databaseService.ativarFallbackWeb();
+      return [...this.clientesFallback];
+    }
   }
 
   /**
@@ -55,11 +78,17 @@ export class ClienteService {
    */
   async buscarPorId(id: number): Promise<Cliente | null> {
     if (this.databaseService.isWebFallbackAtivo()) {
-      const c = this.databaseService.clientesFallback.find(cli => cli.id === id);
+      const c = this.clientesFallback.find(cli => cli.id === id);
       return c ? { ...c } : null;
     }
-    const result = await this.databaseService.query('SELECT * FROM clientes WHERE id = ?', [id]);
-    return result.length > 0 ? result[0] as Cliente : null;
+    try {
+      const result = await this.databaseService.query('SELECT * FROM clientes WHERE id = ?', [id]);
+      return result.length > 0 ? result[0] as Cliente : null;
+    } catch (error) {
+      console.error('Erro ao buscar cliente por ID no SQLite, usando fallback:', error);
+      const c = this.clientesFallback.find(cli => cli.id === id);
+      return c ? { ...c } : null;
+    }
   }
 
   /**
@@ -67,16 +96,28 @@ export class ClienteService {
    */
   async atualizar(cliente: Cliente): Promise<void> {
     if (this.databaseService.isWebFallbackAtivo()) {
-      const index = this.databaseService.clientesFallback.findIndex(c => c.id === cliente.id);
+      const index = this.clientesFallback.findIndex(c => c.id === cliente.id);
       if (index !== -1) {
-        this.databaseService.clientesFallback[index] = { ...cliente };
+        this.clientesFallback[index] = { ...cliente };
       }
+      console.log('Cliente atualizado no fallback web:', cliente);
+      console.log('Lista fallback atual:', this.clientesFallback);
       return;
     }
-    await this.databaseService.run(
-      'UPDATE clientes SET nome = ?, cpf_cnpj = ?, telefone = ?, email = ?, endereco = ? WHERE id = ?',
-      [cliente.nome, cliente.cpf_cnpj, cliente.telefone, cliente.email, cliente.endereco, cliente.id]
-    );
+    
+    try {
+      await this.databaseService.run(
+        'UPDATE clientes SET nome = ?, cpf_cnpj = ?, telefone = ?, email = ?, endereco = ? WHERE id = ?',
+        [cliente.nome, cliente.cpf_cnpj, cliente.telefone, cliente.email, cliente.endereco, cliente.id]
+      );
+    } catch (error) {
+      console.error('Erro ao atualizar cliente no SQLite, usando fallback:', error);
+      this.databaseService.ativarFallbackWeb();
+      const index = this.clientesFallback.findIndex(c => c.id === cliente.id);
+      if (index !== -1) {
+        this.clientesFallback[index] = { ...cliente };
+      }
+    }
   }
 
   /**
@@ -84,10 +125,19 @@ export class ClienteService {
    */
   async excluir(id: number): Promise<void> {
     if (this.databaseService.isWebFallbackAtivo()) {
-      this.databaseService.clientesFallback = this.databaseService.clientesFallback.filter(c => c.id !== id);
+      this.clientesFallback = this.clientesFallback.filter(c => c.id !== id);
+      console.log('Cliente excluído no fallback web. ID:', id);
+      console.log('Lista fallback atual:', this.clientesFallback);
       return;
     }
-    await this.databaseService.run('DELETE FROM clientes WHERE id = ?', [id]);
+    
+    try {
+      await this.databaseService.run('DELETE FROM clientes WHERE id = ?', [id]);
+    } catch (error) {
+      console.error('Erro ao excluir cliente no SQLite, usando fallback:', error);
+      this.databaseService.ativarFallbackWeb();
+      this.clientesFallback = this.clientesFallback.filter(c => c.id !== id);
+    }
   }
 
   /**
