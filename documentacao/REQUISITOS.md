@@ -76,3 +76,23 @@
 - O código deve ser limpo, organizado e bem documentado.
 - O sistema deve ser fácil de explicar em apresentação acadêmica.
 
+---
+
+## 🏁 Checklist Final de Requisitos
+
+Abaixo está o checklist de entrega atestando a conclusão e conformidade dos requisitos do projeto:
+
+- [x] Login
+- [x] Cadastro de usuários
+- [x] Cadastro de produtos
+- [x] Controle de estoque
+- [x] Cadastro de clientes
+- [x] Venda com vários produtos
+- [x] Baixa automática de estoque
+- [x] Financeiro / Receber
+- [x] Relatórios
+- [x] SQLite
+- [x] Documentação Markdown
+- [x] GitHub
+
+

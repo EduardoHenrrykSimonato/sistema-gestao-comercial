@@ -256,3 +256,26 @@ O arquivo `.gitignore` já está configurado para ignorar:
   5. Atualizou todas as documentações Markdown (HISTORICO, TELAS, REQUISITOS, ESTRUTURA, BANCO_DE_DADOS, DIAGRAMAS, GITHUB).
   6. Build executado com sucesso sem erros e sem warnings.
 
+---
+
+## Etapa 6 — Revisão Final e Preparação para Entrega
+
+- **Link do Repositório:** [https://github.com/EduardoHenrrykSimonato/sistema-gestao-comercial.git](https://github.com/EduardoHenrrykSimonato/sistema-gestao-comercial.git)
+- **Branch Utilizada:** `main`
+- **Mensagem do Commit:** `chore: revisao final para entrega`
+- **Comandos Git Utilizados:**
+  ```bash
+  git status
+  git add .
+  git commit -m "chore: revisao final para entrega"
+  git push origin main
+  ```
+- **Status do Push:** Pendente (a ser executado ao concluir a etapa 6)
+- **Mudanças e Correções Realizadas:**
+  1. Revisou todos os fluxos de navegação e validou as 9 telas do aplicativo (Login, Home, Cadastro, Usuários, Produtos, Clientes, Vendas, Financeiro e Relatórios).
+  2. Garantiu títulos, botões de retorno (voltar) e tratamentos com alerts/confirms para validações e mensagens de sucesso/erro em todas as telas.
+  3. Atualizou o README.md principal com as diretrizes acadêmicas solicitadas, autoria e links.
+  4. Revisou e formatou todas as documentações da pasta `documentacao` em Markdown (.md).
+  5. Completou os checklists de requisitos, diagramas e banco de dados SQLite.
+
+

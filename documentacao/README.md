@@ -28,8 +28,8 @@ Bem-vindo à documentação do projeto **Sistema de Gestão Comercial**.
 | Etapa | Status |
 |---|---|
 | 1 — Estrutura inicial | ✅ Concluída |
-| 2 — Telas de Cadastro | 🔲 Pendente |
-| 3 — Módulo de Vendas | 🔲 Pendente |
-| 4 — Módulo Financeiro | 🔲 Pendente |
-| 5 — Relatórios | 🔲 Pendente |
-| 6 — Ajustes finais | 🔲 Pendente |
+| 2 — Telas de Cadastro | ✅ Concluída |
+| 3 — Módulo de Vendas | ✅ Concluída |
+| 4 — Módulo Financeiro / Receber | ✅ Concluída |
+| 5 — Módulo de Relatórios | ✅ Concluída |
+| 6 — Revisão Final e Preparação para Entrega | ✅ Concluída |

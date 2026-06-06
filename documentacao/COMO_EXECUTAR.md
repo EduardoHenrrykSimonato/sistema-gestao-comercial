@@ -1,4 +1,4 @@
-# ▶️ Como Executar o Projeto
+# ▶️ Como Executar o Projeto (Revisado para Entrega Final)
 
 ## Pré-requisitos
 

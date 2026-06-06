@@ -1,5 +1,37 @@
 # 📊 Diagramas do Sistema
 
+## Diagrama de Casos de Uso
+
+```mermaid
+flowchart LR
+    subgraph Atores
+        Admin["👤 Administrador"]
+        Op["👤 Operador"]
+    end
+
+    subgraph Sistema ["Gestão Comercial"]
+        UC_Login(("Login"))
+        UC_CadUsu(("Cadastrar Usuários"))
+        UC_CadProd(("Cadastrar Produtos"))
+        UC_CadCli(("Cadastrar Clientes"))
+        UC_Venda(("Registrar Vendas"))
+        UC_Receber(("Controlar Recebimentos"))
+        UC_Relat(("Consultar Relatórios"))
+    end
+
+    Admin --> UC_Login
+    Admin --> UC_CadUsu
+    Admin --> UC_CadProd
+    Admin --> UC_CadCli
+    Admin --> UC_Venda
+    Admin --> UC_Receber
+    Admin --> UC_Relat
+
+    Op --> UC_Login
+    Op --> UC_CadCli
+    Op --> UC_Venda
+```
+
 ## Diagrama Entidade-Relacionamento (ER)
 
 ```mermaid

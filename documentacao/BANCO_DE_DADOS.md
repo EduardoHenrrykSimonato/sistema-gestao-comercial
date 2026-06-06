@@ -1,4 +1,4 @@
-# 🗄️ Banco de Dados
+# 🗄️ Banco de Dados (Revisado para Entrega Final)
 
 O sistema utiliza **SQLite** como banco de dados local e principal, acessado via plugin `@capacitor-community/sqlite`.
 
