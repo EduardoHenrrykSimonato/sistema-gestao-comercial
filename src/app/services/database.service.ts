@@ -207,6 +207,12 @@ export class DatabaseService {
         endereco TEXT
       );
 
+      CREATE TABLE IF NOT EXISTS categorias_produto (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        nome TEXT NOT NULL UNIQUE,
+        descricao TEXT
+      );
+
       CREATE TABLE IF NOT EXISTS produtos (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         nome TEXT NOT NULL,
@@ -254,15 +260,37 @@ export class DatabaseService {
    * Insere dados padrão no banco (usuário admin).
    */
   private async seedDefaultData(): Promise<void> {
-    const result = await this.db.query('SELECT COUNT(*) as count FROM usuarios');
-    const count = result.values?.[0]?.count || 0;
+    // Seed de usuário padrão
+    const resultUsuarios = await this.db.query('SELECT COUNT(*) as count FROM usuarios');
+    const countUsuarios = resultUsuarios.values?.[0]?.count || 0;
 
-    if (count === 0) {
+    if (countUsuarios === 0) {
       await this.db.run(
         `INSERT INTO usuarios (nome, usuario, senha, perfil) VALUES (?, ?, ?, ?)`,
         ['Administrador', 'admin', 'admin123', 'Administrador']
       );
       console.log('👤 Usuário admin padrão criado!');
+    }
+
+    // Seed de categorias de produto padrão
+    const resultCategorias = await this.db.query('SELECT COUNT(*) as count FROM categorias_produto');
+    const countCategorias = resultCategorias.values?.[0]?.count || 0;
+
+    if (countCategorias === 0) {
+      const categoriasPadrao = [
+        { nome: 'Alimentos', descricao: 'Produtos alimentícios em geral' },
+        { nome: 'Bebidas', descricao: 'Produtos líquidos e bebidas em geral' },
+        { nome: 'Higiene', descricao: 'Produtos de higiene pessoal' },
+        { nome: 'Limpeza', descricao: 'Produtos de limpeza doméstica' },
+        { nome: 'Outros', descricao: 'Categoria genérica para produtos diversos' }
+      ];
+      for (const cat of categoriasPadrao) {
+        await this.db.run(
+          'INSERT INTO categorias_produto (nome, descricao) VALUES (?, ?)',
+          [cat.nome, cat.descricao]
+        );
+      }
+      console.log('📂 Categorias de produto padrão criadas!');
     }
   }
 
@@ -285,13 +313,28 @@ export class DatabaseService {
       localStorage.setItem(usuariosKey, JSON.stringify(defaultUsuarios));
     }
 
-    const tables = ['clientes', 'produtos', 'vendas', 'itens_venda', 'recebimentos'];
+    const tables = ['clientes', 'produtos', 'vendas', 'itens_venda', 'recebimentos', 'categorias_produto'];
     for (const table of tables) {
       const key = `fallback_db_${table}`;
       if (!localStorage.getItem(key)) {
         localStorage.setItem(key, JSON.stringify([]));
       }
     }
+
+    // Seed de categorias padrão no fallback
+    const catKey = 'fallback_db_categorias_produto';
+    const existingCats = JSON.parse(localStorage.getItem(catKey) || '[]');
+    if (existingCats.length === 0) {
+      const categoriasPadrao = [
+        { id: 1, nome: 'Alimentos', descricao: 'Produtos alimentícios em geral' },
+        { id: 2, nome: 'Bebidas', descricao: 'Produtos líquidos e bebidas em geral' },
+        { id: 3, nome: 'Higiene', descricao: 'Produtos de higiene pessoal' },
+        { id: 4, nome: 'Limpeza', descricao: 'Produtos de limpeza doméstica' },
+        { id: 5, nome: 'Outros', descricao: 'Categoria genérica para produtos diversos' }
+      ];
+      localStorage.setItem(catKey, JSON.stringify(categoriasPadrao));
+    }
+
     console.log('⚠️ Fallback LocalStorage Database inicializado para desenvolvimento web');
   }
 
@@ -328,6 +371,27 @@ export class DatabaseService {
 
     if (normalizedSql.includes('from clientes')) {
       const list = this.getFallbackTable('clientes');
+      if (normalizedSql.includes('id = ?')) {
+        return list.filter(c => c.id === Number(params[0]));
+      }
+      if (normalizedSql.includes('order by nome')) {
+        return [...list].sort((a, b) => a.nome.localeCompare(b.nome));
+      }
+      return list;
+    }
+
+    if (normalizedSql.includes('from categorias_produto')) {
+      const list = this.getFallbackTable('categorias_produto');
+      if (normalizedSql.includes('count(*)')) {
+        if (normalizedSql.includes('lower(nome) = ?')) {
+          const count = list.filter(c => c.nome.toLowerCase() === params[0]).length;
+          return [{ count }];
+        }
+        return [{ count: list.length }];
+      }
+      if (normalizedSql.includes('lower(nome) = ?')) {
+        return list.filter(c => c.nome.toLowerCase() === params[0]);
+      }
       if (normalizedSql.includes('id = ?')) {
         return list.filter(c => c.id === Number(params[0]));
       }

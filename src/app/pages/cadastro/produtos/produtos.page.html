@@ -34,18 +34,33 @@
           ></ion-input>
         </ion-item>
 
-        <ion-item lines="none" class="custom-input">
-          <ion-input
-            type="text"
-            placeholder="Categoria (ex: Bebidas, Alimentos)"
+        <!-- Categoria como Select -->
+        <ion-item lines="none" class="custom-input select-item" *ngIf="categorias.length > 0">
+          <ion-select
+            placeholder="Selecione a Categoria"
             [(ngModel)]="produto.categoria"
-          ></ion-input>
+            interface="popover"
+            class="custom-select"
+          >
+            <ion-select-option *ngFor="let cat of categorias" [value]="cat.nome">
+              {{ cat.nome }}
+            </ion-select-option>
+          </ion-select>
         </ion-item>
+
+        <!-- Mensagem quando não há categorias -->
+        <div class="no-categories-msg" *ngIf="categorias.length === 0">
+          <ion-icon name="alert-circle-outline"></ion-icon>
+          <span>Cadastre uma categoria antes de cadastrar produtos.</span>
+          <ion-button fill="clear" size="small" (click)="irParaCategorias()">
+            Cadastrar Categoria
+          </ion-button>
+        </div>
 
         <ion-item lines="none" class="custom-input">
           <ion-input
-            type="number"
-            placeholder="Preço de Venda (R$)"
+            type="text"
+            placeholder="Preço de Venda (R$) — ex: 10,50"
             [(ngModel)]="produto.preco"
           ></ion-input>
         </ion-item>
@@ -69,6 +84,14 @@
           {{ produto.id ? 'Atualizar' : 'Salvar' }}
         </ion-button>
       </div>
+
+      <!-- Link para gerenciar categorias -->
+      <div class="manage-categories-link">
+        <ion-button fill="clear" size="small" (click)="irParaCategorias()">
+          <ion-icon name="settings-outline" slot="start"></ion-icon>
+          Gerenciar Categorias
+        </ion-button>
+      </div>
     </ion-card-content>
   </ion-card>
 
@@ -87,9 +110,10 @@
           <div class="product-title-row">
             <h4>{{ produto.nome }}</h4>
             <span class="category-tag" *ngIf="produto.categoria">{{ produto.categoria }}</span>
+            <span class="category-tag no-cat" *ngIf="!produto.categoria">Sem categoria</span>
           </div>
           <p>
-            <span class="price-text">R$ {{ produto.preco | number:'1.2-2' }}</span>
+            <span class="price-text">R$ {{ formatarMoeda(produto.preco) }}</span>
             <span class="divider">|</span>
             <span class="stock-text" [class.low-stock]="produto.estoque <= 5">
               Estoque: <strong>{{ produto.estoque }}</strong> un.

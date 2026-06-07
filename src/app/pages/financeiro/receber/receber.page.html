@@ -97,7 +97,7 @@
         <div class="card-footer">
           <div class="valor-container">
             <span class="valor-label">Valor</span>
-            <span class="valor-amount">R$ {{ rec.valor | number:'1.2-2' }}</span>
+            <span class="valor-amount">R$ {{ formatarMoeda(rec.valor) }}</span>
           </div>
           <ion-button class="confirmar-btn" (click)="abrirConfirmacao(rec)"
                       *ngIf="recebimentoSelecionado?.id !== rec.id">
@@ -200,7 +200,7 @@
         <div class="card-footer">
           <div class="valor-container">
             <span class="valor-label">Valor Recebido</span>
-            <span class="valor-amount recebido">R$ {{ rec.valor | number:'1.2-2' }}</span>
+            <span class="valor-amount recebido">R$ {{ formatarMoeda(rec.valor) }}</span>
           </div>
         </div>
       </div>

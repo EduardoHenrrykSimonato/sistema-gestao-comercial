@@ -38,9 +38,9 @@ Documentação das telas do sistema, atualizada a cada etapa do desenvolvimento.
 
 ### 3. Cadastro (`/cadastro`)
 
-- **Descrição:** Submenu de cadastro com opções para navegar até os cadastros de Produtos, Clientes e Usuários.
-- **Ações:** Botões/Cards para Produtos, Clientes e Usuários, e botão Voltar para Home.
-- **Status:** ✅ Implementada (Etapa 2)
+- **Descrição:** Submenu de cadastro com opções para navegar até os cadastros de Usuários, Clientes, Categorias de Produto e Produtos.
+- **Ações:** Botões/Cards para cada módulo de cadastro, com reordenação visual e botão Voltar para Home.
+- **Status:** ✅ Atualizada (Etapa 9)
 
 ---
 
@@ -70,28 +70,49 @@ Documentação das telas do sistema, atualizada a cada etapa do desenvolvimento.
 
 ### 5. Cadastro de Produtos (`/cadastro/produtos`)
 
-- **Objetivo da tela:** Cadastrar, consultar, editar, excluir e monitorar a quantidade em estoque dos produtos.
+- **Objetivo da tela:** Cadastrar, consultar, editar, excluir e monitorar a quantidade em estoque dos produtos, classificando-os por categoria e validando preços em moeda brasileira.
 - **Campos disponíveis:**
   - Nome do Produto (`nome`)
-  - Categoria (`categoria`)
-  - Preço de Venda (R$) (`preco`)
+  - Categoria (`categoria`) (Seleção dinâmica via `<ion-select>` a partir das categorias cadastradas)
+  - Preço de Venda (R$) (`preco`) (Formatação e conversão do padrão brasileiro `R$ 0,00`)
   - Quantidade em Estoque (`estoque`)
 - **Botões existentes:**
   - Limpar (Reseta o formulário)
   - Salvar / Atualizar (Envia dados para o SQLite/Fallback)
   - Editar (Carrega os dados do item no formulário)
   - Excluir (Remove o item após confirmação)
+  - Gerenciar Categorias (Navega para a tela de gerenciamento de categorias)
 - **Validações:**
-  - Nome obrigatório
-  - Preço obrigatório, numérico e maior que zero (> 0)
-  - Estoque obrigatório, numérico e maior ou igual a zero (>= 0)
-- **Ações disponíveis:** CRUD completo, destaque visual para produtos com estoque controlado e indicador visual para estoque baixo (<= 5).
-- **Status:** ✅ Implementada com fallback web em memória para testes no browser e estoque baixo (Etapa 2)
+  - Nome do produto obrigatório.
+  - Seleção de categoria obrigatória.
+  - Preço obrigatório, numérico e maior que zero (> 0) (suporta formatos como `"12,50"`, `"R$ 12,50"`, `"1.250,90"`).
+  - Estoque obrigatório, numérico e maior ou igual a zero (>= 0).
+- **Ações disponíveis:** CRUD completo, destaque de estoque controlado, indicador visual de estoque baixo (<= 5) e integração dinâmica com categorias.
+- **Status:** ✅ Implementada com integração dinâmica de categorias e validação/máscara de R$ (Etapa 9)
 - **Screenshots/Prints futuros:** (Reservado para capturas de tela)
 
 ---
 
-### 6. Cadastro de Clientes (`/cadastro/clientes`)
+### 6. Cadastro de Categorias de Produto (`/cadastro/categorias-produto`)
+
+- **Objetivo da tela:** Gerenciar categorias para classificação de produtos.
+- **Campos disponíveis:**
+  - Nome da Categoria (`nome`)
+  - Descrição (`descricao`)
+- **Botões existentes:**
+  - Limpar (Reseta o formulário)
+  - Salvar / Atualizar (Envia dados para o SQLite/Fallback)
+  - Editar (Carrega os dados da categoria no formulário)
+  - Excluir (Remove a categoria após confirmação)
+- **Validações:**
+  - Nome obrigatório.
+  - Nome único (valida duplicidades via `categoriaExiste` impedindo cadastros com o mesmo nome).
+- **Status:** ✅ Implementada com CRUD completo e validações em SQLite/Fallback (Etapa 9)
+- **Screenshots/Prints futuros:** (Reservado para capturas de tela)
+
+---
+
+### 7. Cadastro de Clientes (`/cadastro/clientes`)
 
 - **Objetivo da tela:** Cadastrar, consultar, editar e excluir os clientes do estabelecimento.
 - **Campos disponíveis:**
@@ -116,12 +137,12 @@ Documentação das telas do sistema, atualizada a cada etapa do desenvolvimento.
 
 ---
 
-### 7. Vendas (`/vendas`)
+### 8. Vendas (`/vendas`)
 
-- **Objetivo da tela:** Registrar novas vendas, selecionar clientes e produtos, gerenciar itens no carrinho e baixar estoques e gerar contas a receber.
+- **Objetivo da tela:** Registrar novas vendas, selecionar clientes e produtos, gerenciar itens no carrinho, baixar estoques e gerar contas a receber.
 - **Campos disponíveis:**
   - Cliente da Venda (Select com clientes cadastrados)
-  - Produto (Select com produtos disponíveis, preço unitário e estoque atual)
+  - Produto (Select com produtos disponíveis, preço unitário reformatado em R$ e estoque atual)
   - Quantidade (Input numérico, inteiro, obrigatório e maior que zero)
 - **Botões existentes:**
   - Adicionar (Botão "+" para inserir produto selecionado no carrinho)
@@ -133,15 +154,15 @@ Documentação das telas do sistema, atualizada a cada etapa do desenvolvimento.
   - Pelo menos um item no carrinho para finalizar.
   - Quantidade do item no carrinho não pode exceder o estoque disponível do produto.
   - Bloqueio de inserção de itens com quantidade vazia, negativa ou nula.
-- **Carrinho de Compras:** Exibe lista reativa contendo nome do produto, quantidade, preço unitário, subtotal e botão para exclusão individual de itens.
-- **Totais:** Exibe o valor do Total Geral somando os subtotais de forma reativa.
-- **Vendas Realizadas:** Listagem reativa contendo código da venda, nome do cliente, data do registro, quantidade total de itens, total geral em reais e badge colorido de status (`Pendente` ou `Paga`).
-- **Status:** ✅ Implementada com fallback web em memória e baixa de estoque reativa (Etapa 3)
+- **Carrinho de Compras:** Exibe lista reativa contendo nome do produto, quantidade, preço unitário (formatado em R$), subtotal e botão para exclusão individual de itens.
+- **Totais:** Exibe o valor do Total Geral (formatado em R$) somando os subtotais de forma reativa.
+- **Vendas Realizadas:** Listagem reativa contendo código da venda, nome do cliente, data do registro, quantidade total de itens, total geral formatado em R$ e badge colorido de status (`Pendente` ou `Paga`).
+- **Status:** ✅ Implementada com fallback web, baixa de estoque e formatação monetária centralizada (Etapa 9)
 - **Screenshots/Prints futuros:** (Reservado para capturas de tela)
 
 ---
 
-### 8. Financeiro (`/financeiro`)
+### 9. Financeiro (`/financeiro`)
 
 - **Objetivo da tela:** Submenu do módulo financeiro com acesso ao módulo Contas a Receber.
 - **Ações:** Card/botão para navegar até Contas a Receber e botão Voltar para Home.
@@ -149,13 +170,13 @@ Documentação das telas do sistema, atualizada a cada etapa do desenvolvimento.
 
 ---
 
-### 9. Contas a Receber (`/financeiro/receber`)
+### 10. Contas a Receber (`/financeiro/receber`)
 
 - **Objetivo da tela:** Listar recebimentos pendentes e pagos, registrar pagamentos de vendas.
 - **Resumo Financeiro:** Exibe dois cards resumo no topo com contadores de pendentes e recebidos.
 - **Abas (Segment):** Aba "Pendentes" e aba "Recebidos" com badge de contagem.
 - **Cards de Recebimento Pendente:**
-  - Exibe número da venda, nome do cliente, data da venda, quantidade de produtos e valor total.
+  - Exibe número da venda, nome do cliente, data da venda, quantidade de produtos e valor total formatado em R$.
   - Badge visual de status "Pendente" (vermelho).
   - Botão "Registrar" para abrir formulário inline de confirmação de pagamento.
 - **Formulário de Confirmação (Inline):**
@@ -163,7 +184,7 @@ Documentação das telas do sistema, atualizada a cada etapa do desenvolvimento.
   - Data de recebimento (input date, pré-preenchido com data atual).
   - Botões "Cancelar" e "Confirmar".
 - **Cards de Recebimento Pago:**
-  - Exibe número da venda, nome do cliente, data de recebimento, forma de pagamento e valor recebido.
+  - Exibe número da venda, nome do cliente, data de recebimento, forma de pagamento e valor recebido formatado em R$.
   - Badge visual de status "Recebido" (verde).
 - **Validações:**
   - Forma de pagamento obrigatória.
@@ -172,26 +193,26 @@ Documentação das telas do sistema, atualizada a cada etapa do desenvolvimento.
   - Atualiza o recebimento com forma de pagamento, data e status "recebido".
   - Marca a venda correspondente como "paga".
   - Recarrega ambas as listas automaticamente.
-- **Status:** ✅ Implementada com fallback web em memória para testes no browser (Etapa 4)
+- **Status:** ✅ Implementada com fallback web e formatação de moeda R$ (Etapa 9)
 - **Screenshots/Prints futuros:** (Reservado para capturas de tela)
 
 ---
 
-### 10. Relatórios (`/relatorios`)
+### 11. Relatórios (`/relatorios`)
 
 - **Objetivo da tela:** Permitir ao gestor visualizar consolidados operacionais e financeiros detalhados do sistema.
 - **Seções Disponíveis:**
-  - **Resumo Geral (Dashboard)**: Cards com estatísticas consolidadas contendo contagem de produtos e clientes cadastrados, total de vendas realizadas (com detalhe de pagas vs pendentes), faturamento bruto acumulado, total recebido em caixa e total pendente de recebimento.
-  - **Relatório de Produtos**: Lista exibindo código (ID), nome, categoria, preço, quantidade em estoque e status. Adiciona realce em vermelho e badge animado de alerta para estoques baixos (estoque <= 5).
+  - **Resumo Geral (Dashboard)**: Cards com estatísticas consolidadas contendo contagem de produtos e clientes cadastrados, total de vendas realizadas (com detalhe de pagas vs pendentes), faturamento bruto acumulado, total recebido em caixa e total pendente de recebimento (todos formatados em R$).
+  - **Relatório de Produtos**: Lista exibindo código (ID), nome, categoria, preço formatado em R$, quantidade em estoque e status. Adiciona realce em vermelho e badge animado de alerta para estoques baixos (estoque <= 5).
   - **Relatório de Clientes**: Lista exibindo código (ID), nome, CPF/CNPJ, telefone e e-mail.
-  - **Relatório de Vendas**: Lista com código da venda, nome do cliente, data da venda, quantidade de itens inclusos, valor total e badge com status (Paga ou Pendente).
-  - **Relatório de Recebimentos**: Histórico mostrando o código, código da venda associada, nome do cliente, data do recebimento (ou indicação de pendente), forma de pagamento, valor total e badge do status financeiro (Recebido ou Pendente).
+  - **Relatório de Vendas**: Lista com código da venda, nome do cliente, data da venda, quantidade de itens inclusos, valor total formatado em R$ e badge com status (Paga ou Pendente).
+  - **Relatório de Recebimentos**: Histórico mostrando o código, código da venda associada, nome do cliente, data do recebimento (ou indicação de pendente), forma de pagamento, valor total formatado em R$ e badge do status financeiro (Recebido ou Pendente).
 - **Filtros e Busca:**
   - *Filtro por Tipo*: Permite selecionar uma aba específica para ocultar as demais (Todos, Resumo, Produtos, Clientes, Vendas, Recebimentos).
   - *Barra de Busca*: Permite digitar o nome do produto/categoria ou nome do cliente para filtrar dinamicamente as tabelas de listagem.
   - *Filtros de Status*: Filtros popover específicos para vendas (Todas, Pendentes, Pagas) e recebimentos (Todos, Pendentes, Pagos).
 - **Mensagens para Ausência de Dados (Empty States):** Exibição de um estado vazio personalizado (ícone descritivo e texto instrutivo) caso a listagem selecionada não possua registros correspondentes na base ou fallback (ex: "Nenhum produto cadastrado").
-- **Status:** ✅ Implementada com fallback web completo em memória para execução no browser (Etapa 5)
+- **Status:** ✅ Implementada com fallback web e formatação de moeda R$ (Etapa 9)
 - **Screenshots/Prints futuros:** (Reservado para capturas de tela)
 
 ---

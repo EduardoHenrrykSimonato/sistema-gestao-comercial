@@ -52,6 +52,12 @@
 - Resumo geral consolidado (totalizadores de produtos, clientes, vendas por status e faturamento/caixa geral).
 - Campo de busca unificado para filtrar dados por nome de produto/categoria ou nome de cliente.
 
+### RF09 — Categorias de Produto e Formatação de Preço `[✅ Atendido — Etapa 9]`
+- O sistema deve permitir o cadastro de categorias de produto de forma independente (nome único obrigatório e descrição opcional).
+- O formulário de produto deve listar as categorias de forma dinâmica em um campo `<ion-select>`.
+- O sistema deve validar e aceitar preços digitados no padrão brasileiro (ex: "10,50" ou "R$ 10,50"), convertendo-os corretamente antes de salvar.
+- Todos os preços exibidos nas listagens do sistema (produtos, vendas, financeiro, relatórios) devem utilizar formatação em R$ (ex: "R$ 10,50").
+
 ---
 
 ## Requisitos Não-Funcionais
@@ -101,6 +107,11 @@ Abaixo está o checklist de entrega atestando a conclusão e conformidade dos re
 - [x] Permitir criação de nova conta pela tela de Login (Etapa 8)
 - [x] Impedir cadastro de usuário duplicado (Etapa 8)
 - [x] Permitir login com usuário criado (Etapa 8)
+- [x] Validação de valor em R$ no cadastro de produtos (Etapa 9)
+- [x] Máscara/formatação de preço em moeda brasileira R$ (Etapa 9)
+- [x] Cadastro de categorias de produtos (Etapa 9)
+- [x] Seleção de categoria dinâmica ao cadastrar produto (Etapa 9)
+
 
 
 

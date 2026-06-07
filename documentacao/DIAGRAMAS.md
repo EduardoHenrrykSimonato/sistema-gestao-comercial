@@ -14,6 +14,7 @@ flowchart LR
         UC_Login(("Login"))
         UC_CriarConta(("Criar nova conta"))
         UC_CadUsu(("Cadastrar Usuários"))
+        UC_CadCat(("Cadastrar Categorias"))
         UC_CadProd(("Cadastrar Produtos"))
         UC_CadCli(("Cadastrar Clientes"))
         UC_Venda(("Registrar Vendas"))
@@ -26,6 +27,7 @@ flowchart LR
 
     Admin --> UC_Login
     Admin --> UC_CadUsu
+    Admin --> UC_CadCat
     Admin --> UC_CadProd
     Admin --> UC_CadCli
     Admin --> UC_Venda
@@ -56,6 +58,12 @@ erDiagram
         text telefone
         text email
         text endereco
+    }
+
+    CATEGORIAS_PRODUTO {
+        int id PK
+        text nome
+        text descricao
     }
 
     PRODUTOS {
@@ -96,6 +104,7 @@ erDiagram
     VENDAS ||--o{ ITENS_VENDA : "contém"
     PRODUTOS ||--o{ ITENS_VENDA : "referenciado em"
     VENDAS ||--o{ RECEBIMENTOS : "gera"
+    CATEGORIAS_PRODUTO ||--o{ PRODUTOS : "classifica"
 ```
 
 ## Fluxo de Navegação
@@ -112,6 +121,7 @@ flowchart TD
     C --> C1["Produtos"]
     C --> C2["Clientes"]
     C --> C3["Usuários"]
+    C --> C4["Categorias de Produto"]
 
     E --> E1["Contas a Receber"]
 ```
@@ -215,9 +225,20 @@ classDiagram
         +calcularTotalPendente()
     }
 
+    class CategoriaProdutoService {
+        -databaseService: DatabaseService
+        +inserir(categoria)
+        +listar()
+        +buscarPorId(id)
+        +atualizar(categoria)
+        +excluir(id)
+        +categoriaExiste(nome, excluirId)
+    }
+
     UsuarioService --> DatabaseService
     ProdutoService --> DatabaseService
     ClienteService --> DatabaseService
+    CategoriaProdutoService --> DatabaseService
     VendaService --> DatabaseService
     VendaService --> ClienteService
     VendaService --> ProdutoService
@@ -232,7 +253,7 @@ classDiagram
 
 ```mermaid
 flowchart TD
-    Start["Entrar em Cadastro"] --> Menu["Escolher Usuários, Produtos ou Clientes"]
+    Start["Entrar em Cadastro"] --> Menu["Escolher Usuários, Clientes, Categorias ou Produtos"]
     Menu --> Form["Carregar Formulário e Lista de Itens"]
     Form --> Add["Inserir Dados → Clicar Salvar"]
     Add --> Valid{"Campos Válidos?"}

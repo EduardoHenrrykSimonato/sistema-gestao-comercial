@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { formatarMoeda as formatarMoedaUtil } from '../../utils/moeda.util';
 import {
   IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonIcon,
   IonItem, IonLabel, IonSelect, IonSelectOption,
@@ -226,7 +227,7 @@ export class RelatoriosPage implements OnInit {
    * Formata valores para moeda local (BRL).
    */
   formatarMoeda(valor: number): string {
-    return valor.toFixed(2).replace('.', ',');
+    return formatarMoedaUtil(valor);
   }
 }
 

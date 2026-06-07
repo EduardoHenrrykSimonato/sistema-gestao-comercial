@@ -1,0 +1,23 @@
+.description-text {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin-top: 4px;
+
+  &.empty-desc {
+    font-style: italic;
+    color: rgba(255, 255, 255, 0.35);
+  }
+}
+
+.category-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  h4 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #fff;
+  }
+}

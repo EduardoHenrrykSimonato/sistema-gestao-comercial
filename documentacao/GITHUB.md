@@ -313,7 +313,7 @@ O arquivo `.gitignore` já está configurado para ignorar:
   git commit -m "feat: validacoes de campos e cadastro de conta no login"
   git push origin main
   ```
-- **Status do Push:** Pendente
+- **Status do Push:** ✅ Realizado com sucesso
 - **Mudanças e Correções Realizadas:**
   1. Implementou validações de CPF/CNPJ (11 ou 14 dígitos), Telefone (10 ou 11 dígitos) e E-mail (regex) com máscaras reativas no cadastro de clientes.
   2. Implementou verificação de duplicidade de nome de usuário no cadastro de usuários (impede criação de login existente).
@@ -322,3 +322,25 @@ O arquivo `.gitignore` já está configurado para ignorar:
   5. Ajustou `fallbackQuery` no `DatabaseService` para suportar busca de usuário por nome.
   6. Atualizou todas as documentações Markdown (README, DIAGRAMAS, TELAS_DO_SISTEMA, COMO_EXECUTAR, REQUISITOS, HISTORICO, GITHUB).
 
+---
+
+## Etapa 9 — Categorias de Produto e Formatação em R$
+
+- **Link do Repositório:** [https://github.com/EduardoHenrrykSimonato/sistema-gestao-comercial.git](https://github.com/EduardoHenrrykSimonato/sistema-gestao-comercial.git)
+- **Branch Utilizada:** `main`
+- **Mensagem do Commit:** `feat: categorias de produto e formatacao em R$`
+- **Comandos Git Utilizados:**
+  ```bash
+  git status
+  git add .
+  git commit -m "feat: categorias de produto e formatacao em R$"
+  git push origin main
+  ```
+- **Status do Push:** ✅ Realizado com sucesso
+- **Mudanças e Correções Realizadas:**
+  1. Criou utilitário centralizado de moeda `moeda.util.ts` com funções de formatação `formatarMoeda`, `formatarMoedaCompleta` e conversão de input textual monetário `converterValorMonetario`.
+  2. Desenvolveu a entidade, repositório e serviço `CategoriaProdutoService` com suporte a SQLite e Fallback Web (Local Storage).
+  3. Criou a tela Cadastro de Categorias de Produto (`src/app/pages/cadastro/categorias-produto/`) com suporte a CRUD completo e validações (nome obrigatório e único).
+  4. Integrou a categoria ao formulário de cadastro de produtos substituindo a entrada de texto por um `<ion-select>` dinâmico e adicionando botão de gerenciar categorias.
+  5. Atualizou as telas de Vendas, Contas a Receber e Relatórios para utilizar o utilitário de formatação de moeda R$ de forma global e uniforme.
+  6. Atualizou todas as documentações em Markdown (README, DIAGRAMAS, TELAS_DO_SISTEMA, REQUISITOS, ESTRUTURA_PROJETO, BANCO_DE_DADOS, HISTORICO, GITHUB) e realizou o build final de produção sem erros/warnings.

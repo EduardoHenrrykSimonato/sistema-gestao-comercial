@@ -13,12 +13,12 @@ Aplicativo híbrido móvel e web de **Gestão Comercial** desenvolvido como ativ
 ## 👥 Autoria e Repositório
 * **Autor:** Eduardo Henrryk Simonato
 * **Repositório:** [https://github.com/EduardoHenrrykSimonato/sistema-gestao-comercial](https://github.com/EduardoHenrrykSimonato/sistema-gestao-comercial)
-* **Status do Projeto:** ✅ Concluído (Todas as Etapas 1 a 8 implementadas, testadas e revisadas)
+* **Status do Projeto:** ✅ Concluído (Todas as Etapas 1 a 9 implementadas, testadas e revisadas)
 
 ---
 
 ## 🎯 Objetivo e Descrição Geral
-O projeto consiste em um sistema comercial simplificado de **Ponto de Venda (PDV)** e controle administrativo interno. Permite que pequenos estabelecimentos gerenciem usuários internos (com cadastro de novas contas diretamente na tela de Login), controlem o estoque de produtos, mantenham cadastros de clientes (com validações de formato e máscaras de CPF/CNPJ, Telefone e E-mail), realizem vendas com múltiplos itens (com baixa de estoque em tempo real), gerenciem o fluxo financeiro de contas a receber e visualizem um painel dinâmico de relatórios e faturamento consolidado.
+O projeto consiste em um sistema comercial simplificado de **Ponto de Venda (PDV)** e controle administrativo interno. Permite que pequenos estabelecimentos gerenciem usuários internos (com cadastro de novas contas diretamente na tela de Login), controlem o estoque de produtos (com categorização e formatação de valores em R$), mantenham cadastros de clientes (com validações de formato e máscaras de CPF/CNPJ, Telefone e E-mail), realizem vendas com múltiplos itens (com baixa de estoque em tempo real), gerenciem o fluxo financeiro de contas a receber e visualizem um painel dinâmico de relatórios e faturamento consolidado.
 
 ---
 
@@ -54,6 +54,7 @@ flowchart TD
         AuthService["AuthService"]
         UsuarioService["UsuarioService"]
         ProdutoService["ProdutoService"]
+        CategoriaProdutoService["CategoriaProdutoService"]
         ClienteService["ClienteService"]
         VendaService["VendaService"]
         FinanceiroService["FinanceiroService"]
@@ -68,7 +69,7 @@ flowchart TD
     %% Relações de Apresentação com Serviços
     LoginView --> AuthService & UsuarioService
     HomeView --> AuthService
-    CadastroView --> UsuarioService & ProdutoService & ClienteService
+    CadastroView --> UsuarioService & ProdutoService & ClienteService & CategoriaProdutoService
     VendasView --> VendaService & ClienteService & ProdutoService
     FinanceiroView --> FinanceiroService
     RelatoriosView --> VendaService & FinanceiroService & ProdutoService & ClienteService
@@ -77,6 +78,7 @@ flowchart TD
     AuthService --> DatabaseService
     UsuarioService --> DatabaseService
     ProdutoService --> DatabaseService
+    CategoriaProdutoService --> DatabaseService
     ClienteService --> DatabaseService
     VendaService --> DatabaseService
     FinanceiroService --> DatabaseService
@@ -150,6 +152,12 @@ erDiagram
         text endereco
     }
 
+    CATEGORIAS_PRODUTO {
+        int id PK
+        text nome
+        text descricao
+    }
+
     PRODUTOS {
         int id PK
         text nome
@@ -188,6 +196,7 @@ erDiagram
     VENDAS ||--o{ ITENS_VENDA : "contém"
     PRODUTOS ||--o{ ITENS_VENDA : "referenciado em"
     VENDAS ||--o{ RECEBIMENTOS : "gera"
+    CATEGORIAS_PRODUTO ||--o{ PRODUTOS : "classifica"
 ```
 
 ### 3. Diagrama de Classes (Serviços e Modelos)
@@ -201,6 +210,12 @@ classDiagram
         +usuario: string
         +senha: string
         +perfil: string
+    }
+
+    class CategoriaProduto {
+        +id: number
+        +nome: string
+        +descricao: string
     }
 
     class DatabaseService {
@@ -223,6 +238,16 @@ classDiagram
         +atualizar(usuario)
         +excluir(id)
         +usuarioExiste(usuario)
+    }
+
+    class CategoriaProdutoService {
+        -databaseService: DatabaseService
+        +inserir(categoria)
+        +listar()
+        +buscarPorId(id)
+        +atualizar(categoria)
+        +excluir(id)
+        +categoriaExiste(nome, excluirId)
     }
 
     class ProdutoService {
@@ -273,6 +298,8 @@ classDiagram
 
     UsuarioService --> DatabaseService
     UsuarioService ..> Usuario : manipulates
+    CategoriaProdutoService --> DatabaseService
+    CategoriaProdutoService ..> CategoriaProduto : manipulates
     ProdutoService --> DatabaseService
     ClienteService --> DatabaseService
     VendaService --> DatabaseService
@@ -297,6 +324,7 @@ flowchart TD
     C --> C1["Produtos"]
     C --> C2["Clientes"]
     C --> C3["Usuários"]
+    C --> C4["Categorias de Produto"]
 ```
 
 ### 5. Fluxograma de Login e Criação de Conta

@@ -6,7 +6,7 @@ import {
   IonCard, IonCardContent, IonIcon, IonGrid, IonRow, IonCol
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { peopleOutline, cubeOutline, personOutline, chevronForwardOutline } from 'ionicons/icons';
+import { peopleOutline, cubeOutline, personOutline, chevronForwardOutline, pricetagsOutline } from 'ionicons/icons';
 
 interface SubMenuItem {
   title: string;
@@ -30,11 +30,11 @@ export class CadastroPage {
 
   subMenuItems: SubMenuItem[] = [
     {
-      title: 'Produtos',
-      description: 'Gerenciar produtos e estoque',
-      icon: 'cube-outline',
-      route: '/cadastro/produtos',
-      gradient: 'linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%)'
+      title: 'Usuários',
+      description: 'Gerenciar usuários do sistema',
+      icon: 'person-outline',
+      route: '/cadastro/usuarios',
+      gradient: 'linear-gradient(135deg, #e17055 0%, #fab1a0 100%)'
     },
     {
       title: 'Clientes',
@@ -44,16 +44,23 @@ export class CadastroPage {
       gradient: 'linear-gradient(135deg, #00b894 0%, #55efc4 100%)'
     },
     {
-      title: 'Usuários',
-      description: 'Gerenciar usuários do sistema',
-      icon: 'person-outline',
-      route: '/cadastro/usuarios',
-      gradient: 'linear-gradient(135deg, #e17055 0%, #fab1a0 100%)'
+      title: 'Categorias de Produto',
+      description: 'Gerenciar categorias dos produtos',
+      icon: 'pricetags-outline',
+      route: '/cadastro/categorias-produto',
+      gradient: 'linear-gradient(135deg, #fdcb6e 0%, #f39c12 100%)'
+    },
+    {
+      title: 'Produtos',
+      description: 'Gerenciar produtos e estoque',
+      icon: 'cube-outline',
+      route: '/cadastro/produtos',
+      gradient: 'linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%)'
     }
   ];
 
   constructor(private router: Router) {
-    addIcons({ peopleOutline, cubeOutline, personOutline, 'chevron-forward-outline': chevronForwardOutline });
+    addIcons({ peopleOutline, cubeOutline, personOutline, pricetagsOutline, 'chevron-forward-outline': chevronForwardOutline });
   }
 
   navigateTo(route: string) {

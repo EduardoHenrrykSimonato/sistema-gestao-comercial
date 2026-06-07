@@ -80,10 +80,10 @@ ionic capacitor run ios
 ## Possíveis Problemas
 
 ### Execução de Banco de Dados no Navegador (Desenvolvimento)
-O SQLite roda nativamente em aparelhos físicos/emuladores móveis. Para desenvolvimento web no browser (`ionic serve`), o sistema foi dotado de um **Fallback em Memória funcional**. Se a inicialização do SQLite ou do WebAssembly (`sql-wasm.wasm`) falhar no navegador (como erros de `LinkError` no Chrome), o sistema ativará automaticamente os arrays em memória. Isso elimina problemas de carregamento/linkagem de dependências Wasm e permite testar todo o CRUD do fluxo de cadastro imediatamente no navegador.
-* **Nota sobre o Login:** Para testes no navegador com `ionic serve`, o login com `admin` / `admin123` sempre funcionará por meio do fallback web.
+O SQLite roda nativamente em aparelhos físicos/emuladores móveis. Para desenvolvimento web no navegador (`ionic serve`), o sistema foi dotado de um **Fallback Web funcional baseado em LocalStorage**. Se a inicialização do SQLite ou do WebAssembly (`sql-wasm.wasm`) falhar no navegador (como erros de `LinkError` no Chrome), o sistema ativará automaticamente este fallback. Isso permite testar todos os fluxos de cadastros, vendas e relatórios de forma persistente no navegador.
+* **Nota sobre o Login:** Para testes no navegador com `ionic serve`, o login com `admin` / `admin123` (ou qualquer nova conta criada na tela de login) funcionará por meio do fallback web.
 * **Nota sobre o sql-wasm.wasm:** O arquivo `sql-wasm.wasm` deve ser servido a partir de `assets/sql-wasm.wasm`.
-* **Nota sobre os dados em memória:** Em caso de uso de fallback em memória para os testes acadêmicos, lembre-se de que os dados cadastrados em memória são perdidos ao atualizar a página (refresh) no navegador.
+* **Nota sobre a persistência:** Os dados cadastrados no fallback web são armazenados no `LocalStorage` do navegador, ou seja, permanecem persistidos mesmo que a página seja atualizada (refresh) ou recarregada.
 
 ### Erro de porta em uso
 Se a porta 8100 estiver em uso, o Ionic vai sugerir outra porta automaticamente.

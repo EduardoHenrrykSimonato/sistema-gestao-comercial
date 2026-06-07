@@ -58,7 +58,7 @@
             class="custom-select"
           >
             <ion-select-option *ngFor="let p of produtos" [value]="p.id" [disabled]="p.estoque <= 0">
-              {{ p.nome }} - R$ {{ p.preco | number:'1.2-2' }} (Estoque: {{ p.estoque }} un)
+              {{ p.nome }} - R$ {{ formatarMoeda(p.preco) }} (Estoque: {{ p.estoque }} un)
             </ion-select-option>
           </ion-select>
         </ion-item>
@@ -98,11 +98,11 @@
           <p>
             <span>Qtd: <strong>{{ item.quantidade }}</strong></span>
             <span class="divider-bullet">•</span>
-            <span>Preço: R$ {{ item.valor_unitario | number:'1.2-2' }}</span>
+            <span>Preço: R$ {{ formatarMoeda(item.valor_unitario) }}</span>
           </p>
         </div>
         <div class="cart-subtotal-actions">
-          <span class="subtotal-text">R$ {{ item.subtotal | number:'1.2-2' }}</span>
+          <span class="subtotal-text">R$ {{ formatarMoeda(item.subtotal) }}</span>
           <ion-button fill="clear" color="danger" class="remove-item-btn" (click)="removerProduto(i)">
             <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
           </ion-button>
@@ -113,7 +113,7 @@
       <div class="cart-footer">
         <div class="total-row">
           <span>Total Geral:</span>
-          <span class="total-value">R$ {{ totalVenda | number:'1.2-2' }}</span>
+          <span class="total-value">R$ {{ formatarMoeda(totalVenda) }}</span>
         </div>
         <div class="checkout-buttons">
           <ion-button fill="outline" class="clear-cart-btn" (click)="limparFormulario()">
@@ -168,7 +168,7 @@
 
         <div class="sale-total-column">
           <span class="total-label">Total</span>
-          <span class="total-amount">R$ {{ v.total | number:'1.2-2' }}</span>
+          <span class="total-amount">R$ {{ formatarMoeda(v.total) }}</span>
         </div>
       </div>
     </ion-list>

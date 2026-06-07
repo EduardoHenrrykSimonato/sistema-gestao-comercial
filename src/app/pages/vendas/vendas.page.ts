@@ -20,6 +20,7 @@ import { Venda } from '../../models/venda.model';
 import { ItemVenda } from '../../models/item-venda.model';
 import { Cliente } from '../../models/cliente.model';
 import { Produto } from '../../models/produto.model';
+import { formatarMoeda } from '../../utils/moeda.util';
 
 @Component({
   selector: 'app-vendas',
@@ -223,5 +224,12 @@ export class VendasPage implements OnInit {
     this.quantidadeSelecionada = null;
     this.itensAdicionados = [];
     this.totalVenda = 0;
+  }
+
+  /**
+   * Formata valor monetário para exibição em R$.
+   */
+  formatarMoeda(valor: number): string {
+    return formatarMoeda(valor);
   }
 }

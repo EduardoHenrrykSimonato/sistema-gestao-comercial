@@ -53,7 +53,24 @@ O sistema utiliza **SQLite** como banco de dados local e principal, acessado via
 
 ---
 
-### 3. `produtos`
+### 3. `categorias_produto`
+
+**Finalidade:** Armazena as categorias de produtos que servem para classificar e organizar os itens em estoque.
+
+| Coluna | Tipo | Restrição |
+|---|---|---|
+| id | INTEGER | PRIMARY KEY AUTOINCREMENT |
+| nome | TEXT | NOT NULL UNIQUE |
+| descricao | TEXT | — |
+
+**Regras da tabela:**
+- O `nome` é obrigatório e único (UNIQUE) para evitar duplicidades.
+- A `descricao` é opcional e serve para dar mais detalhes da categoria.
+- **Dados padrão:** Inicializa com 5 categorias padrão: `Alimentos`, `Bebidas`, `Higiene`, `Limpeza` e `Outros`.
+
+---
+
+### 4. `produtos`
 
 **Finalidade:** Armazena os itens disponíveis para venda e mantém o controle de estoque de cada um.
 
@@ -69,11 +86,11 @@ O sistema utiliza **SQLite** como banco de dados local e principal, acessado via
 - `nome`, `preco` e `estoque` são obrigatórios.
 - O preço (`preco`) deve ser maior do que zero (> 0).
 - O estoque (`estoque`) deve ser maior ou igual a zero (>= 0).
-- A categoria é de preenchimento opcional.
+- O campo `categoria` armazena o nome da categoria selecionada e refere-se a um dos registros da tabela `categorias_produto`.
 
 ---
 
-### 4. `vendas`
+### 5. `vendas`
 
 Registra as vendas realizadas.
 
@@ -87,7 +104,7 @@ Registra as vendas realizadas.
 
 ---
 
-### 5. `itens_venda`
+### 6. `itens_venda`
 
 Registra os itens de cada venda.
 
@@ -102,7 +119,7 @@ Registra os itens de cada venda.
 
 ---
 
-### 6. `recebimentos`
+### 7. `recebimentos`
 
 Registra os recebimentos (pagamentos de vendas).
 
@@ -143,13 +160,17 @@ Registra os recebimentos (pagamentos de vendas).
      `UPDATE vendas SET status = 'paga' WHERE id = ?`
 - Formas de pagamento disponíveis: Dinheiro, Cartão Crédito, Cartão Débito, PIX, Boleto, Transferência.
 
-### 7. Consultas de Relatórios
+### 7. Relacionamento entre Produto e Categoria
+- Cada produto está associado a uma categoria por meio da coluna `produtos.categoria`, que referencia o `nome` da categoria na tabela `categorias_produto` (relação 1:N). No formulário de produto, a seleção é obrigatória e feita de maneira dinâmica a partir dos registros de categorias cadastrados.
+
+### 8. Consultas de Relatórios
 O módulo de relatórios lê dados consolidados a partir de todas as principais entidades da base de dados:
 - **Produtos (`produtos`)**: Carrega dados gerais (`SELECT * FROM produtos ORDER BY nome`) para o relatório de estoque, filtrando itens com estoque baixo (`estoque <= 5`).
 - **Clientes (`clientes`)**: Lista todos os clientes cadastrados (`SELECT * FROM clientes ORDER BY nome`).
 - **Vendas (`vendas`)**: Consulta os registros de faturamento (`SELECT v.*, c.nome as cliente_nome FROM vendas v INNER JOIN clientes c ON v.cliente_id = c.id`) para alimentar os totais de vendas gerais, pagas e pendentes.
 - **Itens da Venda (`itens_venda`)**: Conta a quantidade de itens associados a cada venda para exibir no relatório analítico.
 - **Recebimentos (`recebimentos`)**: Mapeia os fluxos de caixa recebidos e pendentes (`SELECT * FROM recebimentos`) para totalizar as receitas de caixa líquidas vs. faturamento em aberto.
+- **Categorias (`categorias_produto`)**: O serviço de categoria fornece dados para validação e listagem das categorias associadas aos produtos.
 
 ## SQL de Criação
 

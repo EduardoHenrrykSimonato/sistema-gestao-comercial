@@ -19,6 +19,7 @@ sistema-gestao-comercial/
 │   │   ├── models/                  # Interfaces/modelos de dados
 │   │   │   ├── usuario.model.ts
 │   │   │   ├── produto.model.ts
+│   │   │   ├── categoria-produto.model.ts
 │   │   │   ├── cliente.model.ts
 │   │   │   ├── venda.model.ts
 │   │   │   ├── item-venda.model.ts
@@ -28,15 +29,19 @@ sistema-gestao-comercial/
 │   │   │   ├── auth.service.ts
 │   │   │   ├── usuario.service.ts
 │   │   │   ├── produto.service.ts
+│   │   │   ├── categoria-produto.service.ts
 │   │   │   ├── cliente.service.ts
 │   │   │   ├── venda.service.ts
 │   │   │   └── financeiro.service.ts
+│   │   ├── utils/                   # Classes utilitárias compartilhadas
+│   │   │   └── moeda.util.ts
 │   │   ├── pages/                   # Páginas do aplicativo
 │   │   │   ├── login/
 │   │   │   ├── home/
 │   │   │   ├── cadastro/
 │   │   │   │   ├── usuarios/
 │   │   │   │   ├── produtos/
+│   │   │   │   ├── categorias-produto/
 │   │   │   │   └── clientes/
 │   │   │   ├── vendas/
 │   │   │   ├── financeiro/
@@ -69,10 +74,15 @@ Classes responsáveis pela lógica de negócio e acesso ao banco de dados.
 | `DatabaseService` | Inicialização do SQLite, criação de tabelas, métodos de acesso (com fallback de emulação em LocalStorage para navegadores) |
 | `AuthService` | Autenticação (login/logout) e controle de sessão |
 | `UsuarioService` | Lógica de CRUD para usuários vinculada ao banco |
-| `ProdutoService` | Lógica de CRUD para produtos e controle de quantidade de estoque |
+| `CategoriaProdutoService` | Lógica de CRUD para categorias de produto, incluindo validação de duplicidade de nomes |
+| `ProdutoService` | Lógica de CRUD para produtos, controle de quantidade de estoque e associação com categorias |
 | `ClienteService` | Lógica de CRUD para clientes vinculada ao banco |
 | `VendaService` | Lógica de CRUD para vendas, redução de estoque e consultas consolidadas/filtradas para relatórios |
 | `FinanceiroService` | Lógica de CRUD para recebimentos de vendas e totalizadores/métricas financeiras para relatórios |
+
+### Utils (`src/app/utils/`)
+Classes e arquivos utilitários globais:
+- `moeda.util.ts` — Centraliza a formatação monetária (Real Brasileiro - R$) e conversão de entrada textual para número decimal (`parseFloat` com tratamento de vírgula).
 
 ### Pages (`src/app/pages/`)
 Cada pasta contém 3 arquivos por página:

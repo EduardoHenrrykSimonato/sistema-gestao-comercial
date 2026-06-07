@@ -589,6 +589,7 @@ O projeto está 100% concluído, polido, compilável, testável no navegador (vi
 | 6 | Revisão Final e Preparação para Entrega | ✅ Concluída |
 | 7 | Revisão Técnica Final, README Profissional e Validação do Banco | ✅ Concluída |
 | 8 | Validações de Campos e Cadastro de Conta no Login | ✅ Concluída |
+| 9 | Categorias de Produto e Formatação em R$ | ✅ Concluída |
 
 ---
 
@@ -669,4 +670,64 @@ O projeto está 100% concluído, polido, compilável, testável no navegador (vi
 ✅ Prevenção de duplicidade ativa nas duas telas.
 ✅ Build final de produção concluído com sucesso e zero erros/warnings.
 
+---
 
+## Etapa 9 — Categorias de Produto e Formatação em R$
+
+**Data:** 07/06/2026
+
+### Prompt Utilizado nesta Etapa
+> [USER_REQUEST]
+> Vamos iniciar a Etapa 9 do projeto sistema-gestao-comercial.
+> Nesta etapa, implemente melhorias no cadastro de produtos:
+> 1. Validação de valor em R$.
+> 2. Máscara/formatação de preço em preço brasileiro R$ 0,00.
+> 3. Cadastro de categorias de produtos.
+> 4. Uso da categoria cadastrada no formulário de produtos.
+> 5. Atualização do README, documentações Markdown e GitHub.
+
+### O que foi implementado
+1. **Utilitário de Moeda centralizado** (`moeda.util.ts`):
+   - Criada a função `formatarMoeda()` usando `Intl.NumberFormat` para moeda brasileira.
+   - Criada a função `formatarMoedaCompleta()` para formatar com o símbolo `R$`.
+   - Criada a função `converterValorMonetario()` para converter inputs brasileiros com vírgula e símbolo de R$ para número.
+2. **Model e Service de Categorias**:
+   - `categoria-produto.model.ts` e `categoria-produto.service.ts` criados.
+   - Integração com SQLite e Fallback Web em LocalStorage (tabela `categorias_produto`).
+   - Sementes (seeds) padrão criados: Alimentos, Bebidas, Higiene, Limpeza, Outros.
+3. **Tela de Categorias** (`categorias-produto.page.ts` / `.html` / `.scss`):
+   - Desenvolvida tela com CRUD completo de categorias de produtos, incluindo validações de nome obrigatório e verificação de duplicidade de categorias.
+4. **Cadastro de Produtos Atualizado**:
+   - Campo categoria alterado de `<ion-input>` para `<ion-select>` dinâmico, buscando dados do `CategoriaProdutoService`.
+   - Validação de categoria obrigatória e de preço numérico no salvamento.
+   - Utilização do conversor monetário para aceitar valores com vírgula (ex: `"10,50"`) e do formatador para a tabela de produtos.
+5. **Formatação Monetária Global**:
+   - Substituição de formatações locais de moedas por imports e chamadas a `formatarMoeda()` em: `VendasPage`, `ReceberPage` e `RelatoriosPage`.
+6. **Rotas e Menu**:
+   - Adicionada rota de categorias de produto em `app.routes.ts`.
+   - Incluído card no submenu de Cadastros e reordenada a disposição: Usuários -> Clientes -> Categorias de Produto -> Produtos.
+
+### Arquivos criados / alterados
+- [moeda.util.ts](file:///c:/Projetos/sistema-gestao-comercial/src/app/utils/moeda.util.ts) [NEW]
+- [categoria-produto.model.ts](file:///c:/Projetos/sistema-gestao-comercial/src/app/models/categoria-produto.model.ts) [NEW]
+- [categoria-produto.service.ts](file:///c:/Projetos/sistema-gestao-comercial/src/app/services/categoria-produto.service.ts) [NEW]
+- [categorias-produto.page.ts](file:///c:/Projetos/sistema-gestao-comercial/src/app/pages/cadastro/categorias-produto/categorias-produto.page.ts) [NEW]
+- [categorias-produto.page.html](file:///c:/Projetos/sistema-gestao-comercial/src/app/pages/cadastro/categorias-produto/categorias-produto.page.html) [NEW]
+- [categorias-produto.page.scss](file:///c:/Projetos/sistema-gestao-comercial/src/app/pages/cadastro/categorias-produto/categorias-produto.page.scss) [NEW]
+- [database.service.ts](file:///c:/Projetos/sistema-gestao-comercial/src/app/services/database.service.ts)
+- [produtos.page.ts](file:///c:/Projetos/sistema-gestao-comercial/src/app/pages/cadastro/produtos/produtos.page.ts)
+- [produtos.page.html](file:///c:/Projetos/sistema-gestao-comercial/src/app/pages/cadastro/produtos/produtos.page.html)
+- [cadastro.page.ts](file:///c:/Projetos/sistema-gestao-comercial/src/app/pages/cadastro/cadastro.page.ts)
+- [app.routes.ts](file:///c:/Projetos/sistema-gestao-comercial/src/app/app.routes.ts)
+- [vendas.page.ts](file:///c:/Projetos/sistema-gestao-comercial/src/app/pages/vendas/vendas.page.ts)
+- [vendas.page.html](file:///c:/Projetos/sistema-gestao-comercial/src/app/pages/vendas/vendas.page.html)
+- [receber.page.ts](file:///c:/Projetos/sistema-gestao-comercial/src/app/pages/financeiro/receber/receber.page.ts)
+- [receber.page.html](file:///c:/Projetos/sistema-gestao-comercial/src/app/pages/financeiro/receber/receber.page.html)
+- [relatorios.page.ts](file:///c:/Projetos/sistema-gestao-comercial/src/app/pages/relatorios/relatorios.page.ts)
+- Todos os arquivos da pasta `documentacao/`
+- `README.md` principal
+
+### Resultado final
+✅ Categorias de produto integradas dinamicamente com os produtos.
+✅ Formatação e validação monetária centralizada no padrão brasileiro (R$) em todo o sistema.
+✅ Build final de produção concluído com sucesso e zero erros/warnings.

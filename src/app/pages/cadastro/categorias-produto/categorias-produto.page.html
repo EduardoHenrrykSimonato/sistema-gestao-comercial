@@ -1,0 +1,84 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/cadastro" text="" color="light"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Categorias de Produto</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="page-content">
+  <div class="page-header">
+    <h2>Gerenciar Categorias</h2>
+    <p>Cadastre, edite e organize as categorias dos seus produtos</p>
+  </div>
+
+  <!-- Formulário -->
+  <ion-card class="custom-card">
+    <ion-card-content>
+      <div class="form-title">
+        <ion-icon [name]="categoria.id ? 'pencil-outline' : 'pricetags-outline'"></ion-icon>
+        <h3>{{ categoria.id ? 'Editar Categoria' : 'Nova Categoria' }}</h3>
+      </div>
+
+      <div class="input-group">
+        <ion-item lines="none" class="custom-input">
+          <ion-input
+            type="text"
+            placeholder="Nome da Categoria"
+            [(ngModel)]="categoria.nome"
+          ></ion-input>
+        </ion-item>
+
+        <ion-item lines="none" class="custom-input">
+          <ion-textarea
+            placeholder="Descrição (opcional)"
+            [(ngModel)]="categoria.descricao"
+            rows="2"
+          ></ion-textarea>
+        </ion-item>
+      </div>
+
+      <div class="form-buttons">
+        <ion-button fill="outline" class="clear-btn" (click)="limparFormulario()">
+          <ion-icon name="close-circle-outline" slot="start"></ion-icon>
+          Limpar
+        </ion-button>
+        <ion-button class="save-btn" (click)="salvarCategoria()">
+          <ion-icon name="save-outline" slot="start"></ion-icon>
+          {{ categoria.id ? 'Atualizar' : 'Salvar' }}
+        </ion-button>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Lista -->
+  <div class="list-section">
+    <h3>Categorias Cadastradas</h3>
+
+    <div *ngIf="categorias.length === 0" class="empty-list">
+      <ion-icon name="pricetags-outline"></ion-icon>
+      <p>Nenhuma categoria cadastrada.</p>
+    </div>
+
+    <ion-list lines="none" class="custom-list" *ngIf="categorias.length > 0">
+      <div class="list-item-card" *ngFor="let cat of categorias">
+        <div class="item-info">
+          <div class="category-title-row">
+            <h4>{{ cat.nome }}</h4>
+          </div>
+          <p *ngIf="cat.descricao" class="description-text">{{ cat.descricao }}</p>
+          <p *ngIf="!cat.descricao" class="description-text empty-desc">Sem descrição</p>
+        </div>
+        <div class="item-actions">
+          <ion-button fill="clear" color="primary" class="action-btn" (click)="editarCategoria(cat)">
+            <ion-icon name="pencil-outline" slot="icon-only"></ion-icon>
+          </ion-button>
+          <ion-button fill="clear" color="danger" class="action-btn" (click)="excluirCategoria(cat.id)">
+            <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+          </ion-button>
+        </div>
+      </div>
+    </ion-list>
+  </div>
+</ion-content>

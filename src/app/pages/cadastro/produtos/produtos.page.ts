@@ -1,18 +1,23 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import {
   IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonIcon,
-  IonCard, IonCardContent, IonItem, IonInput, IonButton,
+  IonCard, IonCardContent, IonItem, IonInput, IonButton, IonSelect, IonSelectOption,
   IonList
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
   trashOutline, pencilOutline, saveOutline, closeCircleOutline,
-  cubeOutline, pricetagOutline, alertCircleOutline
+  cubeOutline, pricetagOutline, alertCircleOutline, pricetagsOutline,
+  settingsOutline
 } from 'ionicons/icons';
 import { ProdutoService } from '../../../services/produto.service';
+import { CategoriaProdutoService } from '../../../services/categoria-produto.service';
 import { Produto } from '../../../models/produto.model';
+import { CategoriaProduto } from '../../../models/categoria-produto.model';
+import { formatarMoeda, converterValorMonetario } from '../../../utils/moeda.util';
 
 @Component({
   selector: 'app-produtos',
@@ -21,7 +26,7 @@ import { Produto } from '../../../models/produto.model';
   imports: [
     CommonModule, FormsModule,
     IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonIcon,
-    IonCard, IonCardContent, IonItem, IonInput, IonButton,
+    IonCard, IonCardContent, IonItem, IonInput, IonButton, IonSelect, IonSelectOption,
     IonList
   ]
 })
@@ -29,6 +34,7 @@ export class ProdutosPage implements OnInit {
 
   // List
   produtos: Produto[] = [];
+  categorias: CategoriaProduto[] = [];
 
   // Current product object
   produto: any = {
@@ -39,15 +45,34 @@ export class ProdutosPage implements OnInit {
     estoque: ''
   };
 
-  constructor(private produtoService: ProdutoService) {
+  constructor(
+    private produtoService: ProdutoService,
+    private categoriaProdutoService: CategoriaProdutoService,
+    private router: Router
+  ) {
     addIcons({
       trashOutline, pencilOutline, saveOutline, closeCircleOutline,
-      cubeOutline, pricetagOutline, alertCircleOutline
+      cubeOutline, pricetagOutline, alertCircleOutline, pricetagsOutline,
+      settingsOutline
     });
   }
 
   ngOnInit() {
-    this.carregarProdutos();
+    this.carregarDados();
+  }
+
+  async carregarDados() {
+    await this.carregarCategorias();
+    await this.carregarProdutos();
+  }
+
+  async carregarCategorias() {
+    try {
+      this.categorias = await this.categoriaProdutoService.listar();
+      console.log('Categorias carregadas:', this.categorias);
+    } catch (error) {
+      console.error('Erro ao carregar categorias:', error);
+    }
   }
 
   async carregarProdutos() {
@@ -66,7 +91,14 @@ export class ProdutosPage implements OnInit {
       return;
     }
 
-    if (this.produto.preco === null || this.produto.preco === undefined || this.produto.preco === '' || Number(this.produto.preco) <= 0) {
+    if (!this.produto.categoria || this.produto.categoria.trim() === '') {
+      alert('Selecione uma categoria.');
+      return;
+    }
+
+    // Converter e validar preço
+    const precoConvertido = converterValorMonetario(this.produto.preco);
+    if (precoConvertido <= 0) {
       alert('Informe um preço válido.');
       return;
     }
@@ -83,8 +115,8 @@ export class ProdutosPage implements OnInit {
       const produtoSalvar: Produto = {
         id: this.produto.id,
         nome: this.produto.nome.trim(),
-        categoria: this.produto.categoria ? this.produto.categoria.trim() : '',
-        preco: Number(this.produto.preco),
+        categoria: this.produto.categoria.trim(),
+        preco: precoConvertido,
         estoque: Number(this.produto.estoque)
       };
 
@@ -125,12 +157,12 @@ export class ProdutosPage implements OnInit {
     try {
       await this.produtoService.excluir(id);
       alert('Produto excluído com sucesso!');
-      
+
       // Se estiver editando o produto excluído, limpa o form
       if (this.produto.id === id) {
         this.limparFormulario();
       }
-      
+
       await this.carregarProdutos();
     } catch (error) {
       console.error('Erro ao excluir produto:', error);
@@ -146,5 +178,19 @@ export class ProdutosPage implements OnInit {
       preco: '',
       estoque: ''
     };
+  }
+
+  /**
+   * Formata valor numérico para exibição em moeda brasileira.
+   */
+  formatarMoeda(valor: number): string {
+    return formatarMoeda(valor);
+  }
+
+  /**
+   * Navega para a tela de gerenciamento de categorias.
+   */
+  irParaCategorias() {
+    this.router.navigateByUrl('/cadastro/categorias-produto');
   }
 }
