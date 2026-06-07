@@ -95,6 +95,13 @@ Abaixo está o checklist de entrega atestando a conclusão e conformidade dos re
 - [x] Documentação Markdown
 - [x] GitHub
 - [x] Revisão Técnica e README Profissional (Etapa 7)
+- [x] Validar CPF/CNPJ no cadastro de clientes (Etapa 8)
+- [x] Validar telefone no cadastro de clientes (Etapa 8)
+- [x] Validar e-mail no cadastro de clientes (Etapa 8)
+- [x] Permitir criação de nova conta pela tela de Login (Etapa 8)
+- [x] Impedir cadastro de usuário duplicado (Etapa 8)
+- [x] Permitir login com usuário criado (Etapa 8)
+
 
 
 

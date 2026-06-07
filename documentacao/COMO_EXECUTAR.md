@@ -38,7 +38,9 @@ O aplicativo será aberto automaticamente em `http://localhost:8100`.
 | Usuário | admin |
 | Senha | admin123 |
 
----
+### 5. Criando uma nova conta
+
+Na tela de login, clique em **"Criar nova conta"**. Preencha os campos obrigatórios (Nome Completo, Usuário, Senha, Confirmar Senha e Perfil) e clique em **"Cadastrar Conta"**. Após a criação, utilize o login e senha informados para acessar o sistema.
 
 ## Executar em Dispositivo Móvel
 

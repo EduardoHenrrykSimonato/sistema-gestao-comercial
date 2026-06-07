@@ -132,3 +132,54 @@
     color: rgba(255, 255, 255, 0.7);
   }
 }
+
+.toggle-container {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.toggle-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: #e94560;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  margin: 0;
+  transition: color 0.2s ease, opacity 0.2s ease;
+
+  &:hover {
+    color: #ff6b6b;
+    text-decoration: underline;
+  }
+
+  &:active {
+    opacity: 0.8;
+  }
+
+  ion-icon {
+    font-size: 16px;
+  }
+}
+
+.signup-btn {
+  --background: linear-gradient(135deg, #16213e 0%, #0f3460 100%);
+  --box-shadow: 0 4px 16px rgba(15, 52, 96, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.custom-select-item {
+  --min-height: 52px;
+  padding: 0;
+}
+
+.custom-select {
+  --placeholder-color: rgba(255, 255, 255, 0.4);
+  --placeholder-opacity: 1;
+  color: #ffffff;
+  font-size: 15px;
+  width: 100%;
+}
+

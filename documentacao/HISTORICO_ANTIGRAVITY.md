@@ -588,6 +588,7 @@ O projeto está 100% concluído, polido, compilável, testável no navegador (vi
 | 5 | Implementar Relatórios | ✅ Concluída |
 | 6 | Revisão Final e Preparação para Entrega | ✅ Concluída |
 | 7 | Revisão Técnica Final, README Profissional e Validação do Banco | ✅ Concluída |
+| 8 | Validações de Campos e Cadastro de Conta no Login | ✅ Concluída |
 
 ---
 
@@ -609,4 +610,63 @@ O projeto está 100% concluído, polido, compilável, testável no navegador (vi
    - `GITHUB.md` atualizado para registrar as operações de commit e push finais da Etapa 7.
    - `HISTORICO_ANTIGRAVITY.md` atualizado com o registro detalhado da Etapa 7.
 4. **Build de Produção**: O build foi executado com sucesso e zero erros/warnings.
+
+---
+
+## Etapa 8 — Validações de Campos e Cadastro de Conta no Login
+
+**Data:** 06/06/2026
+
+### Prompt Utilizado nesta Etapa
+> [USER_REQUEST]
+> Vamos iniciar a Etapa 8 do projeto sistema-gestao-comercial.
+> Nesta etapa, implemente melhorias de validação de campos e cadastro inicial de usuário pela tela de Login...
+
+### O que foi solicitado
+- **Validação de CPF/CNPJ**: Limpeza de pontuações, exigência de 11 (CPF) ou 14 (CNPJ) dígitos e máscara simples (`000.000.000-00` / `00.000.000/0000-00`). O campo é facultativo (salva se vazio).
+- **Validação de Telefone**: Limpeza de caracteres, exigência de 10 ou 11 dígitos, suporte a formatos padrão e máscara simples. Campo facultativo.
+- **Validação de E-mail**: Validação de formato via Regex simples (`texto@dominio.com`). Campo facultativo.
+- **Cadastro de Conta no Login**: Adicionar link/botão para alternar formulário entre Login e Cadastro na tela de Login. Validar Nome, Login, Senhas idênticas e Perfil do Usuário, além de impedir logins duplicados.
+- **Banco de Dados & Fallback Web**: Garantir que as contas registradas no fallback web persistam no localStorage (tabela `usuarios`) permitindo o login normalmente enquanto a sessão estiver ativa, sem quebrar o usuário padrão `admin`/`admin123` ou travar o SQLite.
+- **Atualização da Documentação & Build**: Atualizar toda a pasta `documentacao/` e README, compilar sem avisos e fazer push no GitHub.
+
+### O que foi implementado
+1. **Validação de Clientes**:
+   - Desenvolvidos métodos `formatarCpfCnpj` e `formatarTelefone` na [clientes.page.ts](file:///c:/Projetos/sistema-gestao-comercial/src/app/pages/cadastro/clientes/clientes.page.ts) e vinculados ao evento `(ionInput)` na template [clientes.page.html](file:///c:/Projetos/sistema-gestao-comercial/src/app/pages/cadastro/clientes/clientes.page.html).
+   - Implementadas as verificações de tamanho de dígitos limpos na função `onSalvar()` e validação básica do e-mail por regex.
+2. **Cadastro e Alternância no Login**:
+   - Refatorada a [login.page.ts](file:///c:/Projetos/sistema-gestao-comercial/src/app/pages/login/login.page.ts) adicionando `modoLogin`, os novos campos e a função `onCriarConta()`.
+   - Adicionado no formulário de login o link para "Criar nova conta" e no de cadastro "Já tenho conta / Voltar".
+   - Integrado o `UsuarioService` para realizar a inserção no banco de dados SQLite (ou fallback de localStorage).
+3. **Prevenção de Usuários Duplicados**:
+   - Adicionada verificação de login duplicado na tela de login (`onCriarConta()`) e na tela de gerenciamento de usuários ([usuarios.page.ts](file:///c:/Projetos/sistema-gestao-comercial/src/app/pages/cadastro/usuarios/usuarios.page.ts)), exibindo `alert('Usuário já cadastrado.')` em caso de conflito.
+4. **Sincronização no Fallback Web**:
+   - Ajustada a `fallbackQuery` no [database.service.ts](file:///c:/Projetos/sistema-gestao-comercial/src/app/services/database.service.ts) para suportar a busca por login (`usuario = ?`).
+   - Refatorada a [usuario.service.ts](file:///c:/Projetos/sistema-gestao-comercial/src/app/services/usuario.service.ts) para gravar e carregar do `DatabaseService` (localStorage) mantendo as alterações persistentes para sessões de login no browser.
+
+### Arquivos alterados
+- `src/app/services/database.service.ts`
+- `src/app/services/usuario.service.ts`
+- `src/app/pages/cadastro/clientes/clientes.page.ts`
+- `src/app/pages/cadastro/clientes/clientes.page.html`
+- `src/app/pages/cadastro/usuarios/usuarios.page.ts`
+- `src/app/pages/login/login.page.ts`
+- `src/app/pages/login/login.page.html`
+- `src/app/pages/login/login.page.scss`
+- `README.md`
+- Todos os arquivos da pasta `documentacao/`
+
+### Testes realizados
+- **Validação de CPF/CNPJ**: Ao salvar cliente com CPF menor do que 11 dígitos (ex: "123"), exibiu `alert("CPF/CNPJ inválido.")` e bloqueou. Ao salvar com 11 dígitos válidos ("12345678901"), salvou com a máscara `123.456.789-01`.
+- **Validação de Telefone**: Ao salvar com telefone menor do que 10 dígitos (ex: "123"), exibiu `alert("Telefone inválido.")` e bloqueou. Ao salvar com telefone de 11 dígitos, aplicou a máscara `(19) 99999-9999` e salvou com sucesso.
+- **Validação de E-mail**: Ao salvar com e-mail inválido (ex: "teste@teste"), exibiu `alert("E-mail inválido.")`. Ao salvar com e-mail válido ("teste@teste.com"), salvou com sucesso.
+- **Criação de Conta & Login**: Alternado para modo cadastro, tentou cadastrar em branco e exibiu alertas. Cadastrado usuário `teste` com senha `123` e perfil `Vendedor`. Exibiu o alerta de sucesso e retornou para o login. Foi realizado login com `teste`/`123` com sucesso, acessando a Home.
+- **Duplicidade**: Tentado criar novo usuário com login `teste` e exibiu `alert("Usuário já cadastrado.")`.
+
+### Resultado final
+✅ Validações de campos de cliente funcionando com máscaras visuais.
+✅ Criação de conta no login funcionando perfeitamente tanto em SQLite quanto no Fallback Web.
+✅ Prevenção de duplicidade ativa nas duas telas.
+✅ Build final de produção concluído com sucesso e zero erros/warnings.
+
 

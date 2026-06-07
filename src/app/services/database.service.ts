@@ -314,6 +314,9 @@ export class DatabaseService {
       if (normalizedSql.includes('usuario = ? and senha = ?')) {
         return list.filter(u => u.usuario === params[0] && u.senha === params[1]);
       }
+      if (normalizedSql.includes('usuario = ?')) {
+        return list.filter(u => u.usuario === params[0]);
+      }
       if (normalizedSql.includes('id = ?')) {
         return list.filter(u => u.id === Number(params[0]));
       }

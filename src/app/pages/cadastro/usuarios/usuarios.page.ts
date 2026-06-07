@@ -77,6 +77,17 @@ export class UsuariosPage implements OnInit {
       return;
     }
 
+    // Check duplication
+    const todos = await this.usuarioService.listar();
+    const duplicado = todos.some(
+      u => u.usuario.toLowerCase() === this.usuario.trim().toLowerCase() && u.id !== this.usuarioIdParaEditar
+    );
+
+    if (duplicado) {
+      alert('Usuário já cadastrado.');
+      return;
+    }
+
     const usuarioDados: Usuario = {
       nome: this.nome.trim(),
       usuario: this.usuario.trim(),

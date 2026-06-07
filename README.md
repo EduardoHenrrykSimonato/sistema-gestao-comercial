@@ -13,12 +13,12 @@ Aplicativo híbrido móvel e web de **Gestão Comercial** desenvolvido como ativ
 ## 👥 Autoria e Repositório
 * **Autor:** Eduardo Henrryk Simonato
 * **Repositório:** [https://github.com/EduardoHenrrykSimonato/sistema-gestao-comercial](https://github.com/EduardoHenrrykSimonato/sistema-gestao-comercial)
-* **Status do Projeto:** ✅ Concluído (Todas as Etapas 1 a 7 implementadas, testadas e revisadas)
+* **Status do Projeto:** ✅ Concluído (Todas as Etapas 1 a 8 implementadas, testadas e revisadas)
 
 ---
 
 ## 🎯 Objetivo e Descrição Geral
-O projeto consiste em um sistema comercial simplificado de **Ponto de Venda (PDV)** e controle administrativo interno. Permite que pequenos estabelecimentos gerenciem usuários internos (com diferentes perfis de acesso), controlem o estoque de produtos, mantenham cadastros de clientes, realizem vendas com múltiplos itens (com baixa de estoque em tempo real), gerenciem o fluxo financeiro de contas a receber e visualizem um painel dinâmico de relatórios e métricas.
+O projeto consiste em um sistema comercial simplificado de **Ponto de Venda (PDV)** e controle administrativo interno. Permite que pequenos estabelecimentos gerenciem usuários internos (com cadastro de novas contas diretamente na tela de Login), controlem o estoque de produtos, mantenham cadastros de clientes (com validações de formato e máscaras de CPF/CNPJ, Telefone e E-mail), realizem vendas com múltiplos itens (com baixa de estoque em tempo real), gerenciem o fluxo financeiro de contas a receber e visualizem um painel dinâmico de relatórios e faturamento consolidado.
 
 ---
 
@@ -66,7 +66,7 @@ flowchart TD
     end
 
     %% Relações de Apresentação com Serviços
-    LoginView --> AuthService
+    LoginView --> AuthService & UsuarioService
     HomeView --> AuthService
     CadastroView --> UsuarioService & ProdutoService & ClienteService
     VendasView --> VendaService & ClienteService & ProdutoService
@@ -91,17 +91,19 @@ flowchart TD
 ## 📊 Diagramas do Sistema
 
 ### 1. Diagrama de Casos de Uso
-Define os atores e o escopo de suas respectivas interações dentro do sistema de gestão comercial.
+Define os atores (incluindo Visitante antes da autenticação) e o escopo de suas respectivas interações.
 
 ```mermaid
 flowchart LR
     subgraph Atores
+        Visitante["👤 Visitante"]
         Admin["👤 Administrador"]
         Op["👤 Operador"]
     end
 
     subgraph Sistema ["Gestão Comercial"]
         UC_Login(("Login"))
+        UC_CriarConta(("Criar nova conta"))
         UC_CadUsu(("Cadastrar Usuários"))
         UC_CadProd(("Cadastrar Produtos"))
         UC_CadCli(("Cadastrar Clientes"))
@@ -109,6 +111,9 @@ flowchart LR
         UC_Receber(("Controlar Recebimentos"))
         UC_Relat(("Consultar Relatórios"))
     end
+
+    Visitante --> UC_Login
+    Visitante --> UC_CriarConta
 
     Admin --> UC_Login
     Admin --> UC_CadUsu
@@ -185,11 +190,19 @@ erDiagram
     VENDAS ||--o{ RECEBIMENTOS : "gera"
 ```
 
-### 3. Diagrama de Classes (Serviços e Dependências)
-Estrutura de métodos e atributos expostos pelas classes de serviços principais.
+### 3. Diagrama de Classes (Serviços e Modelos)
+Estrutura de modelos, atributos e dependências expostas pelas classes.
 
 ```mermaid
 classDiagram
+    class Usuario {
+        +id: number
+        +nome: string
+        +usuario: string
+        +senha: string
+        +perfil: string
+    }
+
     class DatabaseService {
         +sqlite: SQLiteConnection
         +db: SQLiteDBConnection
@@ -209,6 +222,7 @@ classDiagram
         +inserir(usuario)
         +atualizar(usuario)
         +excluir(id)
+        +usuarioExiste(usuario)
     }
 
     class ProdutoService {
@@ -258,6 +272,7 @@ classDiagram
     }
 
     UsuarioService --> DatabaseService
+    UsuarioService ..> Usuario : manipulates
     ProdutoService --> DatabaseService
     ClienteService --> DatabaseService
     VendaService --> DatabaseService
@@ -284,7 +299,25 @@ flowchart TD
     C --> C3["Usuários"]
 ```
 
-### 5. Fluxo de Negócio — Registro de Vendas e Estoque
+### 5. Fluxograma de Login e Criação de Conta
+Fluxo de negócio para acesso ao sistema e criação de nova conta diretamente na tela de Login.
+
+```mermaid
+flowchart TD
+    Start["Entrar no App"] --> Login["Tela de Login"]
+    Login --> |"Clicar em Criar conta"| FormCad["Alternar Modo: Form de Cadastro"]
+    FormCad --> |"Preencher Nome/Login/Senha/Perfil"| ValidCad{"Validar Campos e Duplicidade"}
+    ValidCad -- "Vazio ou Inválido" --> AlertCadErr["alert() de Erro"] --> FormCad
+    ValidCad -- "Usuário Já Existe" --> AlertDup["alert('Usuário já cadastrado.')"] --> FormCad
+    ValidCad -- "Sucesso" --> InsertCad["INSERT usuarios (SQLite/Fallback)"]
+    InsertCad --> AlertSucCad["alert('Conta criada com sucesso.')"]
+    AlertSucCad --> ClearCad["Limpar Campos & Voltar para Login"] --> Login
+    Login --> |"Inserir Login/Senha"| Authenticate{"Autenticar com o Banco"}
+    Authenticate -- "Inválido" --> AlertErrLogin["alert('Usuário ou senha inválidos.')"] --> Login
+    Authenticate -- "Sucesso" --> Home["Entrar na Home"]
+```
+
+### 6. Fluxo de Negócio — Registro de Vendas e Estoque
 Processamento reativo desde a montagem do carrinho de compras até a baixa automática de estoque.
 
 ```mermaid
@@ -305,14 +338,13 @@ flowchart TD
     AlertSuc --> Clear["Limpar Carrinho e Atualizar View"]
 ```
 
-### 6. Fluxo de Negócio — Confirmação Financeira (Receber)
+### 7. Fluxo de Negócio — Confirmação Financeira (Receber)
 Processo de liquidação de contas a receber e alteração de status da transação de forma coordenada.
 
 ```mermaid
 flowchart TD
     Fin["Entrar em Financeiro"] --> Receber["Listar Recebimentos Pendentes"]
-    Receber --> SelRec["Registrar Pagamento"]
-    SelRec --> FormPag["Exibir Formulário Inline"]
+    Receber --> |"Registrar Pagamento"| FormPag["Exibir Formulário Inline"]
     FormPag --> InfForma["Selecionar Forma de Pagamento"]
     InfForma --> InfData["Selecionar Data de Recebimento"]
     InfData --> ConfPag["Confirmar Pagamento"]
@@ -322,7 +354,7 @@ flowchart TD
     AlertSuc --> Reload["Recarregar abas Pendentes e Recebidos"]
 ```
 
-### 7. Fluxo de Negócio — Painel de Relatórios
+### 8. Fluxo de Negócio — Painel de Relatórios
 Coleta de faturamento, estoque baixo e relatórios operacionais consolidados.
 
 ```mermaid
@@ -343,7 +375,7 @@ flowchart TD
 
 O banco oficial de persistência local chama-se **`gestao_comercial_db`**. Ele é composto por 6 tabelas principais:
 
-1. **`usuarios`**: Contém registros cadastrais dos operadores e administradores do sistema.
+1. **`usuarios`**: Contém registros cadastrais dos operadores e administradores do sistema. (Impede usuários duplicados por meio da restrição `UNIQUE` na coluna `usuario`).
 2. **`clientes`**: Armazena informações dos clientes para faturamento das vendas.
 3. **`produtos`**: Registra itens em estoque, preço unitário e categoria.
 4. **`vendas`**: Cabeçalho de vendas, registrando data, total e status.
@@ -385,3 +417,5 @@ Para realizar o login inicial e testar as funcionalidades do sistema:
 
 * **Usuário:** `admin`
 * **Senha:** `admin123`
+
+*Você também pode criar contas personalizadas na própria tela de Login clicando no link "Criar nova conta".*

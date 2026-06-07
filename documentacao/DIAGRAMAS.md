@@ -5,12 +5,14 @@
 ```mermaid
 flowchart LR
     subgraph Atores
+        Visitante["👤 Visitante"]
         Admin["👤 Administrador"]
         Op["👤 Operador"]
     end
 
     subgraph Sistema ["Gestão Comercial"]
         UC_Login(("Login"))
+        UC_CriarConta(("Criar nova conta"))
         UC_CadUsu(("Cadastrar Usuários"))
         UC_CadProd(("Cadastrar Produtos"))
         UC_CadCli(("Cadastrar Clientes"))
@@ -18,6 +20,9 @@ flowchart LR
         UC_Receber(("Controlar Recebimentos"))
         UC_Relat(("Consultar Relatórios"))
     end
+
+    Visitante --> UC_Login
+    Visitante --> UC_CriarConta
 
     Admin --> UC_Login
     Admin --> UC_CadUsu
@@ -285,3 +290,23 @@ flowchart TD
     Query --> ShowData["Exibir Informações"]
     ShowData --> Filter["Aplicar Filtros (Busca / Status)"] --> ShowData
 ```
+
+---
+
+## Fluxo de Login e Criação de Conta
+
+```mermaid
+flowchart TD
+    Start["Entrar no App"] --> Login["Tela de Login"]
+    Login --> |"Clicar em Criar conta"| FormCad["Alternar Modo: Form de Cadastro"]
+    FormCad --> |"Preencher Nome/Login/Senha/Perfil"| ValidCad{"Validar Campos e Duplicidade"}
+    ValidCad -- "Vazio ou Inválido" --> AlertCadErr["alert de Erro"] --> FormCad
+    ValidCad -- "Usuário Já Existe" --> AlertDup["alert: Usuário já cadastrado"] --> FormCad
+    ValidCad -- "Sucesso" --> InsertCad["INSERT usuarios (SQLite/Fallback)"]
+    InsertCad --> AlertSucCad["alert: Conta criada com sucesso"]
+    AlertSucCad --> ClearCad["Limpar Campos e Voltar para Login"] --> Login
+    Login --> |"Inserir Login/Senha"| Authenticate{"Autenticar com o Banco"}
+    Authenticate -- "Inválido" --> AlertErrLogin["alert: Usuário ou senha inválidos"] --> Login
+    Authenticate -- "Sucesso" --> Home2["Entrar na Home"]
+```
+

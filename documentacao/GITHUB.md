@@ -298,3 +298,27 @@ O arquivo `.gitignore` já está configurado para ignorar:
   2. Verificou o funcionamento dos services de CRUD (usuário, produto, cliente, venda, financeiro) com fallback web.
   3. Reestruturou completamente o README.md principal adicionando badges, descrição de arquitetura física e 7 diagramas Mermaid.
   4. Atualizou toda a documentação acessória (REQUISITOS, HISTORICO, GITHUB) com o encerramento da Etapa 7.
+
+---
+
+## Etapa 8 — Validações de Campos e Cadastro de Conta no Login
+
+- **Link do Repositório:** [https://github.com/EduardoHenrrykSimonato/sistema-gestao-comercial.git](https://github.com/EduardoHenrrykSimonato/sistema-gestao-comercial.git)
+- **Branch Utilizada:** `main`
+- **Mensagem do Commit:** `feat: validacoes de campos e cadastro de conta no login`
+- **Comandos Git Utilizados:**
+  ```bash
+  git status
+  git add .
+  git commit -m "feat: validacoes de campos e cadastro de conta no login"
+  git push origin main
+  ```
+- **Status do Push:** Pendente
+- **Mudanças e Correções Realizadas:**
+  1. Implementou validações de CPF/CNPJ (11 ou 14 dígitos), Telefone (10 ou 11 dígitos) e E-mail (regex) com máscaras reativas no cadastro de clientes.
+  2. Implementou verificação de duplicidade de nome de usuário no cadastro de usuários (impede criação de login existente).
+  3. Adicionou formulário de "Criar nova conta" na tela de Login com alternância entre modos (Login/Cadastro), validação de senhas coincidentes e integração com `UsuarioService`.
+  4. Atualizou o `UsuarioService` para persistência consistente entre SQLite e Fallback Web via `DatabaseService`.
+  5. Ajustou `fallbackQuery` no `DatabaseService` para suportar busca de usuário por nome.
+  6. Atualizou todas as documentações Markdown (README, DIAGRAMAS, TELAS_DO_SISTEMA, COMO_EXECUTAR, REQUISITOS, HISTORICO, GITHUB).
+

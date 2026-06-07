@@ -5,52 +5,135 @@
         <ion-icon name="storefront-outline"></ion-icon>
       </div>
       <h1>Gestão Comercial</h1>
-      <p>Sistema de Gestão Comercial</p>
+      <p>{{ modoLogin ? 'Sistema de Gestão Comercial' : 'Criar Nova Conta' }}</p>
     </div>
 
     <ion-card class="login-card">
       <ion-card-content>
-        <div class="input-group">
-          <ion-item lines="none" class="custom-input">
-            <ion-icon name="person-outline" slot="start"></ion-icon>
-            <ion-input
-              type="text"
-              placeholder="Usuário"
-              [(ngModel)]="usuario"
-              (keyup.enter)="onLogin()"
-            ></ion-input>
-          </ion-item>
+        
+        <!-- FORMULÁRIO DE LOGIN -->
+        <div *ngIf="modoLogin">
+          <div class="input-group">
+            <ion-item lines="none" class="custom-input">
+              <ion-icon name="person-outline" slot="start"></ion-icon>
+              <ion-input
+                type="text"
+                placeholder="Usuário"
+                [(ngModel)]="usuario"
+                (keyup.enter)="onLogin()"
+              ></ion-input>
+            </ion-item>
 
-          <ion-item lines="none" class="custom-input">
-            <ion-icon name="lock-closed-outline" slot="start"></ion-icon>
-            <ion-input
-              type="password"
-              placeholder="Senha"
-              [(ngModel)]="senha"
-              (keyup.enter)="onLogin()"
-            ></ion-input>
-          </ion-item>
+            <ion-item lines="none" class="custom-input">
+              <ion-icon name="lock-closed-outline" slot="start"></ion-icon>
+              <ion-input
+                type="password"
+                placeholder="Senha"
+                [(ngModel)]="senha"
+                (keyup.enter)="onLogin()"
+              ></ion-input>
+            </ion-item>
+          </div>
+
+          <ion-text color="danger" *ngIf="errorMessage">
+            <p class="error-text">{{ errorMessage }}</p>
+          </ion-text>
+
+          <ion-button
+            expand="block"
+            class="login-btn"
+            (click)="onLogin()"
+            [disabled]="loading"
+          >
+            <ion-spinner *ngIf="loading" name="crescent" slot="start"></ion-spinner>
+            <ion-icon *ngIf="!loading" name="log-in-outline" slot="start"></ion-icon>
+            <span *ngIf="!loading">ENTRAR</span>
+            <span *ngIf="loading">ENTRANDO...</span>
+          </ion-button>
+
+          <div class="toggle-container">
+            <p class="toggle-link" (click)="toggleModo()">Criar nova conta</p>
+          </div>
+
+          <p class="hint-text">
+            Usuário padrão: <strong>admin</strong> / Senha: <strong>admin123</strong>
+          </p>
         </div>
 
-        <ion-text color="danger" *ngIf="errorMessage">
-          <p class="error-text">{{ errorMessage }}</p>
-        </ion-text>
+        <!-- FORMULÁRIO DE CADASTRO -->
+        <div *ngIf="!modoLogin">
+          <div class="input-group">
+            <ion-item lines="none" class="custom-input">
+              <ion-icon name="person-outline" slot="start"></ion-icon>
+              <ion-input
+                type="text"
+                placeholder="Nome Completo"
+                [(ngModel)]="novoNome"
+              ></ion-input>
+            </ion-item>
 
-        <ion-button
-          expand="block"
-          class="login-btn"
-          (click)="onLogin()"
-          [disabled]="loading"
-        >
-          <ion-spinner *ngIf="loading" name="crescent" slot="start"></ion-spinner>
-          <ion-icon *ngIf="!loading" name="log-in-outline" slot="start"></ion-icon>
-          <span *ngIf="!loading">ENTRAR</span>
-          <span *ngIf="loading">ENTRANDO...</span>
-        </ion-button>
+            <ion-item lines="none" class="custom-input">
+              <ion-icon name="person-outline" slot="start"></ion-icon>
+              <ion-input
+                type="text"
+                placeholder="Usuário"
+                [(ngModel)]="novoUsuario"
+              ></ion-input>
+            </ion-item>
 
-        <p class="hint-text">
-          Usuário padrão: <strong>admin</strong> / Senha: <strong>admin123</strong>
-        </p>
+            <ion-item lines="none" class="custom-input">
+              <ion-icon name="lock-closed-outline" slot="start"></ion-icon>
+              <ion-input
+                type="password"
+                placeholder="Senha"
+                [(ngModel)]="novaSenha"
+              ></ion-input>
+            </ion-item>
+
+            <ion-item lines="none" class="custom-input">
+              <ion-icon name="lock-closed-outline" slot="start"></ion-icon>
+              <ion-input
+                type="password"
+                placeholder="Confirmar Senha"
+                [(ngModel)]="confirmarSenha"
+                (keyup.enter)="onCriarConta()"
+              ></ion-input>
+            </ion-item>
+
+            <ion-item lines="none" class="custom-input custom-select-item">
+              <ion-select
+                interface="popover"
+                placeholder="Perfil do Usuário"
+                [(ngModel)]="novoPerfil"
+                class="custom-select"
+              >
+                <ion-select-option value="Administrador">Administrador</ion-select-option>
+                <ion-select-option value="Vendedor">Vendedor</ion-select-option>
+                <ion-select-option value="Financeiro">Financeiro</ion-select-option>
+              </ion-select>
+            </ion-item>
+          </div>
+
+          <ion-button
+            expand="block"
+            class="login-btn signup-btn"
+            (click)="onCriarConta()"
+            [disabled]="loading"
+          >
+            <ion-spinner *ngIf="loading" name="crescent" slot="start"></ion-spinner>
+            <ion-icon *ngIf="!loading" name="person-add-outline" slot="start"></ion-icon>
+            <span *ngIf="!loading">CADASTRAR CONTA</span>
+            <span *ngIf="loading">CADASTRANDO...</span>
+          </ion-button>
+
+          <div class="toggle-container">
+            <p class="toggle-link back-link" (click)="toggleModo()">
+              <ion-icon name="arrow-back-outline"></ion-icon>
+              Já tenho conta / Voltar
+            </p>
+          </div>
+        </div>
+
       </ion-card-content>
     </ion-card>
   </div>

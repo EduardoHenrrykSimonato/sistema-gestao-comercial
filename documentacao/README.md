@@ -33,3 +33,6 @@ Bem-vindo à documentação do projeto **Sistema de Gestão Comercial**.
 | 4 — Módulo Financeiro / Receber | ✅ Concluída |
 | 5 — Módulo de Relatórios | ✅ Concluída |
 | 6 — Revisão Final e Preparação para Entrega | ✅ Concluída |
+| 7 — Revisão Técnica Final e README Profissional | ✅ Concluída |
+| 8 — Validações de Campos e Cadastro de Conta no Login | ✅ Concluída |
+

@@ -61,11 +61,102 @@ export class ClientesPage implements OnInit {
     }
   }
 
+  formatarCpfCnpj(value: string): string {
+    if (!value) return '';
+    const limpo = value.replace(/\D/g, '');
+    if (limpo.length <= 11) {
+      let formatted = limpo;
+      if (limpo.length > 3) {
+        formatted = limpo.substring(0, 3) + '.' + limpo.substring(3);
+      }
+      if (limpo.length > 6) {
+        formatted = formatted.substring(0, 7) + '.' + formatted.substring(7);
+      }
+      if (limpo.length > 9) {
+        formatted = formatted.substring(0, 11) + '-' + formatted.substring(11, 13);
+      }
+      return formatted.substring(0, 14);
+    } else {
+      let formatted = limpo;
+      if (limpo.length > 2) {
+        formatted = limpo.substring(0, 2) + '.' + limpo.substring(2);
+      }
+      if (limpo.length > 5) {
+        formatted = formatted.substring(0, 6) + '.' + formatted.substring(6);
+      }
+      if (limpo.length > 8) {
+        formatted = formatted.substring(0, 10) + '/' + formatted.substring(10);
+      }
+      if (limpo.length > 12) {
+        formatted = formatted.substring(0, 15) + '-' + formatted.substring(15, 17);
+      }
+      return formatted.substring(0, 18);
+    }
+  }
+
+  formatarTelefone(value: string): string {
+    if (!value) return '';
+    const limpo = value.replace(/\D/g, '');
+    let formatted = limpo;
+    if (limpo.length > 0) {
+      formatted = '(' + limpo;
+    }
+    if (limpo.length > 2) {
+      formatted = '(' + limpo.substring(0, 2) + ') ' + limpo.substring(2);
+    }
+    if (limpo.length > 6 && limpo.length <= 10) {
+      formatted = '(' + limpo.substring(0, 2) + ') ' + limpo.substring(2, 6) + '-' + limpo.substring(6, 10);
+    } else if (limpo.length > 10) {
+      formatted = '(' + limpo.substring(0, 2) + ') ' + limpo.substring(2, 7) + '-' + limpo.substring(7, 11);
+    }
+    return formatted.substring(0, 15);
+  }
+
+  onCpfCnpjInput(event: any) {
+    const value = event.target.value || '';
+    this.cpf_cnpj = this.formatarCpfCnpj(value);
+    event.target.value = this.cpf_cnpj;
+  }
+
+  onTelefoneInput(event: any) {
+    const value = event.target.value || '';
+    this.telefone = this.formatarTelefone(value);
+    event.target.value = this.telefone;
+  }
+
   async onSalvar() {
     // Validations
     if (!this.nome || !this.nome.trim()) {
       alert('Preencha o nome do cliente.');
       return;
+    }
+
+    // CPF/CNPJ Validation
+    if (this.cpf_cnpj) {
+      const cpfCnpjLimpo = this.cpf_cnpj.replace(/\D/g, '');
+      if (cpfCnpjLimpo.length > 0 && cpfCnpjLimpo.length !== 11 && cpfCnpjLimpo.length !== 14) {
+        alert('CPF/CNPJ inválido.');
+        return;
+      }
+    }
+
+    // Telefone Validation
+    if (this.telefone) {
+      const telefoneLimpo = this.telefone.replace(/\D/g, '');
+      if (telefoneLimpo.length > 0 && (telefoneLimpo.length < 10 || telefoneLimpo.length > 11)) {
+        alert('Telefone inválido.');
+        return;
+      }
+    }
+
+    // E-mail Validation
+    if (this.email && this.email.trim()) {
+      const emailTrim = this.email.trim();
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(emailTrim)) {
+        alert('E-mail inválido.');
+        return;
+      }
     }
 
     const clienteDados: Cliente = {
@@ -81,11 +172,11 @@ export class ClientesPage implements OnInit {
         // Edit mode
         clienteDados.id = this.clienteIdParaEditar;
         await this.clienteService.atualizar(clienteDados);
-        alert('Cliente atualizado com sucesso!');
+        alert('Cliente salvo com sucesso.'); // Updated to match user's expected "Cliente salvo com sucesso." alert
       } else {
         // Create mode
         await this.clienteService.inserir(clienteDados);
-        alert('Cliente cadastrado com sucesso!');
+        alert('Cliente salvo com sucesso.'); // Updated to match user's expected "Cliente salvo com sucesso." alert
       }
 
       this.limparFormulario();

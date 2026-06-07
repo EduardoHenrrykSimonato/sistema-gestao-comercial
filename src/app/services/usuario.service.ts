@@ -25,12 +25,25 @@ export class UsuarioService {
    */
   async inserir(usuario: Usuario): Promise<number> {
     if (this.databaseService.isWebFallbackAtivo()) {
-      const id = this.proximoId++;
-      const novo = { ...usuario, id };
-      this.usuariosFallback.push(novo);
-      console.log('Usuário salvo no fallback web:', novo);
-      console.log('Lista fallback atual:', this.usuariosFallback);
-      return id;
+      try {
+        const result = await this.databaseService.run(
+          'INSERT INTO usuarios (nome, usuario, senha, perfil) VALUES (?, ?, ?, ?)',
+          [usuario.nome, usuario.usuario, usuario.senha, usuario.perfil]
+        );
+        const id = result.lastId || this.proximoId++;
+        const novo = { ...usuario, id };
+        if (!this.usuariosFallback.some(u => u.id === id)) {
+          this.usuariosFallback.push(novo);
+        }
+        console.log('Usuário salvo no fallback de localStorage via databaseService:', novo);
+        return id;
+      } catch (err) {
+        console.error('Erro ao salvar no databaseService fallback, usando fallback de memória:', err);
+        const id = this.proximoId++;
+        const novo = { ...usuario, id };
+        this.usuariosFallback.push(novo);
+        return id;
+      }
     }
     
     try {
@@ -61,7 +74,16 @@ export class UsuarioService {
    */
   async listar(): Promise<Usuario[]> {
     if (this.databaseService.isWebFallbackAtivo()) {
-      console.log('Listando usuários do fallback web:', this.usuariosFallback);
+      try {
+        const users = await this.databaseService.query('SELECT * FROM usuarios ORDER BY nome');
+        users.forEach(u => {
+          if (!this.usuariosFallback.some(mem => mem.id === u.id)) {
+            this.usuariosFallback.push(u);
+          }
+        });
+      } catch (err) {
+        console.error('Erro ao listar usuários no fallback de localStorage:', err);
+      }
       return [...this.usuariosFallback];
     }
     
@@ -104,12 +126,18 @@ export class UsuarioService {
    */
   async atualizar(usuario: Usuario): Promise<void> {
     if (this.databaseService.isWebFallbackAtivo()) {
+      try {
+        await this.databaseService.run(
+          'UPDATE usuarios SET nome = ?, usuario = ?, senha = ?, perfil = ? WHERE id = ?',
+          [usuario.nome, usuario.usuario, usuario.senha, usuario.perfil, usuario.id]
+        );
+      } catch (err) {
+        console.error('Erro ao atualizar no databaseService fallback:', err);
+      }
       const index = this.usuariosFallback.findIndex(u => u.id === usuario.id);
       if (index !== -1) {
         this.usuariosFallback[index] = { ...usuario };
       }
-      console.log('Usuário atualizado no fallback web:', usuario);
-      console.log('Lista fallback atual:', this.usuariosFallback);
       return;
     }
     
@@ -133,9 +161,12 @@ export class UsuarioService {
    */
   async excluir(id: number): Promise<void> {
     if (this.databaseService.isWebFallbackAtivo()) {
+      try {
+        await this.databaseService.run('DELETE FROM usuarios WHERE id = ?', [id]);
+      } catch (err) {
+        console.error('Erro ao excluir no databaseService fallback:', err);
+      }
       this.usuariosFallback = this.usuariosFallback.filter(u => u.id !== id);
-      console.log('Usuário excluído no fallback web. ID:', id);
-      console.log('Lista fallback atual:', this.usuariosFallback);
       return;
     }
     
@@ -153,5 +184,23 @@ export class UsuarioService {
    */
   async remover(id: number): Promise<void> {
     return this.excluir(id);
+  }
+
+  /**
+   * Verifica se o nome de usuário já existe na base de dados (SQLite ou fallback).
+   */
+  async usuarioExiste(usuario: string): Promise<boolean> {
+    if (!usuario) return false;
+    try {
+      const result = await this.databaseService.query(
+        'SELECT * FROM usuarios WHERE usuario = ?',
+        [usuario.trim()]
+      );
+      return result.length > 0;
+    } catch (error) {
+      console.error('Erro ao verificar se usuário existe, usando fallback em lista:', error);
+      const list = await this.listar();
+      return list.some(u => u.usuario.toLowerCase() === usuario.trim().toLowerCase());
+    }
   }
 }

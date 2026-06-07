@@ -6,14 +6,20 @@ Documentação das telas do sistema, atualizada a cada etapa do desenvolvimento.
 
 ### 1. Login (`/login`)
 
-- **Descrição:** Tela de autenticação do sistema.
-- **Campos:** Usuário (input de texto), Senha (input de senha).
-- **Ações:** Botão "Entrar" (`onLogin()`).
-- **Validações:** Campos vazios exibem `alert('Preencha usuário e senha.')`.
-- **Mensagens de erro:** Credenciais incorretas exibem `alert('Usuário ou senha inválidos.')`. Falhas de sistema exibem `alert('Erro ao realizar login. Tente novamente.')`.
-- **Redirecionamento:** Após sucesso na autenticação, o foco do elemento ativo do DOM é removido (`activeElement.blur()`) para evitar avisos de acessibilidade do navegador e a navegação segura é realizada através de `this.router.navigateByUrl('/home', { replaceUrl: true })`, garantindo que o usuário seja levado à tela Home de forma limpa.
-- **Observação sobre Fallback Web:** O aplicativo conta com um mecanismo de fallback web que permite acesso imediato usando as credenciais padrão (`admin` / `admin123`) caso o banco de dados SQLite não esteja disponível no navegador durante a execução via `ionic serve`.
-- **Status:** ✅ Implementada com fallback web e navegação segura corrigida (Etapa 2)
+- **Descrição:** Tela de autenticação do sistema com suporte a criação de nova conta.
+- **Modo Login:**
+  - **Campos:** Usuário (input de texto), Senha (input de senha).
+  - **Ações:** Botão "Entrar" (`onLogin()`), link "Criar nova conta" (alterna para modo cadastro).
+  - **Validações:** Campos vazios exibem `alert('Preencha usuário e senha.')`.
+  - **Mensagens de erro:** Credenciais incorretas exibem `alert('Usuário ou senha inválidos.')`. Falhas de sistema exibem `alert('Erro ao realizar login. Tente novamente.')`.
+- **Modo Cadastro de Nova Conta:**
+  - **Campos:** Nome Completo, Usuário (login), Senha, Confirmar Senha, Perfil (Administrador, Vendedor, Financeiro).
+  - **Ações:** Botão "Cadastrar Conta" (`onCriarConta()`), link "Já tenho conta / Voltar" (retorna ao modo login).
+  - **Validações:** Todos os campos são obrigatórios. Senhas devem coincidir. O nome de usuário deve ser único no banco (caso contrário exibe `alert('Usuário já cadastrado.')`).
+  - **Sucesso:** Exibe `alert('Conta criada com sucesso. Faça login para acessar o sistema.')`, limpa o formulário e retorna ao modo login.
+- **Redirecionamento:** Após sucesso na autenticação, o foco do elemento ativo do DOM é removido (`activeElement.blur()`) para evitar avisos de acessibilidade do navegador e a navegação segura é realizada através de `this.router.navigateByUrl('/home', { replaceUrl: true })`.
+- **Observação sobre Fallback Web:** O aplicativo conta com um mecanismo de fallback web que permite acesso imediato usando as credenciais padrão (`admin` / `admin123`) e também permite criar novas contas que ficam salvas no localStorage.
+- **Status:** ✅ Implementada com fallback web, cadastro de conta e navegação segura (Etapa 8)
 
 ---
 
@@ -101,8 +107,11 @@ Documentação das telas do sistema, atualizada a cada etapa do desenvolvimento.
   - Excluir (Remove o item após confirmação)
 - **Validações:**
   - Nome completo obrigatório
-- **Ações disponíveis:** CRUD completo com campos opcionais estruturados de contato.
-- **Status:** ✅ Implementada com fallback web em memória para testes no browser (Etapa 2)
+  - CPF/CNPJ: máscara reativa (`000.000.000-00` para CPF, `00.000.000/0000-00` para CNPJ), valida 11 dígitos (CPF) ou 14 dígitos (CNPJ)
+  - Telefone: máscara reativa (`(00) 0000-0000` ou `(00) 00000-0000`), valida 10 ou 11 dígitos
+  - E-mail: validação por regex (`nome@dominio.ext`)
+- **Ações disponíveis:** CRUD completo com campos opcionais estruturados de contato e validações com alertas descritivos.
+- **Status:** ✅ Implementada com fallback web, validações de CPF/CNPJ, Telefone e E-mail (Etapa 8)
 - **Screenshots/Prints futuros:** (Reservado para capturas de tela)
 
 ---
