@@ -107,7 +107,7 @@ Documentação das telas do sistema, atualizada a cada etapa do desenvolvimento.
 - **Validações:**
   - Nome obrigatório.
   - Nome único (valida duplicidades via `categoriaExiste` impedindo cadastros com o mesmo nome).
-- **Status:** ✅ Implementada com CRUD completo e validações em SQLite/Fallback (Etapa 9)
+- **Status:** ✅ Implementada com design dark premium glassmorphism e CRUD completo SQLite/Fallback (Etapa 9 / Ajuste Visual)
 - **Screenshots/Prints futuros:** (Reservado para capturas de tela)
 
 ---

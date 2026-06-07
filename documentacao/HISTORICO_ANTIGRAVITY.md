@@ -731,3 +731,32 @@ O projeto está 100% concluído, polido, compilável, testável no navegador (vi
 ✅ Categorias de produto integradas dinamicamente com os produtos.
 ✅ Formatação e validação monetária centralizada no padrão brasileiro (R$) em todo o sistema.
 ✅ Build final de produção concluído com sucesso e zero erros/warnings.
+
+---
+
+## Ajuste Visual - Tela de Categorias de Produto
+
+**Data:** 07/06/2026
+
+### Problemas visuais encontrados
+- A tela de cadastro de categorias de produtos estava funcional, mas desalinhada com a identidade visual dark premium glassmorphism do projeto.
+- Fundo plano escuro sem o gradiente característico.
+- Inputs pretos sem contraste com o fundo, tornando-os quase invisíveis.
+- Cards sem o filtro backdrop-filter blur de glassmorphism e com bordas ásperas.
+- Lista de categorias e botões sem o refinamento de hover/foco e espaçamentos adequados presentes nos demais cadastros.
+
+### Arquivos alterados
+- [categorias-produto.page.html](file:///c:/Projetos/sistema-gestao-comercial/src/app/pages/cadastro/categorias-produto/categorias-produto.page.html)
+- [categorias-produto.page.scss](file:///c:/Projetos/sistema-gestao-comercial/src/app/pages/cadastro/categorias-produto/categorias-produto.page.scss)
+- [documentacao/HISTORICO_ANTIGRAVITY.md](file:///c:/Projetos/sistema-gestao-comercial/documentacao/HISTORICO_ANTIGRAVITY.md)
+- [documentacao/TELAS_DO_SISTEMA.md](file:///c:/Projetos/sistema-gestao-comercial/documentacao/TELAS_DO_SISTEMA.md)
+
+### Melhorias aplicadas
+1. **Background e Layout**: Vinculado o gradiente principal `linear-gradient(180deg, #1a1a2e 0%, #16213e 100%)` à classe `.page-content`.
+2. **Card com Glassmorphism**: Estilizada a classe `.custom-card` com fundo translúcido `rgba(255, 255, 255, 0.05)`, bordas suaves, e `backdrop-filter: blur(10px)`.
+3. **Estilização de Inputs e Textarea**: Configurado o fundo dos inputs para `rgba(255, 255, 255, 0.04)` com transição de borda em rosa/vermelho `#e94560` ao receber foco (`:focus-within`), garantindo legibilidade total e placeholders visíveis.
+4. **Botões e Ações**: Padronizados os botões Limpar (outline com hover reativo) e Salvar/Atualizar (com gradiente vibrante e box-shadow premium).
+5. **Lista de Categorias**: Organização tabular em cards individuais de listagem `.list-item-card` com botões de ação e ícones perfeitamente alinhados, além de empty state com borda tracejada e ícone centralizado se não houver registros.
+
+### Resultado esperado
+A tela de Categorias de Produto agora é totalmente coerente com os cadastros de Produtos, Clientes e Usuários, ostentando o mesmo design dark premium, legibilidade aprimorada e excelente responsividade em dispositivos móveis e desktop.
