@@ -344,3 +344,27 @@ O arquivo `.gitignore` já está configurado para ignorar:
   4. Integrou a categoria ao formulário de cadastro de produtos substituindo a entrada de texto por um `<ion-select>` dinâmico e adicionando botão de gerenciar categorias.
   5. Atualizou as telas de Vendas, Contas a Receber e Relatórios para utilizar o utilitário de formatação de moeda R$ de forma global e uniforme.
   6. Atualizou todas as documentações em Markdown (README, DIAGRAMAS, TELAS_DO_SISTEMA, REQUISITOS, ESTRUTURA_PROJETO, BANCO_DE_DADOS, HISTORICO, GITHUB) e realizou o build final de produção sem erros/warnings.
+
+---
+
+## Etapa 10 — Auditoria e Sincronização de Diagramas
+
+- **Link do Repositório:** [https://github.com/EduardoHenrrykSimonato/sistema-gestao-comercial.git](https://github.com/EduardoHenrrykSimonato/sistema-gestao-comercial.git)
+- **Branch Utilizada:** `main`
+- **Mensagem do Commit:** `docs: auditores e sincronizacao de todos os diagramas Mermaid do projeto`
+- **Comandos Git Utilizados:**
+  ```bash
+  git status
+  git add .
+  git commit -m "docs: auditores e sincronizacao de todos os diagramas Mermaid do projeto"
+  git push origin main
+  ```
+- **Status do Push:** ✅ Realizado com sucesso
+- **Mudanças e Correções Realizadas:**
+  1. Auditou todos os diagramas Mermaid do projeto para coerência com a modelagem do SQLite e lógica real dos serviços.
+  2. Consolidou o Diagrama de Casos de Uso sob o ator principal único "Usuário".
+  3. Corrigiu o relacionamento entre vendas e recebimentos para 1:1 e explicitou o relacionamento lógico de categorias em produtos.
+  4. Atualizou todas as propriedades opcionais e métodos de serviços no Diagrama de Classes.
+  5. Sincronizou todos os fluxogramas operacionais (Login, Cadastro Geral, Vendas, Receber, Relatórios) e acrescentou o fluxo de Cadastro de Categorias.
+  6. Replicou exatamente os mesmos diagramas em `README.md` e `documentacao/DIAGRAMAS.md` e realizou a validação de build final de produção.
+

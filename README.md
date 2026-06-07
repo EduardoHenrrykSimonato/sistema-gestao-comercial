@@ -93,45 +93,49 @@ flowchart TD
 ## 📊 Diagramas do Sistema
 
 ### 1. Diagrama de Casos de Uso
-Define os atores (incluindo Visitante antes da autenticação) e o escopo de suas respectivas interações.
+Mapeia os casos de uso do sistema em torno do ator principal **Usuário**.
 
 ```mermaid
 flowchart LR
     subgraph Atores
-        Visitante["👤 Visitante"]
-        Admin["👤 Administrador"]
-        Op["👤 Operador"]
+        Usuario["👤 Usuário"]
     end
 
     subgraph Sistema ["Gestão Comercial"]
-        UC_Login(("Login"))
+        UC_Login(("Fazer login"))
         UC_CriarConta(("Criar nova conta"))
-        UC_CadUsu(("Cadastrar Usuários"))
-        UC_CadProd(("Cadastrar Produtos"))
-        UC_CadCli(("Cadastrar Clientes"))
-        UC_Venda(("Registrar Vendas"))
-        UC_Receber(("Controlar Recebimentos"))
-        UC_Relat(("Consultar Relatórios"))
+        UC_CadUsu(("Cadastrar usuários"))
+        UC_CadCli(("Cadastrar clientes"))
+        UC_CadCat(("Cadastrar categorias de produto"))
+        UC_CadProd(("Cadastrar produtos"))
+        UC_ContEst(("Controlar estoque"))
+        UC_Venda(("Realizar venda"))
+        UC_VariosProd(("Adicionar vários produtos na venda"))
+        UC_ValEst(("Validar estoque"))
+        UC_GerRec(("Gerar recebimento pendente"))
+        UC_RegRec(("Registrar recebimento"))
+        UC_Relat(("Consultar relatórios"))
     end
 
-    Visitante --> UC_Login
-    Visitante --> UC_CriarConta
+    Usuario --> UC_Login
+    Usuario --> UC_CriarConta
+    Usuario --> UC_CadUsu
+    Usuario --> UC_CadCli
+    Usuario --> UC_CadCat
+    Usuario --> UC_CadProd
+    Usuario --> UC_Venda
+    Usuario --> UC_RegRec
+    Usuario --> UC_Relat
 
-    Admin --> UC_Login
-    Admin --> UC_CadUsu
-    Admin --> UC_CadProd
-    Admin --> UC_CadCli
-    Admin --> UC_Venda
-    Admin --> UC_Receber
-    Admin --> UC_Relat
-
-    Op --> UC_Login
-    Op --> UC_CadCli
-    Op --> UC_Venda
+    %% Relações de Inclusão / Dependência
+    UC_Venda -.->|include| UC_VariosProd
+    UC_Venda -.->|include| UC_ValEst
+    UC_Venda -.->|include| UC_GerRec
+    UC_Venda -.->|include| UC_ContEst
 ```
 
 ### 2. Diagrama Entidade-Relacionamento (ER)
-Modelagem lógica do banco de dados relacional que armazena os dados do aplicativo.
+Modelagem física da base de dados SQLite local.
 
 ```mermaid
 erDiagram
@@ -192,82 +196,144 @@ erDiagram
         text status
     }
 
-    CLIENTES ||--o{ VENDAS : "possui"
-    VENDAS ||--o{ ITENS_VENDA : "contém"
-    PRODUTOS ||--o{ ITENS_VENDA : "referenciado em"
-    VENDAS ||--o{ RECEBIMENTOS : "gera"
+    CLIENTES ||--o{ VENDAS : "realiza"
+    VENDAS ||--|{ ITENS_VENDA : "possui"
+    PRODUTOS ||--|{ ITENS_VENDA : "referenciado"
+    VENDAS ||--|| RECEBIMENTOS : "gera"
     CATEGORIAS_PRODUTO ||--o{ PRODUTOS : "classifica"
 ```
 
-### 3. Diagrama de Classes (Serviços e Modelos)
-Estrutura de modelos, atributos e dependências expostas pelas classes.
+> [!NOTE]
+> **Relacionamento Lógico de Categoria:**
+> O relacionamento entre `CATEGORIAS_PRODUTO` e `PRODUTOS` é **lógico** (associando o nome da categoria no campo `produtos.categoria` do tipo `TEXT`), e não físico via chave estrangeira. Isso garante a retrocompatibilidade e a simplicidade de portabilidade do fallback web em localStorage.
+
+### 3. Diagrama de Classes
+Diagrama contendo modelos de dados (Models) e classes de lógica de negócios (Services) do aplicativo.
 
 ```mermaid
 classDiagram
     class Usuario {
-        +id: number
+        +id?: number
         +nome: string
         +usuario: string
         +senha: string
         +perfil: string
     }
 
-    class CategoriaProduto {
-        +id: number
+    class Cliente {
+        +id?: number
         +nome: string
-        +descricao: string
+        +cpf_cnpj: string
+        +telefone: string
+        +email: string
+        +endereco: string
+    }
+
+    class CategoriaProduto {
+        +id?: number
+        +nome: string
+        +descricao?: string
+    }
+
+    class Produto {
+        +id?: number
+        +nome: string
+        +categoria: string
+        +preco: number
+        +estoque: number
+    }
+
+    class Venda {
+        +id?: number
+        +cliente_id: number
+        +cliente_nome?: string
+        +data_venda: string
+        +total: number
+        +status: string
+        +itens?: ItemVenda[]
+    }
+
+    class ItemVenda {
+        +id?: number
+        +venda_id?: number
+        +produto_id: number
+        +produto_nome?: string
+        +quantidade: number
+        +valor_unitario: number
+        +subtotal: number
+    }
+
+    class Recebimento {
+        +id?: number
+        +venda_id: number
+        +data_recebimento: string
+        +valor: number
+        +forma_pagamento: string
+        +status: string
     }
 
     class DatabaseService {
-        +sqlite: SQLiteConnection
-        +db: SQLiteDBConnection
-        +isInitialized: boolean
-        +useFallback: boolean
-        +initializeDatabase()
-        +getConnection()
-        +query(sql, params)
-        +run(sql, params)
-        +isWebFallbackAtivo()
+        -sqlite: SQLiteConnection
+        -db: SQLiteDBConnection
+        -isInitialized: boolean
+        -useFallback: boolean
+        +initializeDatabase(): Promise~void~
+        +isWebFallbackAtivo(): boolean
+        +ativarFallbackWeb(): void
+        +getConnection(): Promise~SQLiteDBConnection~
+        +query(sql: string, params: any[]): Promise~any[]~
+        +run(sql: string, params: any[]): Promise~any~
+        +buscarUsuarioPorCredenciais(usuario: string, senha: string): Promise~any~
+        +saveToStore(): Promise~void~
     }
 
     class UsuarioService {
         -databaseService: DatabaseService
-        +listar()
-        +buscarPorId(id)
-        +inserir(usuario)
-        +atualizar(usuario)
-        +excluir(id)
-        +usuarioExiste(usuario)
+        +inserir(usuario: Usuario): Promise~number~
+        +cadastrar(usuario: Usuario): Promise~number~
+        +listar(): Promise~Usuario[]~
+        +listarTodos(): Promise~Usuario[]~
+        +buscarPorId(id: number): Promise~Usuario|null~
+        +atualizar(usuario: Usuario): Promise~void~
+        +excluir(id: number): Promise~void~
+        +remover(id: number): Promise~void~
+        +usuarioExiste(usuario: string): Promise~boolean~
     }
 
     class CategoriaProdutoService {
         -databaseService: DatabaseService
-        +inserir(categoria)
-        +listar()
-        +buscarPorId(id)
-        +atualizar(categoria)
-        +excluir(id)
-        +categoriaExiste(nome, excluirId)
+        +inserir(categoria: CategoriaProduto): Promise~void~
+        +listar(): Promise~CategoriaProduto[]~
+        +buscarPorId(id: number): Promise~CategoriaProduto|null~
+        +atualizar(categoria: CategoriaProduto): Promise~void~
+        +excluir(id: number): Promise~void~
+        +categoriaExiste(nome: string, excluirId?: number): Promise~boolean~
     }
 
     class ProdutoService {
         -databaseService: DatabaseService
-        +listar()
-        +buscarPorId(id)
-        +inserir(produto)
-        +atualizar(produto)
-        +excluir(id)
-        +atualizarEstoque(produtoId, quantidade)
-        +verificarEstoque(produtoId, quantidade)
+        +inserir(produto: Produto): Promise~void~
+        +cadastrar(produto: Produto): Promise~number~
+        +listar(): Promise~Produto[]~
+        +listarTodos(): Promise~Produto[]~
+        +buscarPorId(id: number): Promise~Produto|null~
+        +atualizar(produto: Produto): Promise~void~
+        +excluir(id: number): Promise~void~
+        +remover(id: number): Promise~void~
+        +atualizarEstoque(produtoId: number, novoEstoque: number): Promise~void~
+        +verificarEstoque(produtoId: number, quantidade: number): Promise~boolean~
     }
 
     class ClienteService {
         -databaseService: DatabaseService
-        +listar()
-        +buscarPorId(id)
-        +inserir(cliente)
-        +atualizar(cliente)
-        +excluir(id)
+        +inserir(cliente: Cliente): Promise~number~
+        +cadastrar(cliente: Cliente): Promise~number~
+        +listar(): Promise~Cliente[]~
+        +listarTodos(): Promise~Cliente[]~
+        +buscarPorId(id: number): Promise~Cliente|null~
+        +atualizar(cliente: Cliente): Promise~void~
+        +excluir(id: number): Promise~void~
+        +remover(id: number): Promise~void~
     }
 
     class VendaService {
@@ -275,25 +341,37 @@ classDiagram
         -clienteService: ClienteService
         -produtoService: ProdutoService
         -financeiroService: FinanceiroService
-        +criarVenda(venda, itens)
-        +listarVendas()
-        +listarPendentes()
-        +listarPagas()
-        +listarItensPorVenda(venda_id)
-        +validarEstoque(produto_id, quantidade)
-        +marcarComoPaga(vendaId)
+        +criar(venda: Venda, itens: ItemVenda[]): Promise~number~
+        +criarVenda(venda: Venda, itens: ItemVenda[]): Promise~number~
+        +listarVendas(): Promise~Venda[]~
+        +listarTodas(): Promise~Venda[]~
+        +buscarPorId(id: number): Promise~Venda|null~
+        +listarItensPorVenda(vendaId: number): Promise~ItemVenda[]~
+        +listarPendentes(): Promise~Venda[]~
+        +listarVendasPendentes(): Promise~Venda[]~
+        +listarPagas(): Promise~Venda[]~
+        +listarVendasPagas(): Promise~Venda[]~
+        +calcularTotalVendido(): Promise~number~
+        +marcarComoPaga(vendaId: number): Promise~void~
+        +remover(id: number): Promise~void~
+        +validarEstoque(produto_id: number, quantidade: number): Promise~boolean~
+        +calcularTotal(itens: ItemVenda[]): number
     }
 
     class FinanceiroService {
         -databaseService: DatabaseService
-        +gerarRecebimentoPendente(venda_id, valor)
-        +listarRecebimentos()
-        +listarTodosRecebimentos()
-        +listarRecebimentosPendentes()
-        +listarRecebimentosPagos()
-        +registrarRecebimento(recebimento)
-        +calcularTotalRecebido()
-        +calcularTotalPendente()
+        -vendaService: VendaService
+        +gerarRecebimentoPendente(venda_id: number, valor: number): Promise~void~
+        +listarRecebimentos(): Promise~Recebimento[]~
+        +buscarPorId(id: number): Promise~Recebimento|null~
+        +registrarRecebimento(recebimento: Recebimento): Promise~number~
+        +listarPorVenda(vendaId: number): Promise~Recebimento[]~
+        +listarTodosRecebimentos(): Promise~Recebimento[]~
+        +listarRecebimentosPendentes(): Promise~Recebimento[]~
+        +listarRecebimentosPagos(): Promise~Recebimento[]~
+        +calcularTotalRecebido(): Promise~number~
+        +calcularTotalPendente(): Promise~number~
+        +remover(id: number): Promise~void~
     }
 
     UsuarioService --> DatabaseService
@@ -301,16 +379,27 @@ classDiagram
     CategoriaProdutoService --> DatabaseService
     CategoriaProdutoService ..> CategoriaProduto : manipulates
     ProdutoService --> DatabaseService
+    ProdutoService ..> Produto : manipulates
     ClienteService --> DatabaseService
+    ClienteService ..> Cliente : manipulates
     VendaService --> DatabaseService
     VendaService --> ClienteService
     VendaService --> ProdutoService
     VendaService --> FinanceiroService
+    VendaService ..> Venda : manipulates
     FinanceiroService --> DatabaseService
+    FinanceiroService ..> Recebimento : manipulates
+
+    Cliente "1" -- "0..*" Venda : realiza
+    Venda "1" -- "1..*" ItemVenda : possui
+    ItemVenda "0..*" -- "1" Produto : referencia
+    Venda "1" -- "1" Recebimento : gera
+    CategoriaProduto "1" -- "0..*" Produto : categoriza
+    Produto "1" -- "1" Produto : possui controle de estoque
 ```
 
-### 4. Fluxo de Navegação de Telas
-Mapeamento de rotas e fluxo geral de transições do aplicativo móvel/web.
+### 4. Fluxo de Navegação
+Estrutura geral de rotas e navegação entre as telas do sistema.
 
 ```mermaid
 flowchart TD
@@ -325,76 +414,126 @@ flowchart TD
     C --> C2["Clientes"]
     C --> C3["Usuários"]
     C --> C4["Categorias de Produto"]
+
+    E --> E1["Contas a Receber"]
 ```
 
 ### 5. Fluxograma de Login e Criação de Conta
-Fluxo de negócio para acesso ao sistema e criação de nova conta diretamente na tela de Login.
+Fluxo de entrada e registro de novos operadores no sistema comercial.
 
 ```mermaid
 flowchart TD
     Start["Entrar no App"] --> Login["Tela de Login"]
     Login --> |"Clicar em Criar conta"| FormCad["Alternar Modo: Form de Cadastro"]
     FormCad --> |"Preencher Nome/Login/Senha/Perfil"| ValidCad{"Validar Campos e Duplicidade"}
-    ValidCad -- "Vazio ou Inválido" --> AlertCadErr["alert() de Erro"] --> FormCad
-    ValidCad -- "Usuário Já Existe" --> AlertDup["alert('Usuário já cadastrado.')"] --> FormCad
+    ValidCad -- "Vazio ou Inválido" --> AlertCadErr["alert de Erro"] --> FormCad
+    ValidCad -- "Usuário Já Existe" --> AlertDup["alert: Usuário já cadastrado"] --> FormCad
     ValidCad -- "Sucesso" --> InsertCad["INSERT usuarios (SQLite/Fallback)"]
-    InsertCad --> AlertSucCad["alert('Conta criada com sucesso.')"]
-    AlertSucCad --> ClearCad["Limpar Campos & Voltar para Login"] --> Login
+    InsertCad --> AlertSucCad["alert: Conta criada com sucesso"]
+    AlertSucCad --> ClearCad["Limpar Campos e Voltar para Login"] --> Login
     Login --> |"Inserir Login/Senha"| Authenticate{"Autenticar com o Banco"}
-    Authenticate -- "Inválido" --> AlertErrLogin["alert('Usuário ou senha inválidos.')"] --> Login
+    Authenticate -- "Inválido" --> AlertErrLogin["alert: Usuário ou senha inválidos"] --> Login
     Authenticate -- "Sucesso" --> Home["Entrar na Home"]
 ```
 
-### 6. Fluxo de Negócio — Registro de Vendas e Estoque
-Processamento reativo desde a montagem do carrinho de compras até a baixa automática de estoque.
+### 6. Fluxograma de Cadastro Geral
+Fluxo geral de cadastros (Usuários, Clientes e Produtos).
 
 ```mermaid
 flowchart TD
-    Venda["Entrar em Vendas"] --> SelCliente["Selecionar Cliente"]
+    Start["Home"] --> Cadastro["Módulo de Cadastro"]
+    Cadastro --> Menu{"Escolher Opção"}
+    
+    Menu --> |"Usuários"| CadUsu["Cadastro de Usuários (CRUD)"]
+    Menu --> |"Clientes"| CadCli["Cadastro de Clientes (CRUD com Validações)"]
+    Menu --> |"Categorias de Produto"| CadCat["Cadastro de Categorias (CRUD com Nome Único)"]
+    Menu --> |"Produtos"| CadProd["Cadastro de Produtos"]
+
+    CadProd --> Step1["Cadastrar/Selecionar Categoria"]
+    Step1 --> Step2["Informar Dados do Produto"]
+    Step2 --> Step3["Informar Preço em R$ (ex: 10,50)"]
+    Step3 --> Step4["Informar Estoque"]
+    Step4 --> ValFields{"Validar Campos?"}
+    
+    ValFields -- Não --> AlertErr["Exibir alert() de erro"] --> CadProd
+    ValFields -- Sim --> SaveProd["Salvar Produto (SQLite/Fallback)"]
+    SaveProd --> ListProd["Listar Produto com Preço formatado"]
+```
+
+### 7. Fluxo de Cadastro de Categorias de Produto
+Módulo de cadastro das categorias selecionáveis.
+
+```mermaid
+flowchart TD
+    Start["Home"] --> Cadastro["Módulo de Cadastro"]
+    Cadastro --> Menu{"Escolher Opção"}
+    Menu --> |"Categorias de Produto"| CadCat["Tela de Categorias"]
+    CadCat --> InputFields["Informar Nome e Descrição"]
+    InputFields --> ValFields{"Validar Nome Preenchido?"}
+    ValFields -- Não --> AlertErr["Exibir alert: Nome é obrigatório"] --> CadCat
+    ValFields -- Sim --> CheckDup{"Verificar Duplicidade no Banco?"}
+    CheckDup -- "Já Existe" --> AlertDup["Exibir alert: Categoria já cadastrada"] --> CadCat
+    CheckDup -- "Único" --> SaveCat["Salvar Categoria (SQLite/Fallback)"]
+    SaveCat --> ListCat["Listar Categoria na Tela"]
+```
+
+### 8. Fluxograma de Venda (PDV)
+Montagem reativa do carrinho, baixa de itens e integração com contas a receber.
+
+```mermaid
+flowchart TD
+    Login["Login"] --> Home["Home"]
+    Home --> Venda["Tela de Vendas"]
+    Venda --> SelCliente["Selecionar Cliente"]
     SelCliente --> SelProd["Selecionar Produto"]
     SelProd --> InfQtd["Informar Quantidade"]
-    InfQtd --> ValEst{"Estoque Disponível?"}
-    ValEst -- Sim --> AddProd["Adicionar ao Carrinho"]
-    ValEst -- Não --> AlertEst["Alert: Estoque Insuficiente"] --> InfQtd
-    AddProd --> CalcTotal["Calcular Subtotais e Total Geral"]
-    CalcTotal --> Loop{"Mais itens?"}
+    InfQtd --> ValEst{"Validar Estoque?"}
+    ValEst -- Não --> AlertEst["Alert: Estoque Insuficiente"] --> SelProd
+    ValEst -- Sim --> AddProd["Adicionar Produto ao Carrinho"]
+    AddProd --> CalcSub["Calcular Subtotal do Item"]
+    CalcSub --> Loop{"Adicionar mais produtos?"}
     Loop -- Sim --> SelProd
-    Loop -- Não --> FinVenda["Finalizar Venda"]
-    FinVenda --> BaixEst["UPDATE produtos SET estoque = estoque - Qtd"]
-    FinVenda --> GerReceb["INSERT recebimentos (Status: pendente)"]
-    GerReceb --> AlertSuc["Alert: Venda finalizada!"]
-    AlertSuc --> Clear["Limpar Carrinho e Atualizar View"]
+    Loop -- Não --> CalcTotal["Calcular Total Geral da Venda"]
+    CalcTotal --> FinVenda["Finalizar Venda"]
+    FinVenda --> BaixEst["Baixar Estoque no Banco"]
+    FinVenda --> GerReceb["Gerar Recebimento Pendente no Financeiro"]
+    GerReceb --> ListVendas["Listar Venda Realizada no Histórico"]
 ```
 
-### 7. Fluxo de Negócio — Confirmação Financeira (Receber)
-Processo de liquidação de contas a receber e alteração de status da transação de forma coordenada.
+### 9. Fluxograma de Recebimento
+Baixa financeira e liquidação de vendas.
 
 ```mermaid
 flowchart TD
-    Fin["Entrar em Financeiro"] --> Receber["Listar Recebimentos Pendentes"]
-    Receber --> |"Registrar Pagamento"| FormPag["Exibir Formulário Inline"]
-    FormPag --> InfForma["Selecionar Forma de Pagamento"]
-    InfForma --> InfData["Selecionar Data de Recebimento"]
-    InfData --> ConfPag["Confirmar Pagamento"]
-    ConfPag --> AtuRec["UPDATE recebimentos SET status = 'recebido'"]
-    AtuRec --> AtuVenda["UPDATE vendas SET status = 'paga'"]
-    AtuVenda --> AlertSuc["Alert: Recebimento registrado!"]
-    AlertSuc --> Reload["Recarregar abas Pendentes e Recebidos"]
+    Login["Login"] --> Home["Home"]
+    Home --> Fin["Módulo Financeiro"]
+    Fin --> Receber["Contas a Receber"]
+    Receber --> ListPend["Listar Recebimentos Pendentes"]
+    ListPend --> SelRec["Selecionar Recebimento"]
+    SelRec --> InfForma["Informar Forma de Pagamento"]
+    InfForma --> ConfPag["Confirmar Recebimento"]
+    ConfPag --> AtuRec["Atualizar Recebimento para Pago/Recebido"]
+    AtuRec --> AtuVenda["Atualizar Venda para Paga"]
+    AtuVenda --> ListPag["Listar Recebimentos Pagos na aba Recebidos"]
 ```
 
-### 8. Fluxo de Negócio — Painel de Relatórios
-Coleta de faturamento, estoque baixo e relatórios operacionais consolidados.
+### 10. Fluxograma de Relatórios
+Mapeamento dos relatórios e painéis dinâmicos de resumo.
 
 ```mermaid
 flowchart TD
-    Relatorios["Entrar em Relatórios"] --> SelTipo["Selecionar Aba de Relatório"]
-    SelTipo --> ResumoGeral["Resumo Geral: Totalizadores Financeiros e de Cadastro"]
-    SelTipo --> RelProdutos["Produtos: Destaque de Estoque Baixo (<= 5)"]
-    SelTipo --> RelClientes["Clientes: Listagem de Contatos"]
-    SelTipo --> RelVendas["Vendas: Faturamento filtrado por Pagas/Pendentes"]
-    SelTipo --> RelReceber["Recebimentos: Fluxos de Caixa por Status e Formas de Pagamento"]
-    ResumoGeral & RelProdutos & RelClientes & RelVendas & RelReceber --> Filter["Buscar por Texto (Nome/Categoria/Cliente)"]
-    Filter --> Render["Renderizar Tabelas e Empty States interativos"]
+    Login["Login"] --> Home["Home"]
+    Home --> Relatorios["Módulo de Relatórios"]
+    Relatorios --> SelTipo["Selecionar Tipo de Relatório"]
+    
+    SelTipo --> |"Resumo geral"| QueryRes["Consultar Resumo Geral"]
+    SelTipo --> |"Produtos"| QueryProd["Consultar Produtos (Estoque Baixo)"]
+    SelTipo --> |"Clientes"| QueryCli["Consultar Clientes"]
+    SelTipo --> |"Vendas"| QueryVen["Consultar Vendas (Status)"]
+    SelTipo --> |"Recebimentos"| QueryRec["Consultar Recebimentos (Status)"]
+    
+    QueryRes & QueryProd & QueryCli & QueryVen & QueryRec --> Filter["Aplicar Filtros (Busca / Status)"]
+    Filter --> Render["Exibir resultados na tela"]
 ```
 
 ---

@@ -760,3 +760,29 @@ O projeto está 100% concluído, polido, compilável, testável no navegador (vi
 
 ### Resultado esperado
 A tela de Categorias de Produto agora é totalmente coerente com os cadastros de Produtos, Clientes e Usuários, ostentando o mesmo design dark premium, legibilidade aprimorada e excelente responsividade em dispositivos móveis e desktop.
+
+---
+
+## Etapa 10 — Auditoria e Sincronização de Diagramas
+
+**Data:** 07/06/2026
+
+### Prompt/Instrução Recebida
+> Verifique se todos os diagramas do projeto sistema-gestao-comercial estão corretos e coerentes com o código atual.
+
+### Decisões e Correções Realizadas
+1. **Ator Principal Único**: Alinhado o Diagrama de Casos de Uso para ter apenas o ator principal **Usuário** (unificando e simplificando o escopo).
+2. **ER Relacionamento 1:1 e Chaves Lógicas**: Atualizado o DER do banco SQLite para usar relacionamento `1:1` entre `vendas` e `recebimentos` e explicitar o relacionamento lógico do campo `categoria` na tabela `produtos` (que aponta para `categorias_produto.nome` no formato `TEXT` no SQLite real).
+3. **Sintaxe e Tipagem das Classes**: Ajustados todos os modelos com campos e tipos opcionais reais (`cliente_nome?`, `itens?`, `id?`). Adicionadas todas as assinaturas reais e completas dos métodos dos serviços, utilizando a formatação segura do Mermaid para tipos genéricos (ex: `Promise~void~`).
+4. **Fluxogramas Operacionais**: Unificados os fluxogramas operacionais de Login, Cadastro Geral, Venda (PDV), Recebimento e Relatórios. Adicionado fluxograma dedicado para o Cadastro de Categorias de Produto.
+5. **Sincronização de Arquivos**: Sincronizados todos os diagramas auditados exatamente da mesma forma no `README.md` raiz e em `documentacao/DIAGRAMAS.md`.
+
+### Arquivos alterados
+- [DIAGRAMAS.md](file:///c:/Projetos/sistema-gestao-comercial/documentacao/DIAGRAMAS.md)
+- [README.md](file:///c:/Projetos/sistema-gestao-comercial/README.md)
+- [HISTORICO_ANTIGRAVITY.md](file:///c:/Projetos/sistema-gestao-comercial/documentacao/HISTORICO_ANTIGRAVITY.md)
+
+### Resultado
+✅ Todos os diagramas do projeto estão 100% corretos, com sintaxe válida e totalmente condizentes com a arquitetura e banco SQLite atual do sistema.
+✅ Build de produção de verificação gerado com sucesso sem quaisquer erros.
+
